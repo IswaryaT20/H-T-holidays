@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import React from "react";
-=======
 import React, { useState, useEffect } from "react";
 
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
 import {
   Container,
   Navbar,
@@ -14,90 +10,79 @@ import {
   Button,
   InputGroup,
   Stack,
-<<<<<<< HEAD
- 
+  Card,
+  Table,
 } from "react-bootstrap";
-import  InputGroupText from "react-bootstrap/esm/InputGroupText"
-import {FaFilter} from "react-icons/fa"
+import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import { FaFilter } from "react-icons/fa";
 import { RiSearch2Line } from "react-icons/ri";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { PiKanbanBold } from "react-icons/pi";
-import { IoMenu } from "react-icons/io5";
 
-
-function Customer() {
-=======
-  Card
-
-} from "react-bootstrap";
-import InputGroupText from "react-bootstrap/esm/InputGroupText"
-import { FaFilter } from "react-icons/fa"
-import { RiSearch2Line } from "react-icons/ri";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { PiKanbanBold } from "react-icons/pi";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { IoMdTime } from "react-icons/io";
-import profile from '../../Assets/images/profile.jpg';
-
+import profile from "../../Assets/images/profile.jpg";
+import { Link } from "react-router-dom";
 
 function Customer() {
-
   const [users, setusers] = useState([], false);
+  const [kanbanView, setKanbanView] = useState(true);
+  const [listView, setListView] = useState(false);
   const apiusers = () => {
-    fetch('https://api.github.com/users')
-      .then(response => {
-        return response.json(
-          console.log(response)
-        )
-      }
-      ).then((result) => {
+    fetch("https://api.github.com/users")
+      .then((response) => {
+        return response.json(console.log(response));
+      })
+      .then((result) => {
         setusers(true);
         setusers(result);
         console.log(result);
-
       })
-      .catch(error => {
-        console.error("fetching users:", error)
-      })
-  }
+      .catch((error) => {
+        console.error("fetching users:", error);
+      });
+  };
 
   useEffect(() => {
     apiusers();
-  }, [])
+  }, []);
 
+  const handlekanban = () => {
+    setKanbanView(true);
+    setListView(false);
+  };
+  const handlelist = () => {
+    setKanbanView(false);
+    setListView(true);
+  };
 
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
+  const columnNames = users.length > 0 ? Object.keys(users[0]) : [];
+
   return (
     <>
       <Container fluid className="border">
         <Row className="d-flex justify-space-between align-items-center pt-2 ms-2 border-3">
           <Col xs={1} xxl={1} lg={1} md={1} className="text-center">
-            <Button
-              className="rounded text-white btn-blue"
-              style={{
-                backgroundColor: "#25316f",
-                fontSize: "14px",
-                width: "max-content",
+            <Link to="/CustomerForm">
+              <Button
+                className="rounded text-white btn-blue"
+                style={{
+                  backgroundColor: "#25316f",
+                  fontSize: "14px",
+                  width: "max-content",
 
-                ...(window.innerWidth >= 400 &&
-                  window.innerWidth < 750 && {
-<<<<<<< HEAD
-                    fontSize: "12px",
-                    width: "80%",
-                    height: "max-content",
-                    padding: "1px",
-                  }),
-=======
-                  fontSize: "12px",
-                  width: "80%",
-                  height: "max-content",
-                  padding: "1px",
-                }),
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
-              }}
-            >
-              New +
-            </Button>
+                  ...(window.innerWidth >= 400 &&
+                    window.innerWidth < 750 && {
+                      fontSize: "12px",
+                      width: "80%",
+                      height: "max-content",
+                      padding: "1px",
+                    }),
+                }}
+              >
+                New +
+              </Button>
+            </Link>
           </Col>
           <Col
             xxl={3}
@@ -141,11 +126,7 @@ function Customer() {
               </div>
             </Form.Group>
           </Col>
-<<<<<<< HEAD
-          <Col>
-=======
           {/* <Col>
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
           <Stack>
           <InputGroup>
           
@@ -159,89 +140,103 @@ function Customer() {
             ></Form.Control>
           </InputGroup>
           </Stack>
-<<<<<<< HEAD
-          </Col>
-
-          <Col lg={5} xxl={5} md={2} className="text-end p-1">
-            <span
-              className="ar_back bg-gray txt-blue f-20 p-1 m-1"
-              style={{
-                "ar_back:hover": { backgroundColor: "#25316f", color: "white" },
-              }}
-            >
-              <IoIosArrowBack />
-            </span>
-            <span className=" bg-gray txt-blue f-20 p-1 m-1">
-              <IoIosArrowForward />
-            </span>
-            <span className=" bg-gray txt-blue f-20 p-1 m-1">
-              <PiKanbanBold />
-            </span>
-            <span className=" bg-gray txt-blue f-20 p-1 m-1">
-=======
           </Col> */}
 
           <Col lg={5} xxl={5} md={2} className="text-end p-1">
-            <span
-              className="ar_back bg-gray txt-blue f-20 p-1 rounded pb-1 m-1">
+            <span className="ar_back bg-gray txt-blue f-20 p-1 rounded pb-1 m-1">
               <IoIosArrowBack />
             </span>
             <span className=" bg-gray txt-blue f-20 p-1 rounded m-1">
               <IoIosArrowForward />
             </span>
-            <span className=" bg-gray txt-blue f-20 p-1 rounded m-1">
+            <span
+              className=" bg-gray txt-blue f-20 p-1 rounded m-1"
+              onClick={handlekanban}
+              style={{ cusrsor: "pointer" }}
+            >
               <PiKanbanBold />
             </span>
-            <span className=" bg-gray txt-blue f-20 p-1 rounded m-1">
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
+            <span
+              className=" bg-gray txt-blue f-20 p-1 rounded m-1"
+              onClick={handlelist}
+              style={{ cursor: "pointer" }}
+            >
               <IoMenu />
             </span>
           </Col>
         </Row>
-<<<<<<< HEAD
-      </Container>
-    </>
-  );
-=======
 
-        <Row>
-          <h1>Kanban Board</h1>
+        <Row className="border m-1 p-1">
           <Stack direction="horizontal" className="flex-1 flex-wrap ">
-            {users.length > 0 ? (
+            {kanbanView && users.length > 0 ? (
               users.map((item) => (
-                <div key={item.id} className="card-box m-3 shadow">
-
-                  <Card style={{ width: '20rem' }} className="p-2 d-flex flex-row">
-
-                    <Card.Img variant="left"  src={item.avatar_url ? item.avatar_ur : profile} 
-                                   className="w-30 rounded-circle mt-2 " />
+                <div key={item.id} className="card-box m-3 shadow rounded-3">
+                  <Card
+                    style={{ width: "390px" }}
+                    className="p-3 d-flex flex-row rounded-3"
+                  >
+                    <Card.Img
+                      variant="left"
+                      src={item.avatar_url ? item.avatar_url : profile}
+                      className="w-20 h-20 rounded-circle mt-2 "
+                    />
 
                     <Card.Body>
-                      <Card.Title variant="right" className="mt-2" >{item.login}</Card.Title>
-                      <Card.Title variant="right" className="mt-2" >{item.login}</Card.Title>
-                     
+                      <Card.Title variant="right" className="mt-2">
+                        {item.login}
+                      </Card.Title>
+                      <Card.Title variant="right" className="mt-2">
+                        {item.id}
+                      </Card.Title>
+
+                      <div
+                        variant="top"
+                        className="text-end possition-absolute bg-none"
+                      >
+                        <IoMdTime />
+                      </div>
                     </Card.Body>
-                    <Card.Footer>
-                    <div variant="Bottom" className="text-end possition-absolute bg-none"> <IoMdTime /> </div>
-
-                    </Card.Footer>
-
                     <div className="d-flex flex-column">
-                      <div variant="bottom" className="text-end "> < IoClose/> </div>
+                      <div variant="bottom" className="text-end ">
+                        <IoClose />
+                      </div>
                     </div>
                   </Card>
                 </div>
               ))
             ) : (
-              <div>No users to display</div>
+             null
             )}
-
           </Stack>
         </Row>
+        {listView ? (
+          <div className="w-100">
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>NAME</th>
+                  <th>URL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length > 0 ? (
+                  users.map((item) => (
+                    <tr key={item.id}>
+                      <td> {item.login} </td>
+                      <td> {item.type} </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="text-center">No data available.</tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
+        ) : null}
       </Container>
     </>
-  )
->>>>>>> c72a2113ba73d06592a5bee7a851242ca7bb3e81
+  );
 }
 
 export default Customer;

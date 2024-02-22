@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-const Demo = () => {
-  const [users, setusers] = useState();
+function Demo() {
+  const [user, setUsers] = useState();
 
-  const apiusers = () =>
-    fetch("https://api.github.com/users")
+  const apiUsers = () =>
+    fetch("https://dummyjson.com/users")
       .then((response) => {
         console.log(response);
         return response.json();
       })
       .then((result) => {
-        setusers(result);
+        setUsers(result);
         console.log(result);
-      });
+      }).catch((error) =>{
+        console.log(error) });
 
-  // use effect for apiusers
+  // useEffect for apiUsers
   useEffect(() => {
-    apiusers();
+    apiUsers();
   }, []);
+
   return (
     <div>
-      {users.map((item) => (
-        <div>
-          {item.id} {item.login}
+      {user ?.users.map((item) => (
+        <div key={item.id}>{item.id}
+        <div>{item.firstName}</div>
         </div>
       ))}
     </div>
   );
-};
+}
 
 export default Demo;
