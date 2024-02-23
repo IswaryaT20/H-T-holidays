@@ -32,6 +32,9 @@ code {
 .bg-grey {
     background-color: grey;
 }
+.bg-gray{
+    background-color: #c2c2c2;
+}
 
 .bg-gwhite {
     background-color: ghostwhite;
@@ -43,6 +46,10 @@ code {
 
 .txt-gwhite {
     color: ghostwhite;
+}
+
+.txt-ht_blue {
+    color: #25316f;
 }
 
 .btn-red {
@@ -507,29 +514,55 @@ code {
 .b-none {
     border: none !important;
 }
+.b-top{
+    border-top: none !important;
+}
+.b-bottom{
+    border-bottom: none  !important;
+}
+.b-left{
+    border-left: none  !important;
+}
+.b-right{
+    border-right: none  !important;
+}
 
 /*border */
 .br_s-0 {
-    border: 1px solid;
-    border-width: 1px 1px 1px 0;
+    border: 1px solid black;
+    border-width: 1px 1px 1px 0 !important;
     /* left = 0 */
 }
-
+.br_b-1 {
+    border: 1px solid black;
+    border-width: 0px 0px 1px 0px !important;
+    /* bottom = 1 */
+}
+.br_b-2 {
+    border: 2px solid black;
+    border-width: 0px 0px 2px 0px !important;
+    /* bottom = 2 */
+}
+.br_b-3 {
+    border: 0px 0px 3px 0px solid black !important;
+ 
+    /* bottom = 3 */
+}
 .br_b-0 {
     border: 1px solid;
-    border-width: 1px 1px 0px 1px;
+    border-width: 1px 1px 0px 1px !important;
     /* bottom = 0 */
 }
 
 .br_t-0 {
     border: 1px solid;
-    border-width: 0px 1px 1px 1px;
+    border-width: 0px 1px 1px 1px !important;
     /* top = 0 */
 }
 
 .br_e-0 {
     border: 1px solid;
-    border-width: 1px 0px 1px 1px;
+    border-width: 1px 0px 1px 1px !important;
     /* right = 0 */
 }
 
@@ -914,3 +947,4 @@ th {
 td {
     padding: 5px;
 }
+

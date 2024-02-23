@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 
 function Demo() {
@@ -75,3 +76,5 @@ function Demo() {
 }
 
 export default Demo;
+=======
+>>>>>>> a477c72a5ddd42618758c1e3e0f358372fedd4cc
