@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 function Login() {
  
 
+
   return (
     <Form>
       <div className="full-background">
@@ -27,16 +28,16 @@ function Login() {
                 type="email"
                 className="w-100 mb-2 rounded h-10 plain_text"
                 placeholder="name@example.com"
-               
+
 
               />
-           
+
             </FloatingLabel>
             <FloatingLabel
               id="floatingPassword"
               label="Password"
               className="mb-3 rounded"
-        
+
 
             >
               <Form.Control
@@ -44,9 +45,9 @@ function Login() {
                 type="password"
                 className="w-100 rounded f-14 plain_text "
                 placeholder="Password"
-               
+
               />
-              
+
             </FloatingLabel>
             <Form.Check type="checkbox" className="rounded d-flex">
               <Form.Check.Input />

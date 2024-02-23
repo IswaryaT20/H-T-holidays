@@ -11,7 +11,8 @@
     background-size: cover;
     backdrop-filter: blur;
     background-color: rgba(255, 255, 255, 0.5);
-    height: 100vh;
+    min-height: 100vh;
+    max-height: 100%;
 }
 
 .w-85 {

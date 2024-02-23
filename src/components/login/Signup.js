@@ -1,11 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
-  FloatingLabel,
   Form,
-  FormControl,
-  FormGroup,
-  FormLabel,
 } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Logo from "../../Assets/images/H&T.png";
@@ -13,15 +9,94 @@ import { Link } from "react-router-dom";
 import "../../index.css";
 
 function Signup() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [cpassword, setcPassword] = useState('');
+  const [error, seterror] = useState('');
+  const [passwordMatch ,setPasswordMatch] =useState('')
+
+  const handleChanges = (e) => {
+    const { name, value } = e.target;
+    if (name === 'username') {
+      setUsername(value);
+    }
+    if (name === 'email') {
+      setEmail(value);
+    }
+    if (name === 'password') {
+      setPassword(value)
+    }
+    if (name === 'cpassword') {
+      setcPassword(value);
+      if (password === value) {
+        setPasswordMatch(true);
+      } else {
+        setPasswordMatch(false);
+      }
+    }
+  }
+
+  function handlesubmit(e) {
+    e.preventDefault(); 
+
+    const nameerror = 'Invalid username';
+    const emailerror = 'Invalid email';
+    const passworderror = 'Invalid password';
+    const cpassworderror = 'Invalid confirm';
+
+    seterror('');
+
+    if (username.length === 0) {
+      seterror(nameerror);
+      return;
+    }
+
+    if (email.length === 0) {
+      seterror(emailerror);
+      return;
+    }
+
+    if (password.length === 0) {
+      seterror(passworderror);
+      return;
+    }
+
+    if (cpassword.length === 0 || !passwordMatch) {
+      seterror(cpassworderror);
+      return;
+    }
+
+    // data base value send
+
+    const args = {
+      name : 'username',
+      email : 'email',
+      password:'password',
+      mobile :'1234567890'
+    }
+
+    const urlString = new URLSearchParams(args)
+
+ fetch('http://68.178.161.233:8080/handt/v2/account/register?' + urlString,{
+  method:'POST'
+ }).then(response => response.json())
+ .then(response =>{
+  console.log(response);
+ }).catch(error =>{
+  console.log(error)
+ });
+  };
+
   return (
     <div className="full-background">
-      <Container fluid className=" f-14 d-flex pt-5 justify-content-center ">
-        <div className=" f-14 border w-40 p-5 pt-0 shadow rounded h-max bg-white">
+      <Container fluid className="f-14 d-flex pt-5 justify-content-center">
+        <div className="f-14 border w-40 p-5 pt-0 shadow rounded h-max bg-white">
           <div className="f-14 text-center">
             <img
               src={Logo}
               alt=" HandT holidays company Logo"
-              className=" f-14 w-30 h-40 "
+              className="f-14 w-30 h-40"
             />
           </div>
 
@@ -30,56 +105,70 @@ function Signup() {
             <Form.Control
               className="f-14 border border-secondary border-2"
               type="email"
+              name="email"
               placeholder="name@example.com"
+              onChange={e => handleChanges(e)}
             />
+            {error && !email && <p className='error f-16 ' style={{ color:'red'}}>Please enter your email</p>}
           </Form.Group>
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput2">
             <Form.Label>Username</Form.Label>
             <Form.Control
               className="f-14 border border-secondary border-2"
               type="text"
+              name="username"
               placeholder="Username"
-            ></Form.Control>
+              onChange={e => handleChanges(e)}
+            />
+            {error && !username && <p className='error f-14' style={{ color:'red'}}>Please enter a username</p>}
           </Form.Group>
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput3">
             <Form.Label>Password</Form.Label>
             <Form.Control
               className="f-14 border border-secondary border-2"
-              type="Password"
+              type="password"
+              name="password"
               placeholder="Password"
-            ></Form.Control>
+              onChange={e => handleChanges(e)}
+            />
+            {error && !password && <p className='error f-14 ' style={{ color:'red'}}>Please enter a password</p>}
           </Form.Group>
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput4">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
-            
-              className="f-14 border border-secondary border-2"              
-              type="Password"
+              className="f-14 border border-secondary border-2"
+              type="password"
+              name="cpassword"
               placeholder="Confirm Password"
-            ></Form.Control>
+              onChange={e => handleChanges(e)}
+            />
+             {error && (!cpassword || !passwordMatch) && <p className='error f-14' style={{color:'red'}}>Passwords do not match</p>}
           </Form.Group>
-          <Form.Check type="checkbox" className="rounded d-flex mt-2  ">
+          <Form.Check type="checkbox" className="rounded d-flex mt-2">
             <Form.Check.Input className="border border-secondary border-1" />
-            <Form.Check className=" f-14 ms-2 mb-2">
+            <Form.Check className="f-14 ms-2 mb-2">
               I agreed to the terms and conditions
             </Form.Check>
           </Form.Check>
-
+          <div id='error'>
+            {error && (
+              <p className='error f-20 text-center' style={{color:'red',fontWeight:'400'}}>{error ? error : passwordMatch }</p>
+            )}
+          </div>
           <div style={{ textAlign: "center" }}>
             <Button
               variant=""
               className="f-16 m-2 p-2 btn-blue"
               type="submit"
-              style={{ backgroundColor: "#25316f", color: "white",textTransform:"uppercase" }}
+              style={{ backgroundColor: "#25316f", color: "white", textTransform: "uppercase" }}
+              onClick={handlesubmit}
             >
               Signup
             </Button>
           </div>
-          <p className=" f-14 text-center mt-3 mb-1 f-14">
+          <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}
-            <span
-            className="txt-trans_up"
-            >
+            <span className="txt-trans_up">
               <Link to="/">Login Here</Link>
             </span>
           </p>
