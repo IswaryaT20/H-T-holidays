@@ -28,6 +28,7 @@ function Customer() {
   const [users, setusers] = useState([], false);
   const [kanbanView, setKanbanView] = useState(true);
   const [listView, setListView] = useState(false);
+  
   const apiusers = () => {
     fetch("https://api.github.com/users")
       .then((response) => {
@@ -61,15 +62,16 @@ function Customer() {
   return (
     <>
       <Container fluid className="border">
-        <Row className="d-flex justify-space-between align-items-center pt-2 ms-2 border-3">
-          <Col xs={1} xxl={1} lg={1} md={1} className="text-center">
+        <Row className="d-flex align-items-center">
+          <Col sm={1} xxl={1} lg={1} md={1} className="text-center">
             <Link to="/CustomerForm">
               <Button
-                className="rounded text-white btn-blue"
+                className="rounded text-white btn-blue w-100 b-none"
                 style={{
                   backgroundColor: "#25316f",
                   fontSize: "14px",
-                  width: "max-content",
+                  width: "",
+                  justifyContent:'space-evenly',
 
                   ...(window.innerWidth >= 400 &&
                     window.innerWidth < 750 && {
@@ -85,8 +87,8 @@ function Customer() {
             </Link>
           </Col>
           <Col
-            xxl={3}
-            lg={3}
+            xxl={2}
+            lg={2}
             md={2}
             style={{
               fontSize: "14px",
@@ -103,10 +105,6 @@ function Customer() {
           </Col>
 
           <Col
-            xs={3}
-            xxl={4}
-            lg={4}
-            md={3}
             className=" d-flex justify-content-center align-items-center mt-2 mb-2 ms-5 "
           >
             <Form.Group
@@ -126,38 +124,27 @@ function Customer() {
               </div>
             </Form.Group>
           </Col>
-          {/* <Col>
-          <Stack>
-          <InputGroup>
-          
-          <RiSearch2Line />
-            <InputGroupText style={{ backgroundColor: "#25316f" }}>
-              <FaFilter style={{ color: "white" }} />
-            </InputGroupText>
-            <Form.Control
-              style={{ background: "#80808036" }}
-              placeholder="search here"
-            ></Form.Control>
-          </InputGroup>
-          </Stack>
-          </Col> */}
-
-          <Col lg={5} xxl={5} md={2} className="text-end p-1">
-            <span className="ar_back bg-gray txt-blue f-20 p-1 rounded pb-1 m-1">
+          <Col
+            lg={5}
+            xxl={5}
+            md={2}
+            className="border d-flex justify-content-end "
+          >
+            <span className="ar_back bg-gray pt-0 pb-1 txt-blue f-20 ms-1  rounded-0 h-max ">
               <IoIosArrowBack />
             </span>
-            <span className=" bg-gray txt-blue f-20 p-1 rounded m-1">
+            <span className=" bg-gray txt-blue pb-1 f-20  rounded-0 h-max ms-1">
               <IoIosArrowForward />
             </span>
-            <span
-              className=" bg-gray txt-blue f-20 p-1 rounded m-1"
+            <div
+              className=" bg-gray w-max txt-blue pb-1 f-20 rounded-0 h-max ms-1"
               onClick={handlekanban}
               style={{ cusrsor: "pointer" }}
             >
               <PiKanbanBold />
-            </span>
+            </div>
             <span
-              className=" bg-gray txt-blue f-20 p-1 rounded m-1"
+              className=" bg-gray txt-blue f-20 pb-1 rounded-0 h-max ms-1"
               onClick={handlelist}
               style={{ cursor: "pointer" }}
             >
@@ -166,47 +153,46 @@ function Customer() {
           </Col>
         </Row>
 
+
         <Row className="border m-1 p-1">
           <Stack direction="horizontal" className="flex-1 flex-wrap ">
-            {kanbanView && users.length > 0 ? (
-              users.map((item) => (
-                <div key={item.id} className="card-box m-3 shadow rounded-3">
-                  <Card
-                    style={{ width: "390px" }}
-                    className="p-3 d-flex flex-row rounded-3"
-                  >
-                    <Card.Img
-                      variant="left"
-                      src={item.avatar_url ? item.avatar_url : profile}
-                      className="w-20 h-20 rounded-circle mt-2 "
-                    />
+            {kanbanView && users.length > 0
+              ? users.map((item) => (
+                  <div key={item.id} className="card-box m-3 shadow rounded-3">
+                    <Card
+                      style={{ width: "390px" }}
+                      className="p-3 d-flex flex-row rounded-3"
+                    >
+                      <Card.Img
+                        variant="left"
+                        src={item.avatar_url ? item.avatar_url : profile}
+                        className="w-20 h-20 rounded-circle mt-2 "
+                      />
 
-                    <Card.Body>
-                      <Card.Title variant="right" className="mt-2">
-                        {item.login}
-                      </Card.Title>
-                      <Card.Title variant="right" className="mt-2">
-                        {item.id}
-                      </Card.Title>
+                      <Card.Body>
+                        <Card.Title variant="right" className="mt-2">
+                          {item.login}
+                        </Card.Title>
+                        <Card.Title variant="right" className="mt-2">
+                          {item.id}
+                        </Card.Title>
 
-                      <div
-                        variant="top"
-                        className="text-end possition-absolute bg-none"
-                      >
-                        <IoMdTime />
+                        <div
+                          variant="top"
+                          className="text-end possition-absolute bg-none"
+                        >
+                          <IoMdTime />
+                        </div>
+                      </Card.Body>
+                      <div className="d-flex flex-column">
+                        <div variant="bottom" className="text-end ">
+                          <IoClose />
+                        </div>
                       </div>
-                    </Card.Body>
-                    <div className="d-flex flex-column">
-                      <div variant="bottom" className="text-end ">
-                        <IoClose />
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-              ))
-            ) : (
-             null
-            )}
+                    </Card>
+                  </div>
+                ))
+              : null}
           </Stack>
         </Row>
         {listView ? (
