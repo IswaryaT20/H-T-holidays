@@ -28,7 +28,7 @@ function Customer() {
   const [users, setusers] = useState([], false);
   const [kanbanView, setKanbanView] = useState(true);
   const [listView, setListView] = useState(false);
-  
+
   const apiusers = () => {
     fetch("https://api.github.com/users")
       .then((response) => {
@@ -61,8 +61,8 @@ function Customer() {
 
   return (
     <>
-      <Container fluid className="border">
-        <Row className="d-flex align-items-center">
+      <Container fluid className="border-3 ">
+        <Row className="d-flex align-items-center w-100 mt-2 ms-1 me-1 mb-1 border-3">
           <Col sm={1} xxl={1} lg={1} md={1} className="text-center">
             <Link to="/CustomerForm">
               <Button
@@ -71,15 +71,15 @@ function Customer() {
                   backgroundColor: "#25316f",
                   fontSize: "14px",
                   width: "",
-                  justifyContent:'space-evenly',
+                  justifyContent: 'space-evenly',
 
                   ...(window.innerWidth >= 400 &&
                     window.innerWidth < 750 && {
-                      fontSize: "12px",
-                      width: "80%",
-                      height: "max-content",
-                      padding: "1px",
-                    }),
+                    fontSize: "12px",
+                    width: "80%",
+                    height: "max-content",
+                    padding: "1px",
+                  }),
                 }}
               >
                 New +
@@ -130,7 +130,7 @@ function Customer() {
             md={2}
             className="border d-flex justify-content-end "
           >
-            <span className="ar_back bg-gray pt-0 pb-1 txt-blue f-20 ms-1  rounded-0 h-max ">
+            <span className="ar_back bg-gray pt-0 pb-1 txt-blue f-20 ms-1 rounded-0 h-max ">
               <IoIosArrowBack />
             </span>
             <span className=" bg-gray txt-blue pb-1 f-20  rounded-0 h-max ms-1">
@@ -153,45 +153,44 @@ function Customer() {
           </Col>
         </Row>
 
-
-        <Row className="border m-1 p-1">
-          <Stack direction="horizontal" className="flex-1 flex-wrap ">
+        <Row className="border border-3" style={{flex:1, overscroll:'auto', width:'94%',marginRight:"45px",marginLeft: "45px"}}>
+          <Stack direction="horizontal" className="w-80 flex-1 flex-wrap ">
             {kanbanView && users.length > 0
               ? users.map((item) => (
-                  <div key={item.id} className="card-box m-3 shadow rounded-3">
-                    <Card
-                      style={{ width: "390px" }}
-                      className="p-3 d-flex flex-row rounded-3"
-                    >
-                      <Card.Img
-                        variant="left"
-                        src={item.avatar_url ? item.avatar_url : profile}
-                        className="w-20 h-20 rounded-circle mt-2 "
-                      />
+                <div key={item.id} className="card-box m-3 shadow rounded-3">
+                  <Card
+                    style={{ width: "390px" }}
+                    className="p-3 d-flex flex-row rounded-3"
+                  >
+                    <Card.Img
+                      variant="left"
+                      src={item.avatar_url ? item.avatar_url : profile}
+                      className="w-20 h-20 rounded-circle mt-2 "
+                    />
 
-                      <Card.Body>
-                        <Card.Title variant="right" className="mt-2">
-                          {item.login}
-                        </Card.Title>
-                        <Card.Title variant="right" className="mt-2">
-                          {item.id}
-                        </Card.Title>
+                    <Card.Body>
+                      <Card.Title variant="right" className="mt-2">
+                        {item.login}
+                      </Card.Title>
+                      <Card.Title variant="right" className="mt-2">
+                        {item.id}
+                      </Card.Title>
 
-                        <div
-                          variant="top"
-                          className="text-end possition-absolute bg-none"
-                        >
-                          <IoMdTime />
-                        </div>
-                      </Card.Body>
-                      <div className="d-flex flex-column">
-                        <div variant="bottom" className="text-end ">
-                          <IoClose />
-                        </div>
+                      <div
+                        variant="top"
+                        className="text-end possition-absolute bg-none"
+                      >
+                        <IoMdTime />
                       </div>
-                    </Card>
-                  </div>
-                ))
+                    </Card.Body>
+                    <div className="d-flex flex-column">
+                      <div variant="bottom" className="text-end ">
+                        <IoClose />
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              ))
               : null}
           </Stack>
         </Row>

@@ -9,7 +9,6 @@ import Demo from "./components/Demo";
 import Kanban from "./components/customer/Kanban";
 import CustomerForm from "./components/customer/CustomerForm";
 
-
 function App() {
   return (
     <BrowserRouter>
@@ -19,8 +18,7 @@ function App() {
         <Route path="/Customer" element={<><Navbar /><Customer /></> }/>
         <Route path="/CustomerForm" element={<><Navbar /><CustomerForm /></> }/>
         <Route path="/kanban" element={<Kanban />}/>
-
-        <Route path="/Demo" element ={<Demo />}></Route>
+        <Route path="/Demo" element={<Demo />} /> {/* Fixed the issue here */}
 
       </Routes>
     </BrowserRouter>

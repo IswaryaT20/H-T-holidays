@@ -1,77 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Button, FormControl, Table, Modal, Form, FloatingLabel } from 'react-bootstrap';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { FaCloudArrowDown } from "react-icons/fa6";
+// import React, { useState } from "react";
 
-const Demo = () => {
+// function Demo() {
 
-  //use states
-  const [showModal, setShowModal] = useState(false);
-  const [showPackages, setShowPackages] = useState(false);
-  const [search, setSearch] = useState("");
+//   const [name, setName] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [email, setEmail] = useState('');
+//   const [mobile, setMobile] = useState('');
 
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = () => setShowModal(true);
+//   const handleChanges = (e) => {
+//     if (e.target.name === 'name') {
+//       setName(e.target.value);
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+//     }
+//     if (e.target.name === 'email') {
+//       setEmail(e.target.value);
+//     }
+//     if (e.target.name === 'password') {
+//       setPassword(e.target.value);
+//     }
+//     if (e.target.name === 'mobile') {
+//       setMobile(e.target.value);
+//     }
+//   };
+//   const handleregister = () => {
+//     const args = {
+//       name: name,
+//       password: password,
+//       mobile: mobile,
+//       email: email
+//     };
+  
+//     const urlString = new URLSearchParams(args);
+    
+//     fetch('http://68.178.161.233:8080/handt/v2/account/register?' + urlString , {
+//       method: 'POST',
+     
+           
+//     })
+//     .then(response => response.json())
+//     .then(response => {
+//       console.log(response);
+//     })
+//     .catch(error => {
+//       console.log(error);
+//     });
+//   };
+  
 
-  //Handlers
-  const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-  };
 
+// return (
+//   <div style={{ display: 'flex', flexDirection: 'column', margin: '25px 500px' }}>
+//     <input style={{ marginTop: '25px' }} placeholder="name" name='name' type="text" id="name" onChange={e => handleChanges(e)}></input>
+//     <input style={{ marginTop: '25px' }} placeholder="email" name='email' type="text" id="email" onChange={e => handleChanges(e)}></input>
+//     <input style={{ marginTop: '25px' }} placeholder="password" name='password' type="password" id="password" onChange={e => handleChanges(e)}></input>
+//     <input style={{ marginTop: '25px' }} placeholder="mobile" name='mobile' type="text" id="mobile" onChange={e => handleChanges(e)}></input>
+//     <button style={{ margin: "25px 6px" }} type="submit" onClick={handleregister}>register</button>
+//   </div>
+// );
+// }
 
-  //Dummy
-  const T_head = ["Date", "Product_Id", "Product_type", "Transaction_Type", "Product_Name", "Description"];
-
-  const [demovalue , setdemovalue] = useState([])
-
-const apiurs =() =>{
-  fetch('https://api.github.com/users').then((response) =>{
-    response.json(console.log(response));
-  })
-  .then((result) =>{
-   console.log(result);
-    setdemovalue(result);
-  })
-
-}
-useEffect (() =>{
-  apiurs();
-},[])
-
- 
-
-
-  return (
-   
-      <div className='d-flex' fluid>
-        <Table striped hover>
-          <thead>
-            <tr>
-      <th>hiiiii</th>
-            </tr>
-          </thead>
-          <tbody>
-          {demovalue.length > 0 ? (
-                  demovalue.map((item) => (
-                    <tr key={item.id}>
-                      <td> {item.login} </td>
-                      <td> {item.type} </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr className="text-center">No data available.</tr>
-                )}
-          </tbody>
-        </Table>
-      </div>
-
-  );
-}
-
-export default Demo;
+// export default Demo;
