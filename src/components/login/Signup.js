@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Logo from "../../Assets/images/H&T.png";
 import { Link } from "react-router-dom";
 import "../../index.css";
+import axios from "axios";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -65,40 +66,20 @@ function Signup() {
       return;
     }
 
-    // data base value send
-
+    // api data's sending
     const args = {
       name: username,
       email: email,
       password: password,
-      mobile: "1234567890",
     };
-
-    const urlString = new URLSearchParams(args);
-
-    fetch("http://68.178.161.233:8080/handt/v2/account/register?" + urlString, {
-      method: "POST",
+    axios.post('http://68.178.161.233:8080/handt/v2/account/register','',{
+      params:args,
+    }).then(response =>{
+      console.log(response);
+      seterr(response.data.status)      
+    }).catch(err =>{
+      seterr(err.status);
     })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        if (response.status === "Failed") {
-          seterr(response.errorMessage);
-        } else {
-          seterr(response.status);
-        }
-        // seterr([response.status,response.errorMessage]);
-        // return seterr(response.errorMessage);
-      })
-      .catch((err) => {
-        //change this to err
-        console.log(err);
-      });
-
-    // console.log(email);
-    // console.log(username);
-    // console.log(password);
-    // console.log(cpassword);
   }
   useEffect(() => {
     if (err) {
