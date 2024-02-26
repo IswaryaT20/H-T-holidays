@@ -2,23 +2,24 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Nav, NavLink, Navbar, Dropdown } from "react-bootstrap";
 import logo from "../Assets/images/htnav.png";
+import { Link } from "react-router-dom";
 
 const NavigationItems = [
   { id: 1, title: "Dashboard", link: "#" },
   { id: 2, title: "Customers", link: "#" },
   { id: 3, title: "Vendors", link: "#" },
-  { id: 4, title: "Products", link: "#" },
+  { id: 4, title: "Products", link: "/Product" },
   { id: 5, title: "Accounting", link: "#" },
   { id: 6, title: "Report", link: "#" },
   { id: 7, title: "Procurement", link: "#" },
-  { id: 8, title: "Expense", link: "#" },
+  { id: 8, title: "Expense", link: "/Expense" },
 ];
 
 const dropdownActions = {
-  2: [{ id: 1, title: "Customers", link: "#" }],
-  3: [{ id: 1, title: "Vendors", link: "#" }],
+  2: [{ id: 1, title: "Customers", link: "/Customer" }],
+  3: [{ id: 1, title: "Vendors", link: "/vendor" }],
   7: [
-    { id: 1, title: "purchase", link: "#" },
+    { id: 1, title: "purchase", link: "/Index" },
     { id: 2, title: "Payment", link: "#" },
   ],
 };
@@ -56,7 +57,7 @@ function Navigation2() {
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {dropdownActions[item.id].map((action) => (
-                    <Dropdown.Item key={action.id} href={action.link}>
+                    <Dropdown.Item key={action.id} as={Link} to={action.link}>
                       {action.title}
                     </Dropdown.Item>
                   ))}
@@ -67,7 +68,8 @@ function Navigation2() {
                 className=" ml-4p trans"
                 style={{ border: "none", marginLeft: "2%" }}
                 key={item.id}
-                href={item.link}
+                as={Link}
+                to={item.link}
               >
                 {item.title}
               </NavLink>

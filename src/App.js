@@ -10,7 +10,8 @@ import CustomerForm from "./components/customer/CustomerForm";
 import Vendor from "./components/vendors/Vendors";
 import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
-import Product from './components/product/Product' 
+import Product from "./components/product/Product";
+import Purchase from "./components/purchase/Index";
 
 function App() {
   return (
@@ -78,6 +79,15 @@ function App() {
             <>
               <Navbar />
               <Product />
+            </>
+          }
+        />
+        <Route
+          path="/Index"
+          element={
+            <>
+              <Navbar />
+              <Purchase />
             </>
           }
         />

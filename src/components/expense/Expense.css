@@ -5,6 +5,23 @@
   left: 30px;
 }
 
-.cursor {
-    cursor: pointer;
+.custom-modal .modal-content {
+  border-radius: 0;
+}
+
+.c-b {
+  color: #25316f !important;
+}
+
+.btn-c {
+  background-color: white !important;
+  color: #25316f !important;
+  border-color: #25316f !important;
+  width: 100px;
+}
+
+.btn-s{
+  background-color: #25316f !important;
+  border-color: #25316f !important;
+  width: 100px;
 }

@@ -15,7 +15,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Expense.css";
 import { Link } from "react-router-dom";
-import NewExpense from "./NewExpense";
+import InputGroup from "react-bootstrap/InputGroup";
+import { FaSearch } from "react-icons/fa";
+import InputGroupText from "react-bootstrap/esm/InputGroupText";
 
 const Expense = () => {
   const [search, setSearch] = useState("");
@@ -83,17 +85,28 @@ const Expense = () => {
 
   return (
     <Container fluid className="mt-1">
-      <Row className="m-3 p-1 d-flex align-items-center">
+      <Row className="w-100 mb-5 mt-3 -1 d-flex align-items-center">
         <Col className="col-2 fs-6 fw-bolder" style={{ color: "#25316f" }}>
           My Expense
         </Col>
         <Col className="col-6 text-center position-relative ">
-          <FormControl
-            className="ps-5"
-            placeholder="Search Contacts"
-            onChange={onSearch}
-          />
-          <RiSearch2Line className="search position-absolute" />
+          <InputGroup
+            style={{ height: "10px", width: "39%", marginLeft: "10%" }}
+          >
+            <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
+              <FaSearch className="text-white" />
+            </InputGroupText>
+            <FormControl
+              placeholder="Search Products..."
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                background: "#80808036",
+                boxShadow: "none",
+                outline: "none",
+                borderColor: "white",
+              }}
+            />
+          </InputGroup>
         </Col>
         <Col className="col-4 d-flex justify-content-around">
           <div className="d-flex align-items-center ">
@@ -105,17 +118,17 @@ const Expense = () => {
               endDate={endDate}
               selectsRange
               placeholderText="Select Date Range"
-              className="rounded ms-2"
+              className="form-control rounded ms-2 inputfocus"
             />
           </div>
           <div className="d-flex align-items-center">
             <FaCloudUploadAlt
-              className="cursor fs-2"
-              style={{ color: "#25316f" }}
+              className="fs-2"
+              style={{ color: "#25316f", cursor: "pointer" }}
             />
             <FaCloudDownloadAlt
-              className="cursor fs-2 ms-3"
-              style={{ color: "#25316f" }}
+              className=" fs-2 ms-3"
+              style={{ color: "#25316f", cursor: "pointer" }}
             />
             <FaEye className="cursor fs-4 ms-3" style={{ color: "#25316f" }} />
           </div>
@@ -125,9 +138,17 @@ const Expense = () => {
         style={{ backgroundColor: "#25316f", margin: 10, borderWidth: 0 }}
         className="fs-6 fw-bolder mx-3"
       >
-        <Link to="/NewExpense" style={{textDecoration:"none", color:"white"}}>New Transaction +</Link>
+        <Link
+          to="/newexpense"
+          style={{ textDecoration: "none", color: "white" }}
+        >
+          New Transaction +
+        </Link>
       </Button>
-      <div className="d-flex m-3" style={{ height: 350, overflowY: "auto" }}>
+      <div
+        className="d-flex mt-3 w-100"
+        style={{ height: 350, overflowY: "auto" }}
+      >
         <Table striped hover>
           <thead>
             <tr>

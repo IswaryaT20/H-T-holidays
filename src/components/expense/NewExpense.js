@@ -1,20 +1,11 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-  Table,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { FaTrashCan } from "react-icons/fa6";
-import "./NewExpense.css";
 import { Link } from "react-router-dom";
-
+import ExpenseModal from "./ExpenseModal";
+import "./Expense.css";
 
 const NewExpense = () => {
-  //Dummy Data's
   const tableHeader = [
     "Category",
     "Description",
@@ -25,14 +16,6 @@ const NewExpense = () => {
   ];
 
   //use state
-  const [newContact, setNewContact] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [newAccount, setNewAccount] = useState("");
-  const [newIBAN, setNewIBAN] = useState("");
-  const [newBranch, setNewBranch] = useState("");
-  const [newAdditional, setNewAdditional] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [showAccModal, setShowAccModal] = useState(false);
   const [expenseData, setExpenseData] = useState([
     {
       id: 1,
@@ -43,54 +26,27 @@ const NewExpense = () => {
       totalAmount: "",
     },
   ]);
-  const [categoryName, setCategoryName] = useState("");
-  const [categorySubType, setCategorySubType] = useState("");
-  const [categoryDescription, setCategoryDescription] = useState("");
-  const [categoryAdditional, setCategoryAdditional] = useState("");
+  const [subTotal, setSubTotal] = useState(0);
+  const [totalVAT, setTotalVAT] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const [showModal, setShowModal] = useState(false);
+  const [showAccModal, setShowAccModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   //Handlers
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
   const handleAddContact = (e) => {
     if (e.target.value === "addContact") {
       setShowModal(true);
       e.target.value = ""; // Reset the value of the select element after showing the modal
     }
   };
-  const handleSubmitContact = () => {
-    console.log("New contact name:", newContact);
-    setShowModal(false);
-  };
-  const handleCloseAccModal = () => {
-    setShowAccModal(false);
-  };
+
   const handleAddAccount = (e) => {
     if (e.target.value === "addAccount") {
       setShowAccModal(true);
       e.target.value = "";
     }
-  };
-  const handleSubmitAccount = () => {
-    // Here you can handle the submission of account details
-    console.log("Bank Name:", bankName);
-    console.log("Account Number:", newAccount);
-    console.log("IBAN Number:", newIBAN);
-    console.log("Branch:", newBranch);
-    console.log("Additional:", newAdditional);
-
-    // Reset fields
-    setBankName("");
-    setNewAccount("");
-    setNewIBAN("");
-    setNewBranch("");
-    setNewAdditional("");
-
-    setShowAccModal(false); // Close modal
-  };
-  const handleCloseCategoryModal = () => {
-    setShowCategoryModal(false);
   };
   const handleAddCategory = (e) => {
     if (e.target.value === "addCategory") {
@@ -98,19 +54,10 @@ const NewExpense = () => {
       e.target.value = "";
     }
   };
-  const handleSubmitCategory = () => {
-    console.log("Name: ", categoryName);
-    console.log("Sub Type: ", categorySubType);
-    console.log("Description: ", categoryDescription);
-    console.log("Additional: ", categoryAdditional);
 
-    setCategoryName("");
-    setCategorySubType("");
-    setCategoryDescription("");
-    setCategoryAdditional("");
-    
-    setShowCategoryModal(false);
-  };
+  const handleCloseModal = () => setShowModal(false);
+  const handleCloseAccModal = () => setShowAccModal(false);
+  const handleCloseCategoryModal = () => setShowCategoryModal(false);
   const handleAddRow = () => {
     setExpenseData([
       ...expenseData,
@@ -128,12 +75,50 @@ const NewExpense = () => {
     setExpenseData(expenseData.filter((item) => item.id !== id));
   };
 
+  //Table Calculation:
+  //Row-Wise Calculation
+  const handleInputChange = (id, fieldName, value) => {
+    const updatedData = expenseData.map((item) => {
+      if (item.id === id) {
+        const amount = fieldName === "amount" ? value : item.amount || 0;
+        const vat = fieldName === "vat" ? value : item.vat || 0;
+        const totalAmount = (
+          parseFloat(amount) +
+          parseFloat(amount) * (parseFloat(vat) / 100)
+        ).toFixed(2);
+        return { ...item, [fieldName]: value, totalAmount };
+      }
+      return item;
+    });
+    setExpenseData(updatedData);
+  };
+
+  //Bottom Table Calculation:
+  useEffect(() => {
+    let newSubtotal = 0;
+    let newTotalVAT = 0;
+    let newTotalAmount = 0;
+
+    expenseData.forEach((item) => {
+      const amount = parseFloat(item.amount || 0);
+      const vat = parseFloat(item.vat || 0);
+
+      const totalAmountWithVAT = amount + (amount * vat) / 100;
+
+      newSubtotal += amount;
+      newTotalVAT += (amount * vat) / 100;
+      newTotalAmount += totalAmountWithVAT;
+    });
+
+    setSubTotal(newSubtotal.toFixed(2));
+    setTotalVAT(newTotalVAT.toFixed(2));
+    setTotalAmount(newTotalAmount.toFixed(2));
+  }, [expenseData]);
+
   return (
     <>
-
       <Container fluid className="mt-1">
-
-        <Row className="m-3 p-1 d-flex align-items-center">
+        <Row className="mt-3 w-100 p-1 d-flex align-items-center">
           <Col className="fs-6 fw-bolder c-b">Create Direct Expense</Col>
           <Col className="d-flex justify-content-end">
             <div>
@@ -150,13 +135,13 @@ const NewExpense = () => {
           </Col>
         </Row>
 
-        <Row className="d-flex align-items-center m-3 p-1">
+        <Row className="d-flex align-items-center mt-3 w-100 p-1">
           <Col className="d-flex align-items-center">
             <Form>
               <Form.Group>
                 <Form.Label className="fs-6 fw-bolder">Contact</Form.Label>
                 <Form.Select
-                  className="rounded-0"
+                  className="rounded-0 inputfocus"
                   style={{ width: 175 }}
                   onChange={handleAddContact}
                 >
@@ -175,7 +160,7 @@ const NewExpense = () => {
                   </Form.Label>
                   <Form.Control
                     type="date"
-                    className="border rounded-0"
+                    className="border rounded-0 inputfocus"
                     required
                   />
                 </Form.Group>
@@ -188,7 +173,7 @@ const NewExpense = () => {
                     Pay From <span style={{ color: "red" }}>*</span>
                   </Form.Label>
                   <Form.Select
-                    className="rounded-0"
+                    className="rounded-0 inputfocus"
                     style={{ width: 175 }}
                     onChange={handleAddAccount}
                   >
@@ -205,10 +190,18 @@ const NewExpense = () => {
 
         <div className="m-4">
           <Table>
-            <thead>
+            <thead style={{ padding: "0.75rem" }}>
               <tr>
                 {tableHeader.map((header, index) => (
-                  <th key={index} className="th-c">
+                  <th
+                    key={index}
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      backgroundColor: "#25316f",
+                      color: "white",
+                    }}
+                  >
                     {header}
                   </th>
                 ))}
@@ -217,9 +210,15 @@ const NewExpense = () => {
             <tbody>
               {expenseData.map((row) => (
                 <tr key={row.id}>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     <Form.Select
-                      className="rounded-0"
+                      className="rounded-0 inputfocus"
                       onChange={handleAddCategory}
                     >
                       <option></option>
@@ -231,35 +230,73 @@ const NewExpense = () => {
                       </option>
                     </Form.Select>
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     <Form.Control
-                      className="border-0 rounded-0"
+                      className="border-0 rounded-0 inputfocus"
                       as="textarea"
                       row={1}
                     />
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     <Form.Control
-                      className="border-0 rounded-0"
+                      className="border-0 rounded-0 inputfocus"
                       type="number"
                       placeholder="AED"
+                      value={row.amount}
+                      onChange={(e) =>
+                        handleInputChange(row.id, "amount", e.target.value)
+                      }
                     />
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     <Form.Control
-                      className="border-0 rounded-0"
+                      className="border-0 rounded-0 inputfocus"
                       type="number"
-                      placeholder="AED"
+                      placeholder="VAT %"
+                      value={row.vat}
+                      onChange={(e) =>
+                        handleInputChange(row.id, "vat", e.target.value)
+                      }
                     />
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     {row.amount ? (
                       <span>{row.totalAmount}</span>
                     ) : (
                       <span>-</span>
                     )}
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      verticalAlign: "middle",
+                      padding: "0.5rem",
+                    }}
+                  >
                     <FaTrashCan
                       style={{ color: "red", cursor: "pointer" }}
                       onClick={() => handleDeleteRow(row.id)}
@@ -271,7 +308,7 @@ const NewExpense = () => {
           </Table>
         </div>
 
-        <div className="m-3">
+        <div className="mt-3 w-100">
           <Button
             onClick={handleAddRow}
             style={{
@@ -286,11 +323,12 @@ const NewExpense = () => {
           </Button>
         </div>
 
-        <Row className="m-3">
+        <Row className="mt-3 w-100">
           <Col className="col-8">
             <Form>
               <Form.Group>
                 <Form.Control
+                  className="inputfocus"
                   as="textarea"
                   row={4}
                   placeholder="Description"
@@ -304,176 +342,47 @@ const NewExpense = () => {
               <Table hover bordered>
                 <tbody>
                   <tr>
-                    <td className="fs-6 fw-bolder" style={{ color: "#25316f" }}>
+                    <td
+                      className="fs-6 fw-bolder text-start"
+                      style={{ color: "#25316f" }}
+                    >
                       Sub-Total
                     </td>
-                    <td>0.00</td>
+                    <td className="text-start">{subTotal}</td>
                   </tr>
                   <tr>
-                    <td className="fs-6 fw-bolder" style={{ color: "#25316f" }}>
-                      VAT
+                    <td
+                      className="fs-6 fw-bolder text-start"
+                      style={{ color: "#25316f" }}
+                    >
+                      VAT (AED)
                     </td>
-                    <td>0.00</td>
+                    <td className="text-start">{totalVAT}</td>
                   </tr>
                   <tr>
-                    <td className="fs-6 fw-bolder" style={{ color: "#25316f" }}>
-                      Total Amount
+                    <td
+                      className="fs-6 fw-bolder text-start"
+                      style={{ color: "#25316f" }}
+                    >
+                      Total Amount (AED)
                     </td>
-                    <td>0.00 AED</td>
+                    <td className="text-start">{totalAmount}</td>
                   </tr>
                 </tbody>
               </Table>
             </div>
           </Col>
         </Row>
-
-        <Modal
-          show={showCategoryModal}
-          onHide={handleCloseCategoryModal}
-          centered
-          dialogClassName="custom-modal"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="fw-bolder c-b">Add Category</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group>
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                />
-                <Form.Label className="mt-2">Type</Form.Label>
-                <Form.Control value="Expense" readOnly />
-                <Form.Label className="mt-2">Sub Type</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={categorySubType}
-                  onChange={(e) => setCategorySubType(e.target.value)}
-                />
-                <Form.Label className="mt-2">Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={1}
-                  value={categoryDescription}
-                  onChange={(e) => setCategoryDescription(e.target.value)}
-                />
-                <Form.Label className="mt-2">Additional</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={categoryAdditional}
-                  onChange={(e) => setCategoryAdditional(e.target.value)}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-start">
-            <Button className="btn-s fw-bolder" onClick={handleSubmitCategory}>
-              Save
-            </Button>
-            <Button
-              className="btn-c fw-bolder"
-              onClick={handleCloseCategoryModal}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showModal}
-          onHide={handleCloseModal}
-          centered
-          dialogClassName="custom-modal"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="fs-5 fw-bolder c-b">
-              Create Contact
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group>
-                <Form.Label className="fs-6 c-b">Contact Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newContact}
-                  onChange={(e) => setNewContact(e.target.value)}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-start">
-            <Button className="btn-s fw-bolder" onClick={handleSubmitContact}>
-              Save
-            </Button>
-            <Button className="btn-c fw-bolder" onClick={handleCloseModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showAccModal}
-          onHide={handleCloseAccModal}
-          centered
-          dialogClassName="custom-modal"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="fs-5 fw-bolder c-b">
-              Account Details
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form style={{ gap: "30px" }}>
-              <Form.Group>
-                <Form.Label>Bank Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                />
-                <Form.Label>Account Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newAccount}
-                  onChange={(e) => setNewAccount(e.target.value)}
-                />
-                <Form.Label>IBAN Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newIBAN}
-                  onChange={(e) => setNewIBAN(e.target.value)}
-                />
-                <Form.Label>Branch</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newBranch}
-                  onChange={(e) => setNewBranch(e.target.value)}
-                />
-                <Form.Label>Additional</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newAdditional}
-                  onChange={(e) => setNewAdditional(e.target.value)}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-start">
-            <Button className="btn-s fw-bolder" onClick={handleSubmitAccount}>
-              Save
-            </Button>
-            <Button className="btn-c fw-bolder" onClick={handleCloseAccModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
       </Container>
+
+      <ExpenseModal
+        showContactModal={showModal}
+        showAccountModal={showAccModal}
+        showAddCategoryModal={showCategoryModal}
+        handleCloseContactModal={handleCloseModal}
+        handleCloseAccountModal={handleCloseAccModal}
+        handleCloseCategoryModal={handleCloseCategoryModal}
+      />
     </>
   );
 };

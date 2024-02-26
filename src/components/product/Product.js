@@ -8,10 +8,14 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
+import "./Product.css";
+import InputGroup from "react-bootstrap/InputGroup";
+import { FaSearch } from "react-icons/fa";
+import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCloudArrowDown } from "react-icons/fa6";
-import { IoIosSearch } from "react-icons/io";
+
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdDeleteForever } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
@@ -57,7 +61,6 @@ const Newproduct = () => {
     handleCloseModaledit();
   };
 
- 
   const tableValue = [
     "ID",
     "Date",
@@ -70,7 +73,7 @@ const Newproduct = () => {
 
   return (
     <div>
-      <Row style={{ marginTop: "6%" }}>
+      <Row style={{ marginTop: "2%" }}>
         <Col className="col-8" style={{ paddingLeft: "3%" }}>
           <div className="d-flex">
             <Button
@@ -91,7 +94,7 @@ const Newproduct = () => {
 
             <p
               style={{
-                marginLeft: "13px",
+                marginLeft: "38px",
                 marginTop: "6px",
                 marginRight: "13px",
                 color: "#1d1d5e",
@@ -100,18 +103,30 @@ const Newproduct = () => {
               Products
             </p>
 
-            <FormControl
-              placeholder="Search Products..."
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "30%", height: "20%" }}
-            />
-            <IoIosSearch className="search" />
+            <InputGroup
+              style={{ height: "10px", width: "27%", marginLeft: "10%" }}
+            >
+              <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
+                <FaSearch className="text-white" />
+              </InputGroupText>
+              <FormControl
+                placeholder="Search Products..."
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  background: "#80808036",
+                  boxShadow: "none",
+                  outline: "none",
+                  borderColor: "white",
+                }}
+              />
+            </InputGroup>
+
             <FaCloudArrowDown
-              style={{ marginLeft: "30px", marginTop: "10px" }}
+              style={{ marginLeft: "13px", marginTop: "10px", width: "24px" }}
             />
           </div>
         </Col>
-        <Col className="">
+        <Col className="d-flex justify-content-end me-5" style={{}}>
           <DatePicker
             selected={startDate}
             onChange={handleDateChange}
@@ -119,15 +134,19 @@ const Newproduct = () => {
             endDate={endDate}
             selectsRange
             placeholderText="Select Date Range"
-            className="rounded ms-2"
+            className="form-control datepicker ms-2 inputfocus"
           />
         </Col>
       </Row>
-      <div fluid style={{ paddingLeft: "2%", paddingRight: "2%" }}>
+      <div
+        className="table-container1 mt-5"
+        fluid
+        style={{ paddingLeft: "2%", paddingRight: "2%" }}
+      >
         <Table striped hover>
-          <thead>
+          <thead style={{position:'relative'}}>
             <tr>
-              <th></th>
+              <th >Action</th>
               {tableValue.map((tablename, index) => (
                 <th key={index}>{tablename}</th>
               ))}
@@ -174,7 +193,13 @@ const Newproduct = () => {
                           onClick={() => handleShowModaledit(item.id)}
                         >
                           {/* Passing the id of the current item */}
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
+                          <p
+                            style={{
+                              margin: "0px",
+                              fontSize: "14px",
+                              cursor: "pointer",
+                            }}
+                          >
                             Edit
                           </p>
                           <CiEdit onClick={() => handleOptionClick1(item.id)} />
@@ -189,7 +214,13 @@ const Newproduct = () => {
                             marginRight: "10px",
                           }}
                         >
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
+                          <p
+                            style={{
+                              margin: "0px",
+                              fontSize: "14px",
+                              cursor: "pointer",
+                            }}
+                          >
                             Delete
                           </p>
                           <MdDeleteForever />
@@ -202,7 +233,13 @@ const Newproduct = () => {
                             marginRight: "20px",
                           }}
                         >
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
+                          <p
+                            style={{
+                              margin: "0px",
+                              fontSize: "14px",
+                              cursor: "pointer",
+                            }}
+                          >
                             Download
                           </p>
                           <MdOutlineFileDownload />
@@ -262,6 +299,7 @@ const Newproduct = () => {
                   <Form.Control
                     type="text"
                     placeholder=" "
+                    className="inputfocus"
                     style={{ marginLeft: "17%", width: "50%", padding: "2px" }}
                   />
                 </div>
@@ -278,6 +316,7 @@ const Newproduct = () => {
                   <Form.Control
                     type="text"
                     placeholder=""
+                    className="inputfocus"
                     style={{ marginLeft: "26%", width: "50%", padding: "2px" }}
                   />
                 </div>
@@ -294,6 +333,7 @@ const Newproduct = () => {
                   <Form.Control
                     type="text"
                     placeholder=" "
+                    className="inputfocus"
                     style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
                   />
                 </div>
@@ -305,7 +345,7 @@ const Newproduct = () => {
                     Description
                   </label>
                   <textarea
-                    className="form-control"
+                    className="form-control inputfocus"
                     rows="4"
                     placeholder="Enter your message"
                     style={{ marginLeft: "25%", width: "50%" }}
@@ -379,6 +419,7 @@ const Newproduct = () => {
                   <Form.Control
                     type="text"
                     placeholder=" "
+                    className="inputfocus"
                     style={{ marginLeft: "17%", width: "50%", padding: "2px" }}
                   />
                 </div>
@@ -395,6 +436,7 @@ const Newproduct = () => {
                   <Form.Control
                     type="text"
                     placeholder=""
+                    className="inputfocus"
                     style={{ marginLeft: "26%", width: "50%", padding: "2px" }}
                   />
                 </div>

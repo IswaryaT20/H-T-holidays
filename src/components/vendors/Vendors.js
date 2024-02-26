@@ -8,7 +8,8 @@ import { RiArrowLeftSLine } from "react-icons/ri";
 import { IoMdMenu } from "react-icons/io";
 import { AiOutlineContacts } from "react-icons/ai";
 import React, { useState, useEffect } from "react";
-import { Card, Table } from "react-bootstrap";
+import { Card, Table, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function Vendors() {
   const [card, setCards] = useState([]);
@@ -45,13 +46,27 @@ function Vendors() {
     <>
       <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
         <div className="ps-5">
-          <button
-            type="button"
-            style={{ borderRadius: "5px" }}
-            className="ps-3 pe-3"
-          >
-            New +
-          </button>
+          <Link to="/VendorForm">
+            <Button
+              className="rounded text-white btn-blue w-100 b-none"
+              style={{
+                backgroundColor: "#25316f",
+                fontSize: "14px",
+                width: "",
+                justifyContent: "space-evenly",
+
+                ...(window.innerWidth >= 400 &&
+                  window.innerWidth < 750 && {
+                    fontSize: "12px",
+                    width: "80%",
+                    height: "max-content",
+                    padding: "1px",
+                  }),
+              }}
+            >
+              New +
+            </Button>
+          </Link>
         </div>
         <div className="">
           <span style={{ color: "#25316f" }}>Vendors</span>
@@ -65,18 +80,18 @@ function Vendors() {
           <div className="p-2 filter-icon mt-1"></div>
 
           <div className="p-2">
-            <InputGroup>
+            <InputGroup className="w-max">
               <InputGroupText style={{ backgroundColor: "#25316f" }}>
                 <FaSearch className="text-white" />
               </InputGroupText>
               <Form.Control
+                className="inputfocus"
                 style={{
                   background: "#80808036",
-                  boxShadow: "none",
-                  outline: "none",
                 }}
-                placeholder="search here"
+                placeholder="search Vendors "
               />
+                 
             </InputGroup>
           </div>
         </div>
@@ -142,7 +157,7 @@ function Vendors() {
         </div>
       ) : null}
 
-      <div className="table-container1 mt-5">
+      <div className="table-container mt-5">
         {tableActive ? (
           <Table>
             <thead>

@@ -1,177 +1,131 @@
-import React, { useState, useEffect } from "react";
-
-import {
-  Container,
-  Navbar,
-  Row,
-  Col,
-  FloatingLabel,
-  Form,
-  Button,
-  InputGroup,
-  Stack,
-  Card,
-  Table,
-} from "react-bootstrap";
+import { Form } from "react-bootstrap";
+import Stack from "react-bootstrap/Stack";
+import { FaSearch } from "react-icons/fa";
+import InputGroup from "react-bootstrap/InputGroup";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { FaFilter } from "react-icons/fa";
-import { RiSearch2Line } from "react-icons/ri";
-
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { PiKanbanBold } from "react-icons/pi";
-import { IoMenu, IoClose } from "react-icons/io5";
-import { IoMdTime } from "react-icons/io";
-import profile from "../../Assets/images/profile.jpg";
+import { RiArrowRightSLine } from "react-icons/ri";
+import { RiArrowLeftSLine } from "react-icons/ri";
+import { IoMdMenu } from "react-icons/io";
+import { AiOutlineContacts } from "react-icons/ai";
+import React, { useState, useEffect } from "react";
+import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Customer() {
-  const [users, setusers] = useState([], false);
-  const [kanbanView, setKanbanView] = useState(true);
-  const [listView, setListView] = useState(false);
+  const [card, setCards] = useState([]);
+  const [tablevalue, setTablevalue] = useState([]);
+  const [cardActive, setCardActive] = useState(true);
+  const [tableActive, setTableActive] = useState(false);
 
-  const apiusers = () => {
+  const handleCard = () => {
+    setCardActive(true);
+    setTableActive(false);
+  };
+  const handleTable = () => {
+    setTableActive(true);
+    setCardActive(false);
+  };
+  const getCardData = () => {
     fetch("https://api.github.com/users")
-      .then((response) => {
-        return response.json(console.log(response));
-      })
-      .then((result) => {
-        setusers(true);
-        setusers(result);
-        console.log(result);
-      })
-      .catch((error) => {
-        console.error("fetching users:", error);
-      });
+      .then((response) => response.json())
+      .then((result) => setCards(result));
   };
-
   useEffect(() => {
-    apiusers();
+    getCardData();
   }, []);
-
-  const handlekanban = () => {
-    setKanbanView(true);
-    setListView(false);
+  const gettablevalue = () => {
+    fetch("https://api.github.com/users")
+      .then((res) => res.json())
+      .then((res) => setTablevalue(res));
   };
-  const handlelist = () => {
-    setKanbanView(false);
-    setListView(true);
-  };
-
-  const columnNames = users.length > 0 ? Object.keys(users[0]) : [];
+  useEffect(() => {
+    gettablevalue();
+  }, []);
 
   return (
     <>
-      <Container fluid className="border-3 ">
-        <Row className="d-flex align-items-center w-100 mt-2 ms-1 me-1 mb-1 border-3">
-          <Col sm={1} xxl={1} lg={1} md={1} className="text-center">
-            <Link to="/CustomerForm">
-              <Button
-                className="rounded text-white btn-blue w-100 b-none"
-                style={{
-                  backgroundColor: "#25316f",
-                  fontSize: "14px",
-                  width: "",
-                  justifyContent: "space-evenly",
+      <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
+        <div className="ps-5">
+          <Link to="/CustomerForm">
+            <Button
+              className="rounded text-white btn-blue w-100 b-none"
+              style={{
+                backgroundColor: "#25316f",
+                fontSize: "14px",
+                width: "",
+                justifyContent: "space-evenly",
 
-                  ...(window.innerWidth >= 400 &&
-                    window.innerWidth < 750 && {
-                      fontSize: "12px",
-                      width: "80%",
-                      height: "max-content",
-                      padding: "1px",
-                    }),
-                }}
-              >
-                New +
-              </Button>
-            </Link>
-          </Col>
-          <Col
-            xxl={2}
-            lg={2}
-            md={2}
-            style={{
-              fontSize: "14px",
-              width: "max-content",
-              fontWeight: "bold",
-              display:
-                window.innerWidth >= 400 && window.innerWidth < 750
-                  ? "none"
-                  : "block",
-            }}
-            className="text-center pt-3 align-items-center "
-          >
-            <p className="">Customer List</p>
-          </Col>
-
-          <Col className=" d-flex justify-content-center align-items-center mt-2 mb-2 ms-5 ">
-            <Form.Group
-              controlId="search"
-              xxl={2}
-              className="d-flex w-100 position-relative"
+                ...(window.innerWidth >= 400 &&
+                  window.innerWidth < 750 && {
+                    fontSize: "12px",
+                    width: "80%",
+                    height: "max-content",
+                    padding: "1px",
+                  }),
+              }}
             >
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="w-100 ps-5"
-                aria-label="Search"
-                aria-describedby="basic-addon1"
-              />
-              <div className="search-icon  position-absolute start-5 ps-4 pb-1 top-50 translate-middle ms-2">
-                <RiSearch2Line className="mt-2 f-20" />
-              </div>
-            </Form.Group>
-          </Col>
-          <Col
-            lg={5}
-            xxl={5}
-            md={2}
-            className="border d-flex justify-content-end icons-set align-items-center "
-            style={{ paddingLeft: "18%", width: "33%" }}
-          >
-            <span className="ar_back bg-gray pt-0 pb-1 txt-blue f-20 ms-1 rounded-0 h-max ">
-              <IoIosArrowBack />
-            </span>
-            <span className=" bg-gray txt-blue pb-1 f-20  rounded-0 h-max ms-1">
-              <IoIosArrowForward />
-            </span>
-            <div
-              className=" bg-gray w-max txt-blue pb-1 f-20 rounded-0 h-max ms-1 icons-set align-items-center"
-              onClick={handlekanban}
-              style={{ cusrsor: "pointer" }}
-              
-            >
-              <PiKanbanBold />
-            </div>
-            <span
-              className=" bg-gray txt-blue f-20 pb-1 rounded-0 h-max ms-1"
-              onClick={handlelist}
-              style={{ cursor: "pointer" }}
-             
-            >
-              <IoMenu />
-            </span>
-          </Col>
-        </Row>
-
-        <Row
-          className="h-max"
+              New +
+            </Button>
+          </Link>
+        </div>
+        <div className="">
+          <span style={{ color: "#25316f" }}>Customers</span>
+        </div>
+        <div
+          className="group-search d-flex ml-6p"
           style={{
-            display: "flex",
-            flex: 1,
-            overscroll: "auto",
-            width: "95%",            
-            backgroundColor: "#F2F4FF99",
-            position: "relative",
-            top: "5px",
-            left: "48px",
-            borderRadius: "5px",
+            width: "39%",
           }}
         >
-          <Stack direction="horizontal" className="flex-1 flex-wrap " >
-            {kanbanView && users.length > 0 
-              ? users.map((item) => (
-                  <div key={item.id} className="card-box" style={{ gap: "15px" }}>
+          <div className="p-2 filter-icon mt-1"></div>
+
+          <div className="p-2">
+            <InputGroup className="w-max">
+              <InputGroupText style={{ backgroundColor: "#25316f" }}>
+                <FaSearch className="text-white" />
+              </InputGroupText>
+              <Form.Control
+                style={{
+                  background: "#80808036",
+                  boxShadow: "none",
+                  outline: "none",
+                  borderColor: "white",
+                }}
+                placeholder="search here"
+              />
+                 
+            </InputGroup>
+          </div>
+        </div>
+        <div
+          className="icons-set align-items-center"
+          style={{ paddingLeft: "18%", width: "33%" }}
+        >
+          <RiArrowLeftSLine />
+          <RiArrowRightSLine />
+          <AiOutlineContacts
+            onClick={handleCard}
+            className={cardActive ? "selectedIcon" : ""}
+          />
+          <IoMdMenu
+            onClick={handleTable}
+            className={tableActive ? "selectedIcon" : ""}
+          />
+        </div>
+      </Stack>
+      {cardActive ? (
+        <div
+          className="card-container"
+          style={{
+            background: "#e4e4e4",
+            padding: "15px",
+            margin: "3% 2% 0px 2%",
+          }}
+        >
+          <div>
+            <div className="d-flex flex-wrap" style={{ gap: "15px" }}>
+              {card.length > 0
+                ? card.map((item) => (
                     <Card
                       className="flex container d-flex flex-row align-items-center p-10"
                       style={{
@@ -198,37 +152,49 @@ function Customer() {
                         </Card.Body>
                       </div>
                     </Card>
-                  </div>
-                ))
-              : null}
-          </Stack>
-        </Row>
-        {listView ? (
-          <div className="w-100">
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>NAME</th>
-                  <th>URL</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.length > 0 ? (
-                  users.map((item) => (
-                    <tr key={item.id}>
-                      <td> {item.login} </td>
-                      <td> {item.type} </td>
-                    </tr>
                   ))
-                ) : (
-                  <tr className="text-center">No data available.</tr>
-                )}
-              </tbody>
-            </Table>
+                : null}
+            </div>
           </div>
+        </div>
+      ) : null}
+
+      <div className="table-container mt-5">
+        {tableActive ? (
+          <Table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Sales Person</th>
+                <th>Activities</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tablevalue.length > 0 ? (
+                tablevalue.map((tableItem) => (
+                  <tr>
+                    <td>{tableItem.id}</td>
+                    <td>{tableItem.node_id}</td>
+                    <td>{tableItem.login}</td>
+                    <td>{tableItem.html_url}</td>
+                    <td>{tableItem.gists_url}</td>
+                    <td>{tableItem.login}</td>
+                    <td>{tableItem.login}</td>
+                    <td>{tableItem.login}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>NO data found</tr>
+              )}
+            </tbody>
+          </Table>
         ) : null}
-      </Container>
+      </div>
     </>
   );
 }
