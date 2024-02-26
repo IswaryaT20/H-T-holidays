@@ -5,6 +5,7 @@ import Logo from "../../Assets/images/H&T.png";
 import { Link } from "react-router-dom";
 import "../../index.css";
 import axios from "axios";
+import { AxiosConfig } from "../../Networking/AxiosConfig";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -72,7 +73,7 @@ function Signup() {
       email: email,
       password: password,
     };
-    axios.post('http://68.178.161.233:8080/handt/v2/account/register','',{
+    AxiosConfig.post('http://68.178.161.233:8080/handt/v2/account/register','',{
       params:args,
     }).then(response =>{
       console.log(response);
