@@ -9,6 +9,7 @@ import './App.css';
 import Demo from "./components/Demo";
 import Kanban from "./components/customer/Kanban";
 import CustomerForm from "./components/customer/CustomerForm";
+import Addressform from "./components/customer/Addressform";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Signup" element={<Signup />} />        
         <Route path="/Customer" element={<><Navbar /><Customer /></> }/>
         <Route path="/CustomerForm" element={<><Navbar /><CustomerForm /></> }/>
+        <Route path="/Addressform" element={<><Navbar /><Addressform /></> }/>
         <Route path="/kanban" element={<Kanban />}/>
         <Route path="/Demo" element={<Demo />} /> {/* Fixed the issue here */}
 

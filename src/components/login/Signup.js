@@ -87,18 +87,14 @@ function Signup() {
         } else {
           seterr(response.status);
         }
-        // seterr([response.status,response.errorMessage]);
-        // return seterr(response.errorMessage);
+        
       })
       .catch((err) => {
-        //change this to err
+       
         console.log(err);
       });
 
-    // console.log(email);
-    // console.log(username);
-    // console.log(password);
-    // console.log(cpassword);
+
   }
   useEffect(() => {
     if (err) {
