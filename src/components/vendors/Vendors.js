@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function Customer() {
+function Vendors() {
   const [card, setCards] = useState([]);
   const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
@@ -46,7 +46,7 @@ function Customer() {
     <>
       <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
         <div className="ps-5">
-          <Link to="/CustomerForm">
+          <Link to="/VendorForm">
             <Button
               className="rounded text-white btn-blue w-100 b-none"
               style={{
@@ -69,7 +69,7 @@ function Customer() {
           </Link>
         </div>
         <div className="">
-          <span style={{ color: "#25316f" }}>Customers</span>
+          <span style={{ color: "#25316f" }}>Vendors</span>
         </div>
         <div
           className="group-search d-flex ml-6p"
@@ -85,13 +85,11 @@ function Customer() {
                 <FaSearch className="text-white" />
               </InputGroupText>
               <Form.Control
+                className="inputfocus"
                 style={{
                   background: "#80808036",
-                  boxShadow: "none",
-                  outline: "none",
-                  borderColor: "white",
                 }}
-                placeholder="search here"
+                placeholder="search Vendors "
               />
                  
             </InputGroup>
@@ -199,4 +197,4 @@ function Customer() {
   );
 }
 
-export default Customer;
+export default Vendors;
