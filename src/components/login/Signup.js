@@ -6,8 +6,11 @@ import { Link } from "react-router-dom";
 import "../../index.css";
 import axios from "axios";
 import { AxiosConfig } from "../../Networking/AxiosConfig";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { REGISTER_API_CALL, CLEAR_ERROR_MESSAGE } from "../../utils/Constant";
+import { useNavigate } from "react-router-dom";
 
-function Signup() {
+function Signup(props) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +19,23 @@ function Signup() {
   const [err, seterr] = useState("");
   const [passwordMatch, setPasswordMatch] = useState("");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log(props)
+
+  /**
+   * 
+   * show an error message while registering 
+   * @param {
+   * 
+   * } e 
+   */
+
   const handleChanges = (e) => {
+
+    dispatch({type: CLEAR_ERROR_MESSAGE})
+
     const { name, value } = e.target;
     if (name === "username") {
       setUsername(value);
@@ -73,14 +92,8 @@ function Signup() {
       email: email,
       password: password,
     };
-    AxiosConfig.post('http://68.178.161.233:8080/handt/v2/account/register','',{
-      params:args,
-    }).then(response =>{
-      console.log(response);
-      seterr(response.data.status)      
-    }).catch(err =>{
-      seterr(err.status);
-    })
+    
+    dispatch({type: REGISTER_API_CALL, data: args})
   }
   useEffect(() => {
     if (err) {
@@ -91,6 +104,12 @@ function Signup() {
       return () => clearTimeout(timeoutId);
     }
   }, [err]);
+
+  useEffect(() => {
+      if (props.users.status === 200) {
+        navigate('/Customer')
+      }
+  }, [props.users.status])
 
   return (
     <div className="full-background">
@@ -195,6 +214,10 @@ function Signup() {
               Signup
             </Button>
           </div>
+
+          {
+            props.users.error && <p>{props.users.error}</p>
+          }
           <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}
             <span className="txt-trans_up">
@@ -203,7 +226,15 @@ function Signup() {
           </p>
         </div>
       </Container>
+
+
     </div>
   );
 }
-export default Signup;
+
+const mapsToProps = (state) => {
+  return {
+    users: state.users
+  }
+}
+export default connect(mapsToProps)(Signup);
