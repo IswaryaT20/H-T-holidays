@@ -35,6 +35,7 @@ function AddressForm({ addresstoggle }) {
                   type={type}
                   id={`inline-${type}-3`}
                 />
+
                 <Form.Check
                   className="inputfocus"
                   inline

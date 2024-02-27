@@ -10,12 +10,14 @@ import { AiOutlineContacts } from "react-icons/ai";
 import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Axios from "axios";
 
 function Vendors() {
   const [card, setCards] = useState([]);
   const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
+  const [errorcustomer, seterrorcustomer] = useState('');
 
   const handleCard = () => {
     setCardActive(true);
@@ -25,21 +27,33 @@ function Vendors() {
     setTableActive(true);
     setCardActive(false);
   };
+
   const getCardData = () => {
-    fetch("https://api.github.com/users")
-      .then((response) => response.json())
-      .then((result) => setCards(result));
+    Axios.get("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
+      .then((response) => {
+        console.log(response);
+      
+
+        if(response.status === 200){
+          const filterdata = response.data.data.filter(
+            (supplier) => supplier.businessTypeId === 3
+          );
+          setCards(filterdata);
+          setTablevalue(filterdata);
+          seterrorcustomer(null);
+        }else{
+          seterrorcustomer('the customer not found')
+        }
+      
+      })
+
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   };
+
   useEffect(() => {
     getCardData();
-  }, []);
-  const gettablevalue = () => {
-    fetch("https://api.github.com/users")
-      .then((res) => res.json())
-      .then((res) => setTablevalue(res));
-  };
-  useEffect(() => {
-    gettablevalue();
   }, []);
 
   return (
@@ -91,7 +105,6 @@ function Vendors() {
                 }}
                 placeholder="search Vendors "
               />
-                 
             </InputGroup>
           </div>
         </div>
@@ -125,6 +138,7 @@ function Vendors() {
               {card.length > 0
                 ? card.map((item) => (
                     <Card
+                      key={item.id}
                       className="flex container d-flex flex-row align-items-center p-10"
                       style={{
                         width: "300px",
@@ -139,13 +153,13 @@ function Vendors() {
                       >
                         <Card.Img
                           style={{ width: "60px", height: "auto" }}
-                          src={item.avatar_url}
+                          src={item.name}
                           className="rounded-circle flex-1"
                         ></Card.Img>
                       </div>
                       <div className="image-container d-flex flex-column flex-1">
                         <Card.Body className="flex-1">
-                          <Card.Title>{item.login}</Card.Title>
+                          <Card.Title>{item.name}</Card.Title>
                           <Card.Text>details here</Card.Text>
                         </Card.Body>
                       </div>
@@ -176,14 +190,14 @@ function Vendors() {
               {tablevalue.length > 0 ? (
                 tablevalue.map((tableItem) => (
                   <tr>
-                    <td>{tableItem.id}</td>
-                    <td>{tableItem.node_id}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.html_url}</td>
-                    <td>{tableItem.gists_url}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.login}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
+                    <td>{tableItem.name}</td>
                   </tr>
                 ))
               ) : (
