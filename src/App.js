@@ -12,86 +12,97 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import Product from "./components/product/Product";
 import Purchase from "./components/purchase/Index";
+import { UseSelector, useSelector } from "react-redux";
 
 function App() {
+
+  const state = useSelector(state => state)
+
+  console.log(state)
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/Signup" element={<Signup />} />
-        <Route
-          path="/Customer"
-          element={
-            <>
-              <Navbar />
-              <Customer />
-            </>
-          }
-        />
-        <Route
-          path="/CustomerForm"
-          element={
-            <>
-              <Navbar />
-              <CustomerForm />
-            </>
-          }
-        />
-        <Route
-          path="/Vendor"
-          element={
-            <>
-              <Navbar />
-              <Vendor />
-            </>
-          }
-        />
-        <Route
-          path="/Expense"
-          element={
-            <>
-              <Navbar />
-              <Expense />
-            </>
-          }
-        />
-        <Route
-          path="/NewExpense"
-          element={
-            <>
-              <Navbar />
-              <NewExpense />
-            </>
-          }
-        />
-        <Route
-          path="/Vendor"
-          element={
-            <>
-              <Navbar />
-              <Vendor />
-            </>
-          }
-        />
-        <Route
-          path="/Product"
-          element={
-            <>
-              <Navbar />
-              <Product />
-            </>
-          }
-        />
-        <Route
-          path="/Index"
-          element={
-            <>
-              <Navbar />
-              <Purchase />
-            </>
-          }
-        />
-      </Routes>
+
+    {
+      state.users.isLoggedIn ?  <Routes>
+      <Route
+        path="/"
+        element={
+          <>
+            <Navbar />
+            <Customer />
+          </>
+        }
+      />
+      <Route
+        path="/CustomerForm"
+        element={
+          <>
+            <Navbar />
+            <CustomerForm />
+          </>
+        }
+      />
+      <Route
+        path="/Vendor"
+        element={
+          <>
+            <Navbar />
+            <Vendor />
+          </>
+        }
+      />
+      <Route
+        path="/Expense"
+        element={
+          <>
+            <Navbar />
+            <Expense />
+          </>
+        }
+      />
+      <Route
+        path="/NewExpense"
+        element={
+          <>
+            <Navbar />
+            <NewExpense />
+          </>
+        }
+      />
+      <Route
+        path="/Vendor"
+        element={
+          <>
+            <Navbar />
+            <Vendor />
+          </>
+        }
+      />
+      <Route
+        path="/Product"
+        element={
+          <>
+            <Navbar />
+            <Product />
+          </>
+        }
+      />
+      <Route
+        path="/Index"
+        element={
+          <>
+            <Navbar />
+            <Purchase />
+          </>
+        }
+      />
+    </Routes> : <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/Signup" element={<Signup />} />
+    </Routes>
+    }
+     
     </BrowserRouter>
   );
 }

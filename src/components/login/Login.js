@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { AxiosConfig } from "../../Networking/AxiosConfig";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { LOGIN_API_CALL, CLEAR_ERROR_MESSAGE } from "../../utils/Constant";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login(props) {
@@ -14,9 +15,17 @@ function Login(props) {
   const [loginSuccess, setLoginSuccess] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  console.log(props);
+
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
-  console.log(props)
+  // useEffect(() => {
+  //   if (props.users.status === 200) {
+  //     navigate('/Customer')
+  //   }
+  // }, [props.users.status])
 
   const handleLogin = (e) => {
     dispatch({type: CLEAR_ERROR_MESSAGE})
