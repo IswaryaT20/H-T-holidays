@@ -26,20 +26,20 @@ function Customer() {
     setCardActive(false);
   };
   const getCardData = () => {
-    fetch("https://api.github.com/users")
+    fetch("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
       .then((response) => response.json())
-      .then((result) => setCards(result));
+
+      .then((result) => {
+        // console.log(card);
+        const customerfilter = result.data.filter(
+          (customerdata) => customerdata.businessTypeId === 1
+        );
+        setCards(customerfilter);
+        setTablevalue(customerfilter);
+      });
   };
   useEffect(() => {
     getCardData();
-  }, []);
-  const gettablevalue = () => {
-    fetch("https://api.github.com/users")
-      .then((res) => res.json())
-      .then((res) => setTablevalue(res));
-  };
-  useEffect(() => {
-    gettablevalue();
   }, []);
 
   return (
@@ -78,7 +78,6 @@ function Customer() {
           }}
         >
           <div className="p-2 filter-icon mt-1"></div>
-
           <div className="p-2">
             <InputGroup className="w-max">
               <InputGroupText style={{ backgroundColor: "#25316f" }}>
@@ -93,7 +92,7 @@ function Customer() {
                 }}
                 placeholder="search here"
               />
-                 
+                 
             </InputGroup>
           </div>
         </div>
@@ -127,6 +126,7 @@ function Customer() {
               {card.length > 0
                 ? card.map((item) => (
                     <Card
+                      key={item.id}
                       className="flex container d-flex flex-row align-items-center p-10"
                       style={{
                         width: "300px",
@@ -141,14 +141,14 @@ function Customer() {
                       >
                         <Card.Img
                           style={{ width: "60px", height: "auto" }}
-                          src={item.avatar_url}
+                          src={item.name}
                           className="rounded-circle flex-1"
                         ></Card.Img>
                       </div>
                       <div className="image-container d-flex flex-column flex-1">
                         <Card.Body className="flex-1">
-                          <Card.Title>{item.login}</Card.Title>
-                          <Card.Text>details here</Card.Text>
+                          <Card.Title>{item.name}</Card.Title>
+                          <Card.Text>{item.jobPosition}</Card.Text>
                         </Card.Body>
                       </div>
                     </Card>
@@ -178,14 +178,14 @@ function Customer() {
               {tablevalue.length > 0 ? (
                 tablevalue.map((tableItem) => (
                   <tr>
-                    <td>{tableItem.id}</td>
-                    <td>{tableItem.node_id}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.html_url}</td>
-                    <td>{tableItem.gists_url}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.login}</td>
-                    <td>{tableItem.login}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
+                    <td>{tableItem.jobPosition}</td>
                   </tr>
                 ))
               ) : (

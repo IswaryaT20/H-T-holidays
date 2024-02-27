@@ -41,6 +41,24 @@ function CustomerForm() {
     { id: "6", name: "avatar6", src: profile },
   ];
 
+  const [name, setName] = useState("");
+  const [jobposition, setJobposition] = useState("");
+  const [trnnum, setTrnnum] = useState("");
+  const [phone, setPhone] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
+
+  const handleChange = (e) => {
+    if (e.target.name === "customername") setName(e.target.value);
+    if (e.target.name === "jobposition") setJobposition(e.target.value);
+    if (e.target.name === "trnnumber") setTrnnum(e.target.value);
+    if (e.target.name === "phone") setPhone(e.target.value);
+    if (e.target.name === "mobile") setMobile(e.target.value);
+    if (e.target.name === "email") setEmail(e.target.value);
+    if (e.target.name === "website") setWebsite(e.target.value);
+  };
+
   const openAvatars = () => {
     setIsAvatarsOpen(!isAvatarsOpen);
   };
@@ -304,38 +322,27 @@ function CustomerForm() {
                     </FormGroup>
                   </FormGroup>
                 </div>
-                <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 1
-                  <FormControl
-                    className="f-14 br_b-2 rounded-0 inputfocus"
-                    style={{ border: "2px dotted #25316f", height: "2rem" }}
-                  ></FormControl>
+                <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
+                  walkin cusomers
+                  <Form.Select
+                    aria-label="Default select example"
+                    type="text"
+                    placeholder="Customer Name"
+                    className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
+                    style={{ border: "2px dotted #25316f" }}
+                    defaultValue=""
+                  >
+                    <option value="">Input 1</option>
+                    <option value="">Input 2</option>
+                    <option value="">Input 3</option>
+                    <option value="">Input 4</option>
+                    <option value="">Input 5</option>
+                  </Form.Select>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 2
+                  Title
                   <FormControl
-                    className="f-14 br_b-2 rounded-0 inputfocus"
-                    style={{ border: "2px dotted #25316f", height: "2rem" }}
-                  ></FormControl>
-                </FormLabel>
-                <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 3
-                  <FormControl
-                    className="f-14 br_b-2 rounded-0 inputfocus"
-                    style={{ border: "2px dotted #25316f", height: "2rem" }}
-                  ></FormControl>
-                </FormLabel>
-                <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 4
-                  <FormControl
-                    className="f-14 br_b-2 rounded-0 inputfocus"
-                    style={{ border: "2px dotted #25316f", height: "2rem" }}
-                  ></FormControl>
-                </FormLabel>
-                <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 5
-                  <FormControl
-                    className="f-14 br_b-2 rounded-0 inputfocus"
+                    className="f-14   br_b-2 rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
                 </FormLabel>
@@ -382,13 +389,6 @@ function CustomerForm() {
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
                     Website
-                    <FormControl
-                      className="f-14   br_b-2 rounded-0 inputfocus"
-                      style={{ border: "2px dotted #25316f", height: "2rem" }}
-                    ></FormControl>
-                  </FormLabel>
-                  <FormLabel className=" b txt-ht_blue w-100 f-14">
-                    Title
                     <FormControl
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
