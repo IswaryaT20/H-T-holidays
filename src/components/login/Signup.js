@@ -105,11 +105,11 @@ function Signup(props) {
     }
   }, [err]);
 
-  useEffect(() => {
-      if (props.users.status === 200) {
-        navigate('/Customer')
-      }
-  }, [props.users.status])
+  // useEffect(() => {
+  //     if (props.users.status === 200) {
+  //       navigate('/Customer')
+  //     }
+  // }, [props.users.status])
 
   return (
     <div className="full-background">
