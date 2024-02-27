@@ -10,12 +10,20 @@ import { AiOutlineContacts } from "react-icons/ai";
 import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
+import ProfilePic from '../../Assets/avatars/1.jpg'
+import Close from '../../Assets/images/close.svg';
 
-function Customer() {
+function Customer(props) {
   const [card, setCards] = useState([]);
-  const [tablevalue, setTablevalue] = useState([]);
+  // const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
+
+  const dispatch = useDispatch();
+
+  console.log(props)
 
   const handleCard = () => {
     setCardActive(true);
@@ -25,22 +33,19 @@ function Customer() {
     setTableActive(true);
     setCardActive(false);
   };
-  const getCardData = () => {
-    fetch("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-      .then((response) => response.json())
 
-      .then((result) => {
-        // console.log(card);
-        const customerfilter = result.data.filter(
-          (customerdata) => customerdata.businessTypeId === 1
-        );
-        setCards(customerfilter);
-        setTablevalue(customerfilter);
-      });
-  };
   useEffect(() => {
-    getCardData();
+    //getCardData();
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, []);
+
+  useEffect(() => {
+    const customerfilter = props.customers.customersList.filter(
+      (customerdata) => customerdata.businessTypeId === 1
+    );
+    setCards(customerfilter);
+    // setTablevalue(customerfilter);
+  }, [props.customers.customersList])
 
   return (
     <>
@@ -57,11 +62,11 @@ function Customer() {
 
                 ...(window.innerWidth >= 400 &&
                   window.innerWidth < 750 && {
-                    fontSize: "12px",
-                    width: "80%",
-                    height: "max-content",
-                    padding: "1px",
-                  }),
+                  fontSize: "12px",
+                  width: "80%",
+                  height: "max-content",
+                  padding: "1px",
+                }),
               }}
             >
               New +
@@ -92,7 +97,7 @@ function Customer() {
                 }}
                 placeholder="search here"
               />
-                 
+
             </InputGroup>
           </div>
         </div>
@@ -116,45 +121,49 @@ function Customer() {
         <div
           className="card-container"
           style={{
-            background: "#e4e4e4",
-            padding: "15px",
-            margin: "3% 2% 0px 2%",
+            background: "#F2F4FF99",
+            margin: 48,
+            paddingTop: 15,
+            paddingBottom: 50
           }}
         >
-          <div>
-            <div className="d-flex flex-wrap" style={{ gap: "15px" }}>
-              {card.length > 0
-                ? card.map((item) => (
-                    <Card
-                      key={item.id}
-                      className="flex container d-flex flex-row align-items-center p-10"
+          <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap', paddingRight: 8, paddingLeft: 8, paddingTop: 8, paddingBottom: 8 }}>
+            {card.length > 0
+              ? card.map((item) => (
+                <div style={{ flex: '0 0 25%', paddingLeft: 7, paddingRight: 7, paddingTop: 7, paddingBottom: 7, position: 'relative' }}>
+                  <Card
+                    key={item.id}
+                    className="flex container d-flex flex-row align-items-center p-10"
+                    style={{
+                      width: "100%"
+                    }}
+                  >
+                    <div
+                      className="image-container d-flex flex-column flex-1"
                       style={{
-                        width: "300px",
-                        height: "120px",
+                        marginLeft: "20px",
                       }}
                     >
-                      <div
-                        className="image-container d-flex flex-column flex-1"
-                        style={{
-                          marginLeft: "20px",
-                        }}
-                      >
-                        <Card.Img
-                          style={{ width: "60px", height: "auto" }}
-                          src={item.name}
-                          className="rounded-circle flex-1"
-                        ></Card.Img>
-                      </div>
-                      <div className="image-container d-flex flex-column flex-1">
-                        <Card.Body className="flex-1">
-                          <Card.Title>{item.name}</Card.Title>
-                          <Card.Text>{item.jobPosition}</Card.Text>
-                        </Card.Body>
-                      </div>
-                    </Card>
-                  ))
-                : null}
-            </div>
+                      <Card.Img
+                        style={{ width: "60px", height: "auto" }}
+                        src={ProfilePic}
+                        className="rounded-circle flex-1"
+                      ></Card.Img>
+                    </div>
+                    <div className="image-container d-flex flex-column flex-1">
+                      <Card.Body className="flex-1">
+                        <Card.Title style={{fontSize: 15, color: '#222222', margin: 0, marginTop: 8}}>{item.name}</Card.Title>
+                        <Card.Text style={{color: '#22222280', fontSize: 12}}>{item.jobPosition}</Card.Text>
+                      </Card.Body>
+                    </div>
+                  </Card>
+
+                  <div style={{position: 'absolute', top: 15, right: 25}}>
+                      <img src={Close} style={{width: 7, height: 7}} />
+                  </div>
+                </div>
+              ))
+              : null}
           </div>
         </div>
       ) : null}
@@ -175,8 +184,8 @@ function Customer() {
               </tr>
             </thead>
             <tbody>
-              {tablevalue.length > 0 ? (
-                tablevalue.map((tableItem) => (
+              {card.length > 0 ? (
+                card.map((tableItem) => (
                   <tr>
                     <td>{tableItem.jobPosition}</td>
                     <td>{tableItem.jobPosition}</td>
@@ -199,4 +208,11 @@ function Customer() {
   );
 }
 
-export default Customer;
+
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(Customer);
