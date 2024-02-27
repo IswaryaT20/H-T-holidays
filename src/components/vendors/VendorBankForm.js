@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from "react-bootstrap";
 
-function Bankform({ banktoggle }) {
+function VendorBankForm({ banktoggle }) {
   const [show, setShow] = useState(true);
 
   const handleClose = () => {
@@ -29,7 +29,7 @@ function Bankform({ banktoggle }) {
         onHide={handleClose}
         style={{
           width: "100%",
-          placeItems:'center',
+          placeItems: "center",
         }}
       >
         <Modal.Header closeButton>
@@ -43,8 +43,11 @@ function Bankform({ banktoggle }) {
               <FormGroup className=" m-2 d-flex flex-row">
                 <FormLabel className="f-14">
                   Bank Name
-                  <FormControl Label="Account No" className="f-14 br_b-2 rounded-0 mt-0 me-2 inputfocus" type="text" 
-                   style={{ border: "2px dotted #25316f" }}
+                  <FormControl
+                    Label="Account No"
+                    className="f-14 br_b-2 rounded-0 mt-0 me-2 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
                   />
                 </FormLabel>
               </FormGroup>
@@ -83,4 +86,4 @@ function Bankform({ banktoggle }) {
   );
 }
 
-export default Bankform;
+export default VendorBankForm;

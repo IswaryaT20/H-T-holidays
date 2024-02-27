@@ -84,7 +84,7 @@ const NewPurchase = () => {
             <Col xxl={4} lg={4} md={5} sm={3} className="d-flex justify-content-center">
            
                     <Form.Group className="w-50">
-                        <Form.Control className="text-center w-max" type="search" placeholder="+ Add Client" style={{backgroundColor:"#dedef8"}} />
+                        <Form.Control className="text-center w-max inputfocus" type="search" placeholder="+ Add Client" style={{backgroundColor:"#dedef8"}} />
                     </Form.Group>
                
             </Col>

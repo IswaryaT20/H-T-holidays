@@ -167,13 +167,16 @@ const PurchaseForm = () => {
               {puchaseData.map((item) => (
                 <tr key={item.id} className="w-100 h-30">
                   <td className="table-td f-14">
-                    <Form.Select className="rounded" style={{ width: 175 }}>
+                    <Form.Select
+                      className="rounded inputfocus"
+                      style={{ width: 175 }}
+                    >
                       <option></option>
                     </Form.Select>
                   </td>
                   <td className="table-td">
                     <Form.Control
-                      className="border-0 rounded-0 f-14"
+                      className="border-0 rounded-0 f-14 inputfocus"
                       as="textarea"
                       rows={1}
                       style={{ height: 50 }}
@@ -182,7 +185,7 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14"
+                      className="rounded-0 f-14 inputfocus"
                       placeholder="Quantity"
                       value={item.qty}
                       onChange={(e) =>
@@ -193,7 +196,7 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14"
+                      className="rounded-0 f-14 inputfocus"
                       placeholder="Price (AED)"
                       value={item.price}
                       onChange={(e) =>
@@ -204,7 +207,7 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14"
+                      className="rounded-0 f-14 inputfocus"
                       placeholder="Dicount"
                       value={item.discount}
                       onChange={(e) =>
@@ -215,7 +218,7 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14"
+                      className="rounded-0 f-14 inputfocus"
                       placeholder="VAT"
                       value={item.vat}
                       onChange={(e) =>
@@ -262,7 +265,7 @@ const PurchaseForm = () => {
                   as="textarea"
                   row={4}
                   placeholder="Momo optional"
-                  className="w-60"
+                  className="w-60 inputfocus"
                   style={{ height: "170px" }}
                 />
               </Form.Group>
@@ -316,7 +319,7 @@ const PurchaseForm = () => {
                           Global Discount
                         </Button>
                       ) : (
-                        <div className="d-flex justify-content-between">
+                        <div className="d-flex justify-content-between inputfocus">
                           <Form.Control
                             type="number"
                             style={{ width: 175 }}

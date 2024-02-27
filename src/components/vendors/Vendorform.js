@@ -18,18 +18,18 @@ import avtar3 from "../../Assets/avatars/3.jpg";
 import avtar4 from "../../Assets/avatars/4.png";
 import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
-import AddressForm from "./Addressform";
-import Bankform from "./BankForm";
+import AddressForm from "./VendorAddressform";
+import Bankform from "./VendorBankForm";
 
-function CustomerForm() {
+function VendorForm() {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
   const [address, setaddress] = useState(false);
   const [bankdetails, setbankdetails] = useState(false);
 
-  const [customerType, setCustomerType] = useState("individual"); // individual
-  const handleCustomerTypeChange = (event) => {
-    setCustomerType(event.target.value);
+  const [VendorType, setVendorType] = useState("individual"); // individual
+  const handleVendorTypeChange = (event) => {
+    setVendorType(event.target.value);
   };
 
   const avatars = [
@@ -61,7 +61,7 @@ function CustomerForm() {
   return (
     <>
       <Container fluid className=" f-14 ">
-        <Row className=" f-14 border border-2 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
+        <Row className=" f-14 border border-2 ms-1 me-1 ">
           <Col className=" f-14 d-flex justify-content-start  ">
             <Button
               type="submit"
@@ -136,21 +136,21 @@ function CustomerForm() {
                   <Form.Check
                     inline
                     label="Individual"
-                    name="customerType"
+                    name="VendorType"
                     type="radio"
                     value="individual"
-                    checked={customerType === "individual"}
-                    onChange={handleCustomerTypeChange}
+                    checked={VendorType === "individual"}
+                    onChange={handleVendorTypeChange}
                     id={`inline-radio-1`}
                   />
                   <Form.Check
                     inline
                     label="Company"
-                    name="customerType"
+                    name="VendorType"
                     type="radio"
                     value="company"
-                    checked={customerType === "company"}
-                    onChange={handleCustomerTypeChange}
+                    checked={VendorType === "company"}
+                    onChange={handleVendorTypeChange}
                     id={`inline-radio-2`}
                   />
                 </div>
@@ -178,7 +178,7 @@ function CustomerForm() {
                   />
 
                   {isAvatarsOpen && (
-                    <div className=" h-max w-100 p-2">
+                    <div className="avatargroup">
                       <div
                         className="d-flex flex-wrap position-relative"
                         style={{
@@ -221,14 +221,14 @@ function CustomerForm() {
                 style={{ position: "relative", top: "-40px" }}
               >
                 <div key={`inline-radio`} className="mb-3">
-                  {customerType === "individual" && (
+                  {VendorType === "individual" && (
                     <FormGroup>
                       <FormControl
                         type="text"
-                        placeholder="Customer Name"
+                        placeholder="Vendor Name"
                         className=" f-14 w-100 h-10 br_b-2 pt-3 ps-3 mb-2 rounded-0 inputfocus"
-                        checked={customerType === "individual"}
-                        onChange={handleCustomerTypeChange}
+                        checked={VendorType === "individual"}
+                        onChange={handleVendorTypeChange}
                         style={{ border: "2px dotted #25316f" }}
                         id={`inline-radio-1`}
                       ></FormControl>
@@ -238,8 +238,8 @@ function CustomerForm() {
                     <FormControl
                       type="text"
                       placeholder="Company Name"
-                      checked={customerType === "company"}
-                      onChange={handleCustomerTypeChange}
+                      checked={VendorType === "company"}
+                      onChange={handleVendorTypeChange}
                       className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       id={`inline-radio-1`}
@@ -312,28 +312,28 @@ function CustomerForm() {
                   ></FormControl>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 2
+                INPUT 2
                   <FormControl
                     className="f-14 br_b-2 rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 3
+                INPUT 3
                   <FormControl
                     className="f-14 br_b-2 rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 4
+                INPUT 4
                   <FormControl
                     className="f-14 br_b-2 rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
-                  INPUT 5
+                INPUT 5
                   <FormControl
                     className="f-14 br_b-2 rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
@@ -401,7 +401,7 @@ function CustomerForm() {
                     <Form.Select
                       aria-label="Default select example"
                       type="text"
-                      placeholder="Customer Name"
+                      placeholder="Vendor Name"
                       className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       defaultValue="Unregistered"
@@ -459,4 +459,4 @@ function CustomerForm() {
   );
 }
 
-export default CustomerForm;
+export default VendorForm;

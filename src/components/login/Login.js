@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, FloatingLabel, Form, Alert } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
 import Logo from "../../Assets/images/H&T.png";
 import { Link } from "react-router-dom";
+import { AxiosConfig } from "../../Networking/AxiosConfig";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { LOGIN_API_CALL, CLEAR_ERROR_MESSAGE } from "../../utils/Constant";
+import axios from "axios";
 
-function Login() {
+function Login(props) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  const dispatch = useDispatch();
+
+  console.log(props)
+
   const handleLogin = (e) => {
+    dispatch({type: CLEAR_ERROR_MESSAGE})
     if (e.target.name === "name") {
       setName(e.target.value);
     } else if (e.target.name === "password") {
@@ -20,34 +28,12 @@ function Login() {
   };
 
   const handleSubmit = () => {
-    console.log("Name: ", name);
-    console.log("Password: ", password);
-
     const bodyData = {
-      username: name,
+      userName: name,
       password: password,
     };
-
-    const requestOption = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bodyData),
-    };
-
-    axios.post("http://68.178.161.233:8080/handt/v2/account/login", requestOption)
-      .then((res) => {
-        console.log("Login Successful");
-        console.log(res.data);
-        setLoginSuccess("Login Sucessfully");
-        setLoginError("");
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoginError("An error occurred during login");
-        setLoginSuccess("");
-      });
+    
+    dispatch({type: LOGIN_API_CALL, data: bodyData})
   };
 
   return (
@@ -94,8 +80,9 @@ function Login() {
             </Form.Check>
 
             <div>
-              {loginError && <Alert variant="danger">{loginError}</Alert>}
-              {loginSuccess && <Alert variant="success">{loginSuccess}</Alert>}
+              {
+                props.users.error && <p>{props.users.error}*</p>
+              }
             </div>
 
             <Button
@@ -120,4 +107,10 @@ function Login() {
   );
 }
 
-export default Login;
+const mapToProps = (state) =>{
+  return {
+    users: state.users
+  }
+}
+
+export default connect(mapToProps)(Login);

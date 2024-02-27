@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormLabel, Form, Modal } from "react-bootstrap";
 
-function AddressForm({ addresstoggle }) {
+function VendorAddressform({ addresstoggle }) {
   const [show, setShow] = useState(true);
 
   const handleClose = () => {
@@ -141,4 +141,4 @@ function AddressForm({ addresstoggle }) {
   );
 }
 
-export default AddressForm;
+export default VendorAddressform;
