@@ -168,40 +168,40 @@ function Customer(props) {
         </div>
       ) : null}
 
-      <div className="table-container mt-5">
-        {tableActive ? (
-          <Table>
+      <div className="table-container mt-5" style={{}}>
+        {tableActive ? ( <div style={{marginLeft: 48, marginRight: 48, paddingBottom: 50}}>
+              <Table>
             <thead>
-              <tr>
+              <tr style={{paddingTop: 100, paddingBottom: 100}}>
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Email</th>
                 <th>Sales Person</th>
                 <th>Activities</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Country</th>
+                <th>Place</th>
+               
               </tr>
             </thead>
             <tbody>
               {card.length > 0 ? (
-                card.map((tableItem) => (
-                  <tr>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                    <td>{tableItem.jobPosition}</td>
-                  </tr>
-                ))
+                card.map((tableItem) => {
+                  console.log(tableItem)
+                  return <tr>
+                  <td>{tableItem.title}. {tableItem.name}</td>
+                  <td>{tableItem.phone}</td>
+                  <td>{tableItem.email}</td>
+                  <td>{tableItem.businessTypeName}</td>
+                  <td>{tableItem.jobPosition}</td>
+                  <td>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
+                </tr>
+                })
               ) : (
                 <tr>NO data found</tr>
               )}
             </tbody>
           </Table>
+            </div>
+          
         ) : null}
       </div>
     </>
