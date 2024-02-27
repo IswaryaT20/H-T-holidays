@@ -12,7 +12,7 @@ function* callLoginApi(bodyData) {
                 yield put({type: ERROR_TYPE, payload: response.data.message})
             }
             else if (response.data.code === 200) {
-                yield put({type: LOGIN_API_RESPONSE, payload: response.data.data})
+                yield put({type: LOGIN_API_RESPONSE, payload: response.data})
             }
         }
     }
