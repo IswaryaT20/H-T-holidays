@@ -1,12 +1,22 @@
 import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import {
+  Button,
+  FormGroup,
+  Modal,
+  Row,
+  Col,
+  FormCheck,
+  FormControl,
+  Input,
+  FormLabel,
+} from "react-bootstrap";
 
-function Bankform({ addresstoggle }) {
+function Bankform({ banktoggle }) {
   const [show, setShow] = useState(true);
 
   const handleClose = () => {
     setShow(false);
-    addresstoggle();
+    banktoggle();
   };
 
   return (
@@ -17,19 +27,51 @@ function Bankform({ addresstoggle }) {
         centered
         show={show}
         onHide={handleClose}
+        style={{
+          width: "100%",
+          placeItems:'center',
+        }}
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             Bank Form
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <h4>Bank Form Content</h4>
-          <p>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-            ac consectetur ac, vestibulum at eros.
-          </p>
+        <Modal.Body className="">
+          <Row className="">
+            <Col className="d-flex flex-column justify-content-end">
+              <FormGroup className=" m-2 d-flex flex-row">
+                <FormLabel className="f-14">
+                  Bank Name
+                  <FormControl Label="Account No" className="f-14 br_b-2 rounded-0 mt-0 me-2" type="text" 
+                   style={{ border: "2px dotted #25316f" }}
+                  />
+                </FormLabel>
+              </FormGroup>
+              <FormGroup className=" m-2">
+                <FormLabel className="f-14 ">
+                  {" "}
+                  Account Number
+                  <FormControl className="" type="text" />
+                </FormLabel>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup className=" m-2">
+                <FormLabel className="f-14 ">
+                  {" "}
+                  IBAN No
+                  <FormControl className="" type="text" />
+                </FormLabel>
+              </FormGroup>
+              <FormGroup className=" m-2">
+                <FormLabel className="f-14 ">
+                  Branch
+                  <FormControl className="" type="text" />
+                </FormLabel>
+              </FormGroup>
+            </Col>
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Modal,
+  FloatingLabel,
   Form,
   FormControl,
   FormLabel,
@@ -17,11 +18,13 @@ import avtar4 from "../../Assets/avatars/4.png";
 import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
 import AddressForm from "./Addressform";
+import Bankform from "./BankForm";
 
 function CustomerForm() {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
   const [address, setaddress] = useState(false);
+  const [bankdetails, setbankdetails] = useState(false);
 
   const [customerType, setCustomerType] = useState("individual"); // individual
   const handleCustomerTypeChange = (event) => {
@@ -48,13 +51,17 @@ function CustomerForm() {
   };
 
   const addressmodal = () => {
-      setaddress(!address);
+    setaddress(!address);
   };
- 
+  
+  const bankmodal = () => {
+    setbankdetails(!bankdetails);
+  };
+
   return (
     <>
       <Container fluid className=" f-14 ">
-        <Row className=" f-14 border ms-1 me-1 ">
+        <Row className=" f-14 border border-2 ms-1 me-1 ">
           <Col className=" f-14 d-flex justify-content-start  ">
             <Button
               type="submit"
@@ -93,6 +100,7 @@ function CustomerForm() {
             <Button
               className="m-1 bg-blue f-12 rounded-1 b-none"
               style={{ backgroundColor: "#25316f", width: "max-content" }}
+              onClick={bankmodal}
             >
               Accounting
             </Button>
@@ -104,25 +112,25 @@ function CustomerForm() {
             </Button>
           </Col>
         </Row>
-
+        {/*---------------form starts ---------------------*/}
         <Row
           xs={12}
           sm={12}
-          lg={12}
-          md={12}
-          xxl={12}
-          className=" f-14 border ms-1 mt-2 "
+          lg={9}
+          md={9}
+          xxl={9}
+          className=" f-14 ms-1 mt-2 w-100 "
           style={{ flex: 1 }}
         >
-          <Col xs={9} md={9} lg={9} xxl={9}>
-            <Row style={{ flex: 1 }} className=" ms-0">
+          <Col xs={9} md={9} lg={9} xxl={9} className="border border-2  shadow">
+            <Row style={{ flex: 1 }} className=" ms-0 ">
               <Col
                 xs={10}
                 sm={10}
                 lg={10}
                 md={10}
                 xxl={10}
-                className=" f-14 d-flex"
+                className=" f-14 d-flex ps-2 pe-2"
               >
                 <div key={`inline-radio`} className="mb-1 mt-2">
                   <Form.Check
@@ -153,7 +161,7 @@ function CustomerForm() {
                 md={2}
                 lg={2}
                 xxl={2}
-                className="mt-1 d-flex justify-content-end"
+                className="mt-1 d-flex justify-content-end "
                 style={{ zIndex: "9" }}
               >
                 <Form.Group className="text-end d-flex flex-column justify-content-end">
@@ -170,7 +178,7 @@ function CustomerForm() {
                   />
 
                   {isAvatarsOpen && (
-                    <div className="border border-3 h-max w-100 p-2">
+                    <div className=" h-max w-100 p-2">
                       <div
                         className="d-flex flex-wrap position-relative"
                         style={{
@@ -199,7 +207,10 @@ function CustomerForm() {
             </Row>
 
             {/* First column for personal details like that */}
-            <Row style={{ display: "flex", justifyContent: "space-around" }}>
+            <Row
+              className="ps-3 pe-3"
+              style={{ display: "flex", justifyContent: "space-around" }}
+            >
               <Col
                 xxl={7}
                 lg={7}
@@ -269,7 +280,7 @@ function CustomerForm() {
                     ></Form.Control>
                     <FormGroup className=" f-14 d-flex justify-space-between ">
                       <Form.Control
-                        className=" f-14  br_b-2 rounded-0 mt-2 me-2"
+                        className=" f-14 br_b-2 rounded-0 mt-2 me-2"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="City"
                       ></Form.Control>
@@ -377,9 +388,33 @@ function CustomerForm() {
             </Row>
           </Col>
 
+          <Col className="mt-2">
+            <FormGroup>
+              <FormLabel>
+                <h4>Log Notes</h4>
+              </FormLabel>
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                style={{ height: "100px" }}
+              />
+              <Button
+                className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
+                style={{
+                  height: "30px",
+                  width: "max-content",
+                  backgroundColor: "#25316f",
+                }}
+                type="button"
+              >
+                Save
+              </Button>
+            </FormGroup>
+          </Col>
+
           {/*addreess modal for the extra address */}
-           {address && <AddressForm addresstoggle ={addressmodal} />}
-         
+          {address && <AddressForm addresstoggle={addressmodal} />}
+          {bankdetails && <Bankform banktoggle={bankmodal} />}
         </Row>
       </Container>
     </>

@@ -10,6 +10,7 @@ import Demo from "./components/Demo";
 import Kanban from "./components/customer/Kanban";
 import CustomerForm from "./components/customer/CustomerForm";
 import Addressform from "./components/customer/Addressform";
+import Index from "./components/purchase/Index";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/Customer" element={<><Navbar /><Customer /></> }/>
         <Route path="/CustomerForm" element={<><Navbar /><CustomerForm /></> }/>
         <Route path="/Addressform" element={<><Navbar /><Addressform /></> }/>
+        <Route path="/Index" element={<><Navbar /><Index /></> }/>
         <Route path="/kanban" element={<Kanban />}/>
         <Route path="/Demo" element={<Demo />} /> {/* Fixed the issue here */}
 

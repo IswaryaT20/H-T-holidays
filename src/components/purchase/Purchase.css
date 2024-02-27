@@ -1,0 +1,13 @@
+.table-td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 0.5rem !important;
+}
+
+.btn-globalDiscount {
+  background-color: #25316f !important;
+  border-color: #25316f !important;
+  width: 130px !important;
+  padding: 5px !important;
+  border-radius: 8px !important;
+}
