@@ -12,6 +12,7 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import Product from "./components/product/Product";
 import Purchase from "./components/purchase/Index";
+import Customerpay from "./components/payment/Customerpay";
 
 function App() {
   return (
@@ -88,6 +89,15 @@ function App() {
             <>
               <Navbar />
               <Purchase />
+            </>
+          }
+        />
+        <Route
+          path="/Customerpay"
+          element={
+            <>
+              <Navbar />
+              <Customerpay />
             </>
           }
         />

@@ -159,9 +159,9 @@ function Customer() {
         </div>
       ) : null}
 
-      <div className="table-container mt-5">
+      <div className="table-container mt-5 ">
         {tableActive ? (
-          <Table>
+          <Table >
             <thead>
               <tr>
                 <th>Name</th>

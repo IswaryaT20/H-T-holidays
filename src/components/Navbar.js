@@ -20,7 +20,7 @@ const dropdownActions = {
   3: [{ id: 1, title: "Vendors", link: "/vendor" }],
   7: [
     { id: 1, title: "purchase", link: "/Index" },
-    { id: 2, title: "Payment", link: "#" },
+    { id: 2, title: "Payment", link: "/Customerpay" },
   ],
 };
 
