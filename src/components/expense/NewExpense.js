@@ -122,20 +122,18 @@ const NewExpense = () => {
           <Col className="fs-6 fw-bolder c-b">Create Direct Expense</Col>
           <Col className="d-flex justify-content-end">
             <div>
-              <Button className="fw-bolder btn-c">
-                <Link
-                  to="/expense"
-                  style={{ textDecoration: "none", color: "#25316f" }}
-                >
-                  Close
-                </Link>
-              </Button>
+              <Link
+                to="/expense"
+                style={{ textDecoration: "none", color: "#1d1d5e" }}
+              >
+                <Button className="fw-bolder btn-c">Close</Button>
+              </Link>
               <Button className="ms-3 fw-bolder btn-s">Save</Button>
             </div>
           </Col>
         </Row>
 
-        <Row className="d-flex align-items-center mt-3 w-100 p-1">
+        <Row className="d-flex align-items-center mt-3 w-100 p-1 mb-3">
           <Col className="d-flex align-items-center">
             <Form>
               <Form.Group>
@@ -188,8 +186,8 @@ const NewExpense = () => {
           </Col>
         </Row>
 
-        <div className="m-4">
-          <Table>
+        <div>
+          <Table hover>
             <thead style={{ padding: "0.75rem" }}>
               <tr>
                 {tableHeader.map((header, index) => (
@@ -198,7 +196,7 @@ const NewExpense = () => {
                     style={{
                       textAlign: "center",
                       verticalAlign: "middle",
-                      backgroundColor: "#25316f",
+                      backgroundColor: "#1d1d5e",
                       color: "white",
                     }}
                   >
@@ -241,6 +239,7 @@ const NewExpense = () => {
                       className="border-0 rounded-0 inputfocus"
                       as="textarea"
                       row={1}
+                      placeholder="Description"
                     />
                   </td>
                   <td
@@ -312,7 +311,7 @@ const NewExpense = () => {
           <Button
             onClick={handleAddRow}
             style={{
-              backgroundColor: "#25316f",
+              backgroundColor: "#1d1d5e",
               margin: 10,
               borderWidth: 0,
               width: 120,
@@ -328,7 +327,7 @@ const NewExpense = () => {
             <Form>
               <Form.Group>
                 <Form.Control
-                  className="inputfocus"
+                  className="inputfocus border"
                   as="textarea"
                   row={4}
                   placeholder="Description"
@@ -344,7 +343,7 @@ const NewExpense = () => {
                   <tr>
                     <td
                       className="fs-6 fw-bolder text-start"
-                      style={{ color: "#25316f" }}
+                      style={{ color: "#1d1d5e" }}
                     >
                       Sub-Total
                     </td>
@@ -353,7 +352,7 @@ const NewExpense = () => {
                   <tr>
                     <td
                       className="fs-6 fw-bolder text-start"
-                      style={{ color: "#25316f" }}
+                      style={{ color: "#1d1d5e" }}
                     >
                       VAT (AED)
                     </td>
@@ -362,7 +361,7 @@ const NewExpense = () => {
                   <tr>
                     <td
                       className="fs-6 fw-bolder text-start"
-                      style={{ color: "#25316f" }}
+                      style={{ color: "#1d1d5e" }}
                     >
                       Total Amount (AED)
                     </td>

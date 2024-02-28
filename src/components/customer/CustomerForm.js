@@ -21,7 +21,7 @@ import profile from "../../Assets/images/profile.jpg";
 import AddressForm from "./Addressform";
 import Bankform from "./BankForm";
 import { useSelector, useDispatch, connect } from "react-redux";
-import { MASTER_API_CALL } from "../../utils/Constant";
+import { MASTER_API_CALL, CREATE_CUSTOMER_API_CALL } from "../../utils/Constant";
 
 
 function CustomerForm(props) {

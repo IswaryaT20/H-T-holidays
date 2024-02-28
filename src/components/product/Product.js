@@ -8,21 +8,17 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import "./Product.css";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { FaCloudArrowDown } from "react-icons/fa6";
-
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdDeleteForever } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineFileDownload } from "react-icons/md";
+import axios from "axios";
 
 const Newproduct = () => {
-  //use states
   const [showModal, setShowModal] = useState(false);
   const [showModaledit, setShowModaledit] = useState(false);
   const [search, setSearch] = useState("");
@@ -31,26 +27,55 @@ const Newproduct = () => {
   const handleCloseModaledit = () => setShowModaledit(false);
   const handleShowModaledit = () => setShowModaledit(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [data, setData] = useState([]);
+  const [tableData, setTableData] = useState([]);
 
-  useEffect(() => {
-    // Fetch data from API
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  const [productId, setProductId] = useState("HT-");
+  const [productType, setProductType] = useState("");
+  const [productName, setProductName] = useState("");
+  const [description, setDescription] = useState("");
+  const supplierId = "007";
+  const createdBy = "14";
+  const productUrl = "testURL@gmail.com";
 
-  //Handlers
-  const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  const fetchTableData = () => {
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/products/getProducts")
+      .then((response) => {
+        console.log(response);
+        setTableData(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   };
 
+  useEffect(() => {
+    fetchTableData();
+  }, []);
+
+  const handleSubmit = () => {
+    const BodyData = {
+      productName: productName,
+      supplierId: supplierId,
+      productType: productType,
+      productDescription: description,
+      createdBy: createdBy,
+      productUrl: productUrl,
+    };
+
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error adding product:", error);
+      });
+    setShowModal(false);
+  };
+
+  //Handlers
   const handleOptionClick = (index) => {
     setSelectedIndex(index);
     setShowForm(!showForm);
@@ -62,13 +87,11 @@ const Newproduct = () => {
   };
 
   const tableValue = [
-    "ID",
-    "Date",
-    "Product Id",
-    "Product Type",
-    "Transaction Type",
-    "Product Name",
-    "Description",
+    "",
+    "PRODUCT ID",
+    "PRODUCT NAME",
+    "PRODUCT TYPE",
+    "DESCRIPTION",
   ];
 
   return (
@@ -120,57 +143,51 @@ const Newproduct = () => {
                 }}
               />
             </InputGroup>
-
-            <FaCloudArrowDown
-              style={{ marginLeft: "13px", marginTop: "10px", width: "24px" }}
-            />
+            <div className="ms-3 d-flex align-items-center">
+              <FaCloudArrowDown
+                style={{
+                  fontSize: 26,
+                  color: "#1d1d5e",
+                }}
+              />
+            </div>
           </div>
-        </Col>
-        <Col className="d-flex justify-content-end me-5" style={{}}>
-          <DatePicker
-            selected={startDate}
-            onChange={handleDateChange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            placeholderText="Select Date Range"
-            className="form-control datepicker ms-2 inputfocus"
-          />
         </Col>
       </Row>
       <div
-        className="table-container1 mt-5"
+        className="mt-4 table-container"
         fluid
         style={{ paddingLeft: "2%", paddingRight: "2%" }}
       >
         <Table striped hover>
-          <thead style={{position:'relative'}}>
+          <thead>
             <tr>
-              <th >Action</th>
               {tableValue.map((tablename, index) => (
-                <th key={index}>{tablename}</th>
+                <th
+                  key={index}
+                  style={{ backgroundColor: "#1d1d5e", color: "white" }}
+                >
+                  {tablename}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {data
-              .filter((item) => {
-                return (
-                  (search.toLowerCase() === ""
-                    ? item
-                    : item.name.toLowerCase().includes(search.toLowerCase())) &&
-                  (!startDate || new Date(item.date) >= new Date(startDate)) &&
-                  (!endDate || new Date(item.date) <= new Date(endDate))
-                );
+            {tableData
+              .filter((items) => {
+                return search.toLowerCase() === ""
+                  ? items
+                  : items.productName
+                      .toLowerCase()
+                      .includes(search.toLowerCase());
               })
-              .map((item) => (
-                <tr key={item.id}>
+              .map((items) => (
+                <tr key={items.id}>
                   <td style={{ position: "relative" }}>
                     <SlOptionsVertical
-                      onClick={() => handleOptionClick(item)}
+                      onClick={() => handleOptionClick(items)}
                     />
-
-                    {selectedIndex === item && showForm && (
+                    {selectedIndex === items && showForm && (
                       <div
                         style={{
                           position: "absolute",
@@ -190,23 +207,16 @@ const Newproduct = () => {
                             alignItems: "center",
                             marginRight: "10px",
                           }}
-                          onClick={() => handleShowModaledit(item.id)}
+                          onClick={() => handleShowModaledit(items.productCode)}
                         >
-                          {/* Passing the id of the current item */}
-                          <p
-                            style={{
-                              margin: "0px",
-                              fontSize: "14px",
-                              cursor: "pointer",
-                            }}
-                          >
+                          <p style={{ margin: "0px", fontSize: "14px" }}>
                             Edit
                           </p>
-                          <CiEdit onClick={() => handleOptionClick1(item.id)} />
+                          <CiEdit
+                            onClick={() => handleOptionClick1(items.id)}
+                          />
                         </div>
-
                         <hr style={{ margin: "8px 0 !important" }} />
-
                         <div
                           style={{
                             display: "flex",
@@ -214,13 +224,7 @@ const Newproduct = () => {
                             marginRight: "10px",
                           }}
                         >
-                          <p
-                            style={{
-                              margin: "0px",
-                              fontSize: "14px",
-                              cursor: "pointer",
-                            }}
-                          >
+                          <p style={{ margin: "0px", fontSize: "14px" }}>
                             Delete
                           </p>
                           <MdDeleteForever />
@@ -233,13 +237,7 @@ const Newproduct = () => {
                             marginRight: "20px",
                           }}
                         >
-                          <p
-                            style={{
-                              margin: "0px",
-                              fontSize: "14px",
-                              cursor: "pointer",
-                            }}
-                          >
+                          <p style={{ margin: "0px", fontSize: "14px" }}>
                             Download
                           </p>
                           <MdOutlineFileDownload />
@@ -247,13 +245,10 @@ const Newproduct = () => {
                       </div>
                     )}
                   </td>
-                  <td>{item.id}</td>
-                  <td>{item.date}</td>
-                  <td>{item.product_id}</td>
-                  <td>{item.product_type}</td>
-                  <td>{item.transctation_type}</td>
-                  <td>{item.name}</td>
-                  <td>{item.description}</td>
+                  <td>{items.productId}</td>
+                  <td>{items.productName}</td>
+                  <td>{items.productType}</td>
+                  <td>{items.productDescription}</td>
                 </tr>
               ))}
           </tbody>
@@ -293,16 +288,19 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Transaction type
+                    Product Type
                   </label>
 
-                  <Form.Control
+                  <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "17%", width: "50%", padding: "2px" }}
+                    style={{ marginLeft: "22%", width: "50%", padding: "2px" }}
+                    value={productType}
+                    onChange={(e) => setProductType(e.target.value)}
                   />
                 </div>
+
                 <div
                   className="mb-3"
                   style={{ display: "flex", alignItems: "center" }}
@@ -311,13 +309,16 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-                    Product_Id
+                    Product Code
                   </label>
                   <Form.Control
                     type="text"
                     placeholder=""
                     className="inputfocus"
-                    style={{ marginLeft: "26%", width: "50%", padding: "2px" }}
+                    style={{ marginLeft: "21%", width: "50%", padding: "2px" }}
+                    value={productId}
+                    onChange={(e) => setProductId(e.target.value)}
+                    readOnly
                   />
                 </div>
                 <div
@@ -328,13 +329,15 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-                    Product_Name
+                    Product Name
                   </label>
                   <Form.Control
                     type="text"
                     placeholder=" "
                     className="inputfocus"
                     style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
                   />
                 </div>
                 <div
@@ -349,6 +352,8 @@ const Newproduct = () => {
                     rows="4"
                     placeholder="Enter your message"
                     style={{ marginLeft: "25%", width: "50%" }}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
                 </div>
               </div>
@@ -358,7 +363,7 @@ const Newproduct = () => {
         <Modal.Footer>
           <Button
             variant="button"
-            onClick={handleCloseModal}
+            onClick={handleSubmit}
             style={{
               background: "#1d1d5e",
               color: "white",
@@ -371,7 +376,6 @@ const Newproduct = () => {
               marginRight: "22px",
             }}
           >
-            {" "}
             Save
           </Button>
         </Modal.Footer>
@@ -413,14 +417,14 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Transaction type
+                    Product Type
                   </label>
 
                   <Form.Control
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "17%", width: "50%", padding: "2px" }}
+                    style={{ marginLeft: "22%", width: "50%", padding: "2px" }}
                   />
                 </div>
                 <div
@@ -431,13 +435,14 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-                    Product_Id
+                    Product Code
                   </label>
                   <Form.Control
                     type="text"
                     placeholder=""
                     className="inputfocus"
-                    style={{ marginLeft: "26%", width: "50%", padding: "2px" }}
+                    style={{ marginLeft: "21%", width: "50%", padding: "2px" }}
+                    readOnly
                   />
                 </div>
                 <div
@@ -448,11 +453,12 @@ const Newproduct = () => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-                    Product_Name
+                    Product Name
                   </label>
                   <Form.Control
                     type="text"
                     placeholder=" "
+                    className="inputfocus"
                     style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
                   />
                 </div>
@@ -464,7 +470,7 @@ const Newproduct = () => {
                     Description
                   </label>
                   <textarea
-                    className="form-control"
+                    className="form-control inputfocus"
                     rows="4"
                     placeholder="Enter your message"
                     style={{ marginLeft: "25%", width: "50%" }}
