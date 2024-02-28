@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Col,
@@ -28,9 +28,9 @@ function CustomerForm() {
   const [bankdetails, setbankdetails] = useState(false);
 
   const [customerType, setCustomerType] = useState("individual"); // individual
-  const handleCustomerTypeChange = (event) => {
-    setCustomerType(event.target.value);
-  };
+  // const handleCustomerTypeChange = (event) => {
+  //   setCustomerType(event.target.value);
+  // };
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -48,8 +48,10 @@ function CustomerForm() {
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
+  const [customercategory, setcustomercategory] = useState([]);
 
   const handleChange = (e) => {
+    setCustomerType(e.target.value);
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
@@ -57,6 +59,15 @@ function CustomerForm() {
     if (e.target.name === "mobile") setMobile(e.target.value);
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
+  };
+  const handlesubmit = () => {
+    console.log(name);
+    console.log(jobposition);
+    console.log(trnnum);
+    console.log(phone);
+    console.log(mobile);
+    console.log(email);
+    console.log(website);
   };
 
   const openAvatars = () => {
@@ -75,7 +86,20 @@ function CustomerForm() {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
-
+  const mastercategory = () => {
+    fetch("http://68.178.161.233:8080/handt/v2/common/getmaster")
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result.data.customerCategories);
+        setcustomercategory(result.data.customerCategories);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+  useEffect(() => {
+    mastercategory();
+  }, []);
   return (
     <>
       <div style={{backgroundColor: '#F5F5F5', paddingLeft: 30, paddingRight:30}}>
@@ -90,6 +114,7 @@ function CustomerForm() {
                 width: "13%",
                 backgroundColor: "#25316f",
               }}
+              onClick={handlesubmit}
             >
               Save
             </Button>
@@ -159,7 +184,7 @@ function CustomerForm() {
                     type="radio"
                     value="individual"
                     checked={customerType === "individual"}
-                    onChange={handleCustomerTypeChange}
+                    onChange={(e) => handleChange(e)}
                     id={`inline-radio-1`}
                   />
                   <Form.Check
@@ -169,7 +194,7 @@ function CustomerForm() {
                     type="radio"
                     value="company"
                     checked={customerType === "company"}
-                    onChange={handleCustomerTypeChange}
+                    onChange={(e) => handleChange(e)}
                     id={`inline-radio-2`}
                   />
                 </div>
@@ -247,9 +272,10 @@ function CustomerForm() {
                         placeholder="Customer Name"
                         className=" f-14 w-100 h-10 br_b-2 pt-3 ps-3 mb-2 rounded-0 inputfocus"
                         checked={customerType === "individual"}
-                        onChange={handleCustomerTypeChange}
+                        onChange={(e) => handleChange(e)}
                         style={{ border: "2px dotted #25316f" }}
                         id={`inline-radio-1`}
+                        name="customername"
                       ></FormControl>
                     </FormGroup>
                   )}
@@ -258,7 +284,7 @@ function CustomerForm() {
                       type="text"
                       placeholder="Company Name"
                       checked={customerType === "company"}
-                      onChange={handleCustomerTypeChange}
+                      onChange={(e) => handleChange(e)}
                       className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       id={`inline-radio-1`}
@@ -324,7 +350,7 @@ function CustomerForm() {
                   </FormGroup>
                 </div>
                 <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
-                  walkin cusomers
+                  Customer Category
                   <Form.Select
                     aria-label="Default select example"
                     type="text"
@@ -333,11 +359,12 @@ function CustomerForm() {
                     style={{ border: "2px dotted #25316f" }}
                     defaultValue=""
                   >
-                    <option value="">Input 1</option>
-                    <option value="">Input 2</option>
-                    <option value="">Input 3</option>
-                    <option value="">Input 4</option>
-                    <option value="">Input 5</option>
+                    <option>Select the Category</option>
+                    {customercategory.map((categoryitem) => (
+                      <option key={categoryitem.id}>
+                        {categoryitem.value}
+                      </option>
+                    ))}
                   </Form.Select>
                 </FormLabel>
                 <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -365,6 +392,10 @@ function CustomerForm() {
                     <FormControl
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                      name="jobposition"
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -372,6 +403,8 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="phone"
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -379,6 +412,8 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="mobile"
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -386,6 +421,8 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="email"
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -393,6 +430,8 @@ function CustomerForm() {
                     <FormControl
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
+                      name="website"
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>
@@ -417,6 +456,8 @@ function CustomerForm() {
                     <FormControl
                       className="f-14 br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
+                      name="trnnumber"
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>
