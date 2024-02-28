@@ -28,9 +28,9 @@ function CustomerForm() {
   const [bankdetails, setbankdetails] = useState(false);
 
   const [customerType, setCustomerType] = useState("individual"); // individual
-  const handleCustomerTypeChange = (event) => {
-    setCustomerType(event.target.value);
-  };
+  // const handleCustomerTypeChange = (event) => {
+  //   setCustomerType(event.target.value);
+  // };
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -50,6 +50,7 @@ function CustomerForm() {
   const [website, setWebsite] = useState("");
 
   const handleChange = (e) => {
+    setCustomerType(e.target.value);
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
@@ -57,6 +58,15 @@ function CustomerForm() {
     if (e.target.name === "mobile") setMobile(e.target.value);
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
+  };
+  const handlesubmit = () => {
+    console.log(name);
+    console.log(jobposition);
+    console.log(trnnum);
+    console.log(phone);
+    console.log(mobile);
+    console.log(email);
+    console.log(website);
   };
 
   const openAvatars = () => {
@@ -89,6 +99,7 @@ function CustomerForm() {
                 width: "13%",
                 backgroundColor: "#25316f",
               }}
+              onClick={handlesubmit}
             >
               Save
             </Button>
@@ -158,7 +169,7 @@ function CustomerForm() {
                     type="radio"
                     value="individual"
                     checked={customerType === "individual"}
-                    onChange={handleCustomerTypeChange}
+                    onChange={(e) => handleChange(e)}
                     id={`inline-radio-1`}
                   />
                   <Form.Check
@@ -168,7 +179,7 @@ function CustomerForm() {
                     type="radio"
                     value="company"
                     checked={customerType === "company"}
-                    onChange={handleCustomerTypeChange}
+                    onChange={(e) => handleChange(e)}
                     id={`inline-radio-2`}
                   />
                 </div>
@@ -246,7 +257,7 @@ function CustomerForm() {
                         placeholder="Customer Name"
                         className=" f-14 w-100 h-10 br_b-2 pt-3 ps-3 mb-2 rounded-0 inputfocus"
                         checked={customerType === "individual"}
-                        onChange={handleCustomerTypeChange}
+                        onChange={(e) => handleChange(e)}
                         style={{ border: "2px dotted #25316f" }}
                         id={`inline-radio-1`}
                       ></FormControl>
@@ -257,7 +268,7 @@ function CustomerForm() {
                       type="text"
                       placeholder="Company Name"
                       checked={customerType === "company"}
-                      onChange={handleCustomerTypeChange}
+                      onChange={(e) => handleChange(e)}
                       className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       id={`inline-radio-1`}
@@ -364,6 +375,9 @@ function CustomerForm() {
                     <FormControl
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -371,6 +385,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -378,6 +393,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -385,6 +401,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -392,10 +409,12 @@ function CustomerForm() {
                     <FormControl
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>
                 <FormGroup>
+                  
                   <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
                     Vat Treatment
                     <Form.Select
@@ -416,6 +435,7 @@ function CustomerForm() {
                     <FormControl
                       className="f-14 br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>

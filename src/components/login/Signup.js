@@ -9,7 +9,6 @@ import { AxiosConfig } from "../../Networking/AxiosConfig";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { REGISTER_API_CALL, CLEAR_ERROR_MESSAGE } from "../../utils/Constant";
 import { useNavigate } from "react-router-dom";
-
 function Signup(props) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

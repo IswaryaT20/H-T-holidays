@@ -92,7 +92,6 @@ function Customer() {
                 }}
                 placeholder="search here"
               />
-                 
             </InputGroup>
           </div>
         </div>
