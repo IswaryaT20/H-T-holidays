@@ -66,23 +66,10 @@ function CustomerForm(props) {
     { id: "5", name: "avatar5", src: avtar5 },
     { id: "6", name: "avatar6", src: profile },
   ];
-  const [customercategory, setcustomercategory] = useState([]);
-  const [name, setName] = useState("");
-  const [jobposition, setJobposition] = useState("");
-  const [trnnum, setTrnnum] = useState("");
-  const [phone, setPhone] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [email, setEmail] = useState("");
-  const [website, setWebsite] = useState("");
+const [customercategory, setcustomercategory] = useState([]);
   const [businessType, setBusinessType] = useState([])
 
   const handleChange = (e) => {
-    if (e.target.name === "customerTypeindividual") {
-      setCustomerType(e.target.value === 1);
-    }
-    if (e.target.name === "customerTypecompany") {
-      setCustomerType(e.target.value === 2);
-    }
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
@@ -103,7 +90,7 @@ function CustomerForm(props) {
   const selectBusinessType = (businessType) => {
     setCustomerType(businessType.id)
   }
-  
+
   const handlesubmit = () => {
     // console.log(name);
     // console.log(jobposition);
@@ -112,7 +99,7 @@ function CustomerForm(props) {
     // console.log(mobile);
     // console.log(email);
     // console.log(website);
-    // console.log(customeraddress);
+// console.log(customeraddress);
     // console.log(city);
     // console.log(emirates);
     // console.log(country);
@@ -183,7 +170,7 @@ function CustomerForm(props) {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
-
+  
   useEffect(() => {
     // mastercategory();
     dispatch({type: MASTER_API_CALL})
@@ -287,7 +274,7 @@ function CustomerForm(props) {
                     />
                     })
                   }
-                  
+                 
                 </div>
               </Col>
               <Col
@@ -438,14 +425,14 @@ function CustomerForm(props) {
                         className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Country"
-                        onChange={(e) => handleChange(e)}
+onChange={(e) => handleChange(e)}
                         name="country"
                       ></Form.Control>
                       <Form.Control
                         className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Zip"
-                        onChange={(e) => handleChange(e)}
+onChange={(e) => handleChange(e)}
                         name="zip"
                       ></Form.Control>
                     </FormGroup>
@@ -460,7 +447,7 @@ function CustomerForm(props) {
                     className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f" }}
                     defaultValue=""
-                    onChange={(e) => handleChange(e)}
+onChange={(e) => handleChange(e)}
                     name="category"
                   >
                     <option>Select the Category</option>
@@ -475,7 +462,7 @@ function CustomerForm(props) {
                   Title
                   <FormControl
                     className="f-14   br_b-2 rounded-0 inputfocus"
-                    onChange={(e) => handleChange(e)}
+onChange={(e) => handleChange(e)}
                     name="title"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
@@ -551,7 +538,7 @@ function CustomerForm(props) {
                       className="f-14 w-100 h-10 br_b-2 pt-1 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       defaultValue="Unregistered"
-                      onChange={(e) => handleChange(e)} // Include this line to handle the change
+onChange={(e) => handleChange(e)} // Include this line to handle the change
                       name="vattreatment"
                     >
                       <option value="Registered">Registered</option>
