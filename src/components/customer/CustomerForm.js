@@ -78,8 +78,9 @@ function CustomerForm() {
 
   return (
     <>
+      <div style={{backgroundColor: '#F5F5F5', paddingLeft: 30, paddingRight:30}}>
       <Container fluid className=" f-14 ">
-        <Row className=" f-14 border border-2 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
+        <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
           <Col className=" f-14 d-flex justify-content-start  ">
             <Button
               type="submit"
@@ -140,7 +141,7 @@ function CustomerForm() {
           className=" f-14 ms-1 mt-2 w-100 "
           style={{ flex: 1 }}
         >
-          <Col xs={9} md={9} lg={9} xxl={9} className="border border-2  shadow">
+          <Col xs={6} md={8} lg={8} xxl={8} className="border border-2  shadow">
             <Row style={{ flex: 1 }} className=" ms-0 ">
               <Col
                 xs={10}
@@ -148,7 +149,7 @@ function CustomerForm() {
                 lg={10}
                 md={10}
                 xxl={10}
-                className=" f-14 d-flex ps-2 pe-2"
+                className=" f-14 d-flex p-4"
               >
                 <div key={`inline-radio`} className="mb-1 mt-2">
                   <Form.Check
@@ -423,7 +424,7 @@ function CustomerForm() {
             </Row>
           </Col>
 
-          <Col className="mt-2">
+          <Col className="mt-2" style={{paddingLeft: 50, paddingRight: 50}}>
             <FormGroup>
               <FormLabel>
                 <h4>Log Notes</h4>
@@ -435,11 +436,12 @@ function CustomerForm() {
                 style={{ height: "100px" }}
               />
               <Button
-                className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
+                className=" f-14 bg-blue b-none f-14 text-uppercase rounded-1"
                 style={{
                   height: "30px",
                   width: "max-content",
                   backgroundColor: "#25316f",
+                  marginTop: 25
                 }}
                 type="button"
               >
@@ -455,6 +457,8 @@ function CustomerForm() {
           {bankdetails && <Bankform banktoggle={bankmodal} />}
         </Row>
       </Container>
+
+      </div>
     </>
   );
 }
