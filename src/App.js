@@ -15,6 +15,8 @@ import NewInvoice from "./components/invoice/NewInvoice";
 import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import { useSelector } from "react-redux";
+import VendorForm from "./components/vendors/Vendorform";
+
 import "./App.css";
 
 function App() {
@@ -125,6 +127,7 @@ function App() {
               </>
             }
           />
+          <Route path="/VendorForm" element={<><Navbar /> <VendorForm /></>} />
         </Routes>
       ) : (
         <Routes>
