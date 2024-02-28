@@ -19,9 +19,6 @@ import "./App.css";
 
 function App() {
   const state = useSelector((state) => state);
-  const state = useSelector((state) => state);
-
-  console.log(state);
   console.log(state);
 
   return (
@@ -29,7 +26,7 @@ function App() {
       {state.users.isLoggedIn ? (
         <Routes>
           <Route
-            path="/Customer"
+            path="/"
             element={
               <>
                 <Navbar />
