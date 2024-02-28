@@ -67,6 +67,10 @@ function CustomerForm(props) {
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
   };
+
+  const selectBusinessType = (businessType) => {
+    setCustomerType(businessType.id)
+  }
   const handlesubmit = () => {
     console.log(name);
     console.log(jobposition);
@@ -93,17 +97,7 @@ function CustomerForm(props) {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
-  const mastercategory = () => {
-    fetch("http://68.178.161.233:8080/handt/v2/common/getmaster")
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result.data.customerCategories);
-        // setcustomercategory(result.data.customerCategories);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
+  
   useEffect(() => {
     // mastercategory();
     dispatch({type: MASTER_API_CALL})
@@ -201,7 +195,7 @@ function CustomerForm(props) {
                       name="customerType"
                       type="radio"
                       value={item.value}
-                      onChange={(e) => handleChange(e)}
+                      onChange={(e) => selectBusinessType(item)}
                       id={item.id}
                     />
                     })
