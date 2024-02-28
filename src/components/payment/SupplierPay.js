@@ -96,7 +96,7 @@ function Customerpay() {
                 <p className="f-20 ms-auto d-flex align-items-center">
                   <IoMdContact style={{ fontSize: 40 }} />
                   <span className="ms-2 f-18 text-capitalize">
-                    Contact details
+                    Supplier details
                   </span>
                 </p>
                 <FormGroup>
@@ -106,7 +106,7 @@ function Customerpay() {
                       type="search"
                       className="inputfocus f-14 br_b-2 rounded-0 mt-2"
                       style={{ border: "2px dotted #25316f" }}
-                      placeholder="Search Customer Name"
+                      placeholder="Search Supplier Name"
                       value={customerName}
                       onChange={handleSearchChange}
                     />
@@ -131,7 +131,7 @@ function Customerpay() {
                           </ListGroup.Item>
                         ))}
                       </ListGroup>
-                      <Button variant='link'>Add Customer +</Button>
+                      <Button variant='link'>Add Supplier +</Button>
                     </Card>
                   )}
                   {selectedCustomer ? (
@@ -186,7 +186,7 @@ function Customerpay() {
                     </div>
                     
                   ) : (
-                    <span>Select a customer</span>
+                    <span>Select a Supplier</span>
                   )}
                 </FormGroup>
               </Col>
