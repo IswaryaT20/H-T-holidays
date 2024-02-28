@@ -44,15 +44,16 @@ function CustomerForm(props) {
   const [country, setCountry] = useState("");
   const [zip, setZip] = useState("");
   const [title, setTitle] = useState("");
-  const [vattreatment, setVattreatment] = useState("");
+  const [vattreatment, setVattreatment] = useState("false");
   const createby = 1;
   const CustomerCategoryId = 0;
   const businessTypeId = 0;
 
   const [customerType, setCustomerType] = useState("individual"); // individual
-  // const handleCustomerTypeChange = (event) => {
-  //   setCustomerType(event.target.value);
-  // };
+
+  const handleCustomerTypeChange = (event) => {
+    setCustomerType(event.target.value);
+  };
 
   const dispatch = useDispatch();
 
@@ -77,37 +78,30 @@ const [customercategory, setcustomercategory] = useState([]);
     if (e.target.name === "mobile") setMobile(e.target.value);
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
-    if (e.target.name === "category") setCategory(e.target.value);
     if (e.target.name === "customeraddress") setAddress(e.target.value);
     if (e.target.name === "city") setCity(e.target.value);
     if (e.target.name === "emirates") setEmirates(e.target.value);
     if (e.target.name === "country") setCountry(e.target.value);
     if (e.target.name === "zip") setZip(e.target.value);
     if (e.target.name === "title") setTitle(e.target.value);
-    if (e.target.name === "vattreatment") setVattreatment(e.target.value);
   };
 
   const selectBusinessType = (businessType) => {
     setCustomerType(businessType.id)
   }
 
-  const handlesubmit = () => {
-    // console.log(name);
-    // console.log(jobposition);
-    // console.log(trnnum);
-    // console.log(phone);
-    // console.log(mobile);
-    // console.log(email);
-    // console.log(website);
-// console.log(customeraddress);
-    // console.log(city);
-    // console.log(emirates);
-    // console.log(country);
-    // console.log(zip);
-    // console.log(title);
-    // console.log(vattreatment);
-    // console.log(category);
 
+  const onSelectCategory = (item) => {
+    console.log(item.target.value)
+    setCategory(item.target.value)
+  }
+
+  const handleVatreatment = (item) => {
+    console.log(item.target.value)
+    setVattreatment(item.target.value)
+  }
+
+  const handlesubmit = () => {
     const requestData = {
       name: name,
       jobPosition: jobposition,
@@ -116,8 +110,8 @@ const [customercategory, setcustomercategory] = useState([]);
       mobile: mobile,
       email: email,
       website: website,
-      vattreatment: vattreatment,
-      category: category,
+      isRegistered: vattreatment,
+      category: category.id,
       title: title,
       customeraddress: customeraddress,
       city: city,
@@ -125,8 +119,8 @@ const [customercategory, setcustomercategory] = useState([]);
       country: country,
       zip: zip,
       createdBy: createby,
-      CustomerCategoryId: CustomerCategoryId,
-      businessTypeId: businessTypeId,
+      CustomerCategoryId: category,
+      businessTypeId: customerType,
     };
 
     console.log("Request Data:", requestData);
@@ -265,7 +259,7 @@ const [customercategory, setcustomercategory] = useState([]);
                     businessType.map(item => {
                       return <Form.Check
                       inline
-                      label="Individual"
+                      label={item.value}
                       name="customerType"
                       type="radio"
                       value={item.value}
@@ -447,12 +441,13 @@ onChange={(e) => handleChange(e)}
                     className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f" }}
                     defaultValue=""
-onChange={(e) => handleChange(e)}
+                    onChange={(e) => onSelectCategory(e)}
+                    value={category}
                     name="category"
                   >
                     <option>Select the Category</option>
                     {props.master.customerCategories.map((categoryitem) => (
-                      <option key={categoryitem.id}>
+                      <option key={categoryitem.id} id={categoryitem.id} value={categoryitem.id}>
                         {categoryitem.value}
                       </option>
                     ))}
@@ -538,11 +533,12 @@ onChange={(e) => handleChange(e)}
                       className="f-14 w-100 h-10 br_b-2 pt-1 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       defaultValue="Unregistered"
-onChange={(e) => handleChange(e)} // Include this line to handle the change
+                      value={vattreatment}
+onChange={(e) => handleVatreatment(e)} // Include this line to handle the change
                       name="vattreatment"
                     >
-                      <option value="Registered">Registered</option>
-                      <option value="Unregistered">Unregistered</option>
+                      <option value="true">Registered</option>
+                      <option value="false">Unregistered</option>
                     </Form.Select>
                   </FormLabel>
 
