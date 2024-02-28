@@ -260,6 +260,7 @@ function CustomerForm() {
                         onChange={(e) => handleChange(e)}
                         style={{ border: "2px dotted #25316f" }}
                         id={`inline-radio-1`}
+                        name="customername"
                       ></FormControl>
                     </FormGroup>
                   )}
@@ -376,8 +377,9 @@ function CustomerForm() {
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
                       onChange={(e) => {
-                        handleChange(e);
+                        handleChange(e);                        
                       }}
+                      name="jobposition"
                     ></FormControl>
                   </FormLabel>
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -385,6 +387,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="phone"
                       onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
@@ -393,6 +396,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="mobile"
                       onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
@@ -401,6 +405,7 @@ function CustomerForm() {
                     <FormControl
                       className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
+                      name="email"
                       onChange={(e) => handleChange(e)}
                     ></FormControl>
                   </FormLabel>
@@ -410,6 +415,7 @@ function CustomerForm() {
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
                       onChange={(e) => handleChange(e)}
+                      name="website"
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>
@@ -436,6 +442,7 @@ function CustomerForm() {
                       className="f-14 br_b-2 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f", height: "2rem" }}
                       onChange={(e) => handleChange(e)}
+                      name="trnnumber"
                     ></FormControl>
                   </FormLabel>
                 </FormGroup>

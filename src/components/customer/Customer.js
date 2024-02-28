@@ -10,6 +10,8 @@ import { AiOutlineContacts } from "react-icons/ai";
 import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Avatar from "react-avatar";
+import avatar1 from "../../../src/Assets/avatars/1.jpg";
 
 function Customer() {
   const [card, setCards] = useState([]);
@@ -140,7 +142,7 @@ function Customer() {
                       >
                         <Card.Img
                           style={{ width: "60px", height: "auto" }}
-                          src={item.name}
+                          src={avatar1}
                           className="rounded-circle flex-1"
                         ></Card.Img>
                       </div>
