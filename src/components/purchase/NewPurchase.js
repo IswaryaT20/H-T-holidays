@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 
 const NewPurchase = () => {
@@ -11,7 +12,7 @@ const NewPurchase = () => {
           <Col  sm={3} md={7} lg={9} xxl={9} className="text-center">
           <h4
           className="d-flex justify-content-center fs-5 fw-bolder"
-          style={{ color: "#25316f",placeItems:"center" }}
+          style={{ color: "#1d1d5e",placeItems:"center" }}
         >
           Purchase
         </h4>
@@ -19,15 +20,16 @@ const NewPurchase = () => {
       
           <Col sm={2} md={5} lg={3} xxl={3} className="d-flex justify-content-end">
             <div>
+              <Link to="/Purchase" >
               <Button className="b-none" style={{
                 height: "max-content",
                 width: "max-content",
-                backgroundColor: "#25316f",
-              }} >Close</Button>
+                backgroundColor: "#1d1d5e",
+              }} >Close</Button></Link>
               <Button  style={{
                 height: "max-content",
                 width: "max-content",
-                backgroundColor: "#25316f",
+                backgroundColor: "#1d1d5e",
               }} className="ms-3 b-none">Save</Button>
             </div>
           </Col>
@@ -73,7 +75,7 @@ const NewPurchase = () => {
                     Website :{" "}
                     <a target="blank"
                       href="http://www.handtholidays.ae/"
-                      style={{ textDecoration: "none", color: "#25316f" }}
+                      style={{ textDecoration: "none", color: "#1d1d5e" }}
                     >
                       www.htholidays.ae
                     </a>

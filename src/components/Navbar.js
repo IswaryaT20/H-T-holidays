@@ -16,10 +16,9 @@ const NavigationItems = [
 ];
 
 const dropdownActions = {
-  2: [{ id: 1, title: "Customers", link: "/Customer" }],
-  3: [{ id: 1, title: "Vendors", link: "/vendor" }],
+  2: [{ id: 1, title: "Customers", link: "/Customer" }, {id:2, title: "Invoice", link:"/Invoice"}],
+  3: [{ id: 1, title: "Vendors", link: "/vendor" }, {id:2, title:"Purchase", link:"/Purchase"}],
   7: [
-    { id: 1, title: "purchase", link: "/Index" },
     { id: 2, title: "Payment", link: "#" },
   ],
 };
