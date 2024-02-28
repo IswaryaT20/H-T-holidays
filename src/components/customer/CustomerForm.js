@@ -21,7 +21,7 @@ import profile from "../../Assets/images/profile.jpg";
 import AddressForm from "./Addressform";
 import Bankform from "./BankForm";
 import { useSelector, useDispatch, connect } from "react-redux";
-import { MASTER_API_CALL, CREATE_CUSTOMER_API_CALL } from "../../utils/Constant";
+import { MASTER_API_CALL, CREATE_CUSTOMER_API_CALL, REGISTER_API_CALL } from "../../utils/Constant";
 
 
 function CustomerForm(props) {
@@ -46,18 +46,10 @@ function CustomerForm(props) {
   const [title, setTitle] = useState("");
   const [vattreatment, setVattreatment] = useState("false");
   const createby = 1;
-  const CustomerCategoryId = 0;
-  const businessTypeId = 0;
 
-  const [customerType, setCustomerType] = useState("individual"); // individual
-
-  const handleCustomerTypeChange = (event) => {
-    setCustomerType(event.target.value);
-  };
+  const [customerType, setCustomerType] = useState(); // individual
 
   const dispatch = useDispatch();
-
-  console.log(props)
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -67,7 +59,7 @@ function CustomerForm(props) {
     { id: "5", name: "avatar5", src: avtar5 },
     { id: "6", name: "avatar6", src: profile },
   ];
-const [customercategory, setcustomercategory] = useState([]);
+
   const [businessType, setBusinessType] = useState([])
 
   const handleChange = (e) => {
@@ -123,29 +115,8 @@ const [customercategory, setcustomercategory] = useState([]);
       businessTypeId: customerType,
     };
 
-    console.log("Request Data:", requestData);
+    dispatch({type: REGISTER_API_CALL, payload: requestData})
 
-    axios
-      .post(
-        "http://68.178.161.233:8080/handt/v2/customer/addcustomer",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-
-      .then((response) => {
-        if (response.status === 200) {
-          console.log("Customer added successfully:", response.data);
-        } else {
-          console.error("Error adding customer. Status:", response.status);
-        }
-      })
-      .catch((error) => {
-        console.error("Error in Axios request:", error);
-      });
   };
 
   const openAvatars = () => {
@@ -166,12 +137,13 @@ const [customercategory, setcustomercategory] = useState([]);
   };
   
   useEffect(() => {
-    // mastercategory();
     dispatch({type: MASTER_API_CALL})
   }, []);
 
   useEffect(() => {
-      if (props.type === 1) {
+      if (props.type === 1 && props.master.businessTypes.length > 0) {
+        console.log(props.master.businessTypes[0].id)
+        setCustomerType(props.master.businessTypes[0].id)
         setBusinessType(props.master.businessTypes.filter(item => {
           return item.id === 1 || item.id === 2;
         }))
@@ -262,6 +234,7 @@ const [customercategory, setcustomercategory] = useState([]);
                       label={item.value}
                       name="customerType"
                       type="radio"
+                      checked={item.id == customerType}
                       value={item.value}
                       onChange={(e) => selectBusinessType(item)}
                       id={item.id}
@@ -337,7 +310,7 @@ const [customercategory, setcustomercategory] = useState([]);
                 style={{ position: "relative", top: "-40px" }}
               >
                 <div key={`inline-radio`} className="mb-3">
-                  {customerType === "individual" && (
+                  {customerType === 1 && (
                     <FormGroup>
                       <FormControl
                         type="text"
@@ -419,14 +392,14 @@ const [customercategory, setcustomercategory] = useState([]);
                         className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Country"
-onChange={(e) => handleChange(e)}
+                        onChange={(e) => handleChange(e)}
                         name="country"
                       ></Form.Control>
                       <Form.Control
                         className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Zip"
-onChange={(e) => handleChange(e)}
+                        onChange={(e) => handleChange(e)}
                         name="zip"
                       ></Form.Control>
                     </FormGroup>
@@ -456,7 +429,7 @@ onChange={(e) => handleChange(e)}
                   Title
                   <FormControl
                     className="f-14   br_b-2 rounded-0 inputfocus"
-onChange={(e) => handleChange(e)}
+                    onChange={(e) => handleChange(e)}
                     name="title"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
@@ -533,7 +506,7 @@ onChange={(e) => handleChange(e)}
                       style={{ border: "2px dotted #25316f" }}
                       defaultValue="Unregistered"
                       value={vattreatment}
-onChange={(e) => handleVatreatment(e)} // Include this line to handle the change
+                      onChange={(e) => handleVatreatment(e)} // Include this line to handle the change
                       name="vattreatment"
                     >
                       <option value="true">Registered</option>
