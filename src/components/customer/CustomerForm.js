@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import axios from "axios";
 import {
   Col,
   Row,
@@ -30,6 +30,25 @@ function CustomerForm(props) {
   const [address, setaddress] = useState(false);
   const [bankdetails, setbankdetails] = useState(false);
 
+  const [name, setName] = useState("");
+  const [jobposition, setJobposition] = useState("");
+  const [trnnum, setTrnnum] = useState("");
+  const [phone, setPhone] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
+  const [category, setCategory] = useState("");
+  const [customeraddress, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [emirates, setEmirates] = useState("");
+  const [country, setCountry] = useState("");
+  const [zip, setZip] = useState("");
+  const [title, setTitle] = useState("");
+  const [vattreatment, setVattreatment] = useState("");
+  const createby = 1;
+  const CustomerCategoryId = 0;
+  const businessTypeId = 0;
+
   const [customerType, setCustomerType] = useState("individual"); // individual
   // const handleCustomerTypeChange = (event) => {
   //   setCustomerType(event.target.value);
@@ -47,7 +66,7 @@ function CustomerForm(props) {
     { id: "5", name: "avatar5", src: avtar5 },
     { id: "6", name: "avatar6", src: profile },
   ];
-
+  const [customercategory, setcustomercategory] = useState([]);
   const [name, setName] = useState("");
   const [jobposition, setJobposition] = useState("");
   const [trnnum, setTrnnum] = useState("");
@@ -58,7 +77,12 @@ function CustomerForm(props) {
   const [businessType, setBusinessType] = useState([])
 
   const handleChange = (e) => {
-    setCustomerType(e.target.value);
+    if (e.target.name === "customerTypeindividual") {
+      setCustomerType(e.target.value === 1);
+    }
+    if (e.target.name === "customerTypecompany") {
+      setCustomerType(e.target.value === 2);
+    }
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
@@ -66,19 +90,81 @@ function CustomerForm(props) {
     if (e.target.name === "mobile") setMobile(e.target.value);
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
+    if (e.target.name === "category") setCategory(e.target.value);
+    if (e.target.name === "customeraddress") setAddress(e.target.value);
+    if (e.target.name === "city") setCity(e.target.value);
+    if (e.target.name === "emirates") setEmirates(e.target.value);
+    if (e.target.name === "country") setCountry(e.target.value);
+    if (e.target.name === "zip") setZip(e.target.value);
+    if (e.target.name === "title") setTitle(e.target.value);
+    if (e.target.name === "vattreatment") setVattreatment(e.target.value);
   };
 
   const selectBusinessType = (businessType) => {
     setCustomerType(businessType.id)
   }
+  
   const handlesubmit = () => {
-    console.log(name);
-    console.log(jobposition);
-    console.log(trnnum);
-    console.log(phone);
-    console.log(mobile);
-    console.log(email);
-    console.log(website);
+    // console.log(name);
+    // console.log(jobposition);
+    // console.log(trnnum);
+    // console.log(phone);
+    // console.log(mobile);
+    // console.log(email);
+    // console.log(website);
+    // console.log(customeraddress);
+    // console.log(city);
+    // console.log(emirates);
+    // console.log(country);
+    // console.log(zip);
+    // console.log(title);
+    // console.log(vattreatment);
+    // console.log(category);
+
+    const requestData = {
+      name: name,
+      jobPosition: jobposition,
+      trnNo: trnnum,
+      phone: phone,
+      mobile: mobile,
+      email: email,
+      website: website,
+      vattreatment: vattreatment,
+      category: category,
+      title: title,
+      customeraddress: customeraddress,
+      city: city,
+      emirates: emirates,
+      country: country,
+      zip: zip,
+      createdBy: createby,
+      CustomerCategoryId: CustomerCategoryId,
+      businessTypeId: businessTypeId,
+    };
+
+    console.log("Request Data:", requestData);
+
+    axios
+      .post(
+        "http://68.178.161.233:8080/handt/v2/customer/addcustomer",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Customer added successfully:", response.data);
+        } else {
+          console.error("Error adding customer. Status:", response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error in Axios request:", error);
+      });
   };
 
   const openAvatars = () => {
@@ -97,7 +183,7 @@ function CustomerForm(props) {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
-  
+
   useEffect(() => {
     // mastercategory();
     dispatch({type: MASTER_API_CALL})
@@ -187,6 +273,7 @@ function CustomerForm(props) {
                 className=" f-14 d-flex p-4"
               >
                 <div key={`inline-radio`} className="mb-1 mt-2">
+
                   {
                     businessType.map(item => {
                       return <Form.Check
@@ -200,7 +287,7 @@ function CustomerForm(props) {
                     />
                     })
                   }
-                 
+                  
                 </div>
               </Col>
               <Col
@@ -292,6 +379,7 @@ function CustomerForm(props) {
                       className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       id={`inline-radio-1`}
+                      name="companyname"
                     ></FormControl>
                   </FormGroup>
                 </div>
@@ -326,17 +414,23 @@ function CustomerForm(props) {
                       className=" f-14  br_b-2 rounded-0 mt-2 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       placeholder="Address"
+                      name="customeraddress"
+                      onChange={(e) => handleChange(e)}
                     ></Form.Control>
                     <FormGroup className=" f-14 d-flex justify-space-between ">
                       <Form.Control
                         className=" f-14 br_b-2 rounded-0 mt-2 me-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="City"
+                        name="city"
+                        onChange={(e) => handleChange(e)}
                       ></Form.Control>
                       <Form.Control
                         className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Emirates"
+                        onChange={(e) => handleChange(e)}
+                        name="emirates"
                       ></Form.Control>
                     </FormGroup>
                     <FormGroup className=" f-14 d-flex justify-space-between ">
@@ -344,11 +438,15 @@ function CustomerForm(props) {
                         className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Country"
+                        onChange={(e) => handleChange(e)}
+                        name="country"
                       ></Form.Control>
                       <Form.Control
                         className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Zip"
+                        onChange={(e) => handleChange(e)}
+                        name="zip"
                       ></Form.Control>
                     </FormGroup>
                   </FormGroup>
@@ -362,6 +460,8 @@ function CustomerForm(props) {
                     className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
                     style={{ border: "2px dotted #25316f" }}
                     defaultValue=""
+                    onChange={(e) => handleChange(e)}
+                    name="category"
                   >
                     <option>Select the Category</option>
                     {props.master.customerCategories.map((categoryitem) => (
@@ -375,6 +475,8 @@ function CustomerForm(props) {
                   Title
                   <FormControl
                     className="f-14   br_b-2 rounded-0 inputfocus"
+                    onChange={(e) => handleChange(e)}
+                    name="title"
                     style={{ border: "2px dotted #25316f", height: "2rem" }}
                   ></FormControl>
                 </FormLabel>
@@ -440,15 +542,17 @@ function CustomerForm(props) {
                   </FormLabel>
                 </FormGroup>
                 <FormGroup>
-                  <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
+                  <FormLabel className=" txt-ht_blue w-100 mt-2 f-16">
                     Vat Treatment
                     <Form.Select
                       aria-label="Default select example"
                       type="text"
                       placeholder="Customer Name"
-                      className=" f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus"
+                      className="f-14 w-100 h-10 br_b-2 pt-1 ps-3 rounded-0 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       defaultValue="Unregistered"
+                      onChange={(e) => handleChange(e)} // Include this line to handle the change
+                      name="vattreatment"
                     >
                       <option value="Registered">Registered</option>
                       <option value="Unregistered">Unregistered</option>
