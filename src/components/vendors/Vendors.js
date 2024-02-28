@@ -11,13 +11,18 @@ import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Axios from "axios";
+import ProfilePic from '../../Assets/avatars/1.jpg'
+import Close from '../../Assets/images/close.svg';
+import { useDispatch, useSelector, connect } from "react-redux";
+import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 
-function Vendors() {
+function Vendors(props) {
   const [card, setCards] = useState([]);
   const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
   const [errorcustomer, seterrorcustomer] = useState('');
+  const dispatch = useDispatch();
 
   const handleCard = () => {
     setCardActive(true);
@@ -28,33 +33,19 @@ function Vendors() {
     setCardActive(false);
   };
 
-  const getCardData = () => {
-    Axios.get("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-      .then((response) => {
-        console.log(response);
-      
-
-        if(response.status === 200){
-          const filterdata = response.data.data.filter(
-            (supplier) => supplier.businessTypeId === 3
-          );
-          setCards(filterdata);
-          setTablevalue(filterdata);
-          seterrorcustomer(null);
-        }else{
-          seterrorcustomer('the customer not found')
-        }
-      
-      })
-
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
 
   useEffect(() => {
-    getCardData();
+    //getCardData();
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, []);
+
+  useEffect(() => {
+    const customerfilter = props.customers.customersList.filter(
+      (customerdata) => customerdata.businessTypeId === 2
+    );
+    setCards(customerfilter);
+    // setTablevalue(customerfilter);
+  }, [props.customers.customersList])
 
   return (
     <>
@@ -71,11 +62,11 @@ function Vendors() {
 
                 ...(window.innerWidth >= 400 &&
                   window.innerWidth < 750 && {
-                    fontSize: "12px",
-                    width: "80%",
-                    height: "max-content",
-                    padding: "1px",
-                  }),
+                  fontSize: "12px",
+                  width: "80%",
+                  height: "max-content",
+                  padding: "1px",
+                }),
               }}
             >
               New +
@@ -128,21 +119,22 @@ function Vendors() {
         <div
           className="card-container"
           style={{
-            background: "#e4e4e4",
-            padding: "15px",
-            margin: "3% 2% 0px 2%",
+            background: "#F2F4FF99",
+            margin: 48,
+            paddingTop: 15,
+            paddingBottom: 50
           }}
         >
           <div>
-            <div className="d-flex flex-wrap" style={{ gap: "15px" }}>
+            <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap', paddingRight: 8, paddingLeft: 8, paddingTop: 8, paddingBottom: 8 }}>
               {card.length > 0
                 ? card.map((item) => (
+                  <div style={{ flex: '0 0 25%', paddingLeft: 7, paddingRight: 7, paddingTop: 7, paddingBottom: 7, position: 'relative' }}>
                     <Card
                       key={item.id}
                       className="flex container d-flex flex-row align-items-center p-10"
                       style={{
-                        width: "300px",
-                        height: "120px",
+                        width: "100%"
                       }}
                     >
                       <div
@@ -153,18 +145,23 @@ function Vendors() {
                       >
                         <Card.Img
                           style={{ width: "60px", height: "auto" }}
-                          src={item.name}
+                          src={ProfilePic}
                           className="rounded-circle flex-1"
                         ></Card.Img>
                       </div>
                       <div className="image-container d-flex flex-column flex-1">
                         <Card.Body className="flex-1">
-                          <Card.Title>{item.name}</Card.Title>
-                          <Card.Text>details here</Card.Text>
+                          <Card.Title style={{ fontSize: 15, color: '#222222', margin: 0, marginTop: 8 }}>{item.name}</Card.Title>
+                          <Card.Text style={{ color: '#22222280', fontSize: 12 }}>{item.jobPosition}</Card.Text>
                         </Card.Body>
                       </div>
                     </Card>
-                  ))
+
+                    <div style={{ position: 'absolute', top: 15, right: 25 }}>
+                      <img src={Close} style={{ width: 7, height: 7 }} />
+                    </div>
+                  </div>
+                ))
                 : null}
             </div>
           </div>
@@ -173,42 +170,48 @@ function Vendors() {
 
       <div className="table-container mt-5">
         {tableActive ? (
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Sales Person</th>
-                <th>Activities</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Country</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tablevalue.length > 0 ? (
-                tablevalue.map((tableItem) => (
-                  <tr>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                    <td>{tableItem.name}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>NO data found</tr>
-              )}
-            </tbody>
-          </Table>
+          <div style={{ marginLeft: 48, marginRight: 48, paddingBottom: 50 }}>
+            <Table>
+              <thead>
+                <tr style={{ paddingTop: 100, paddingBottom: 100 }}>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Sales Person</th>
+                  <th>Activities</th>
+                  <th>Place</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {card.length > 0 ? (
+                  card.map((tableItem) => {
+                    console.log(tableItem)
+                    return <tr>
+                      <td>{tableItem.title}. {tableItem.name}</td>
+                      <td>{tableItem.phone}</td>
+                      <td>{tableItem.email}</td>
+                      <td>{tableItem.businessTypeName}</td>
+                      <td>{tableItem.jobPosition}</td>
+                      <td>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
+                    </tr>
+                  })
+                ) : (
+                  <tr>NO data found</tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
         ) : null}
       </div>
     </>
   );
 }
 
-export default Vendors;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(Vendors);
