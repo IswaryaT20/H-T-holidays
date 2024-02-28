@@ -15,6 +15,11 @@ import Purchase from "./components/purchase/Index";
 import Customerpay from "./components/payment/Customerpay";
 
 function App() {
+
+  const state = useSelector(state => state)
+
+  console.log(state)
+
   return (
     <BrowserRouter>
       <Routes>
