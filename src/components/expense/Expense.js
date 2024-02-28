@@ -8,25 +8,25 @@ import {
   Table,
 } from "react-bootstrap";
 import { CiCalendar } from "react-icons/ci";
-import { RiSearch2Line } from "react-icons/ri";
 import { FaCloudUploadAlt, FaCloudDownloadAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./Expense.css";
 import { Link } from "react-router-dom";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import "./Expense.css";
 
 const Expense = () => {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const onSearch = (e) => {
-    setSearch(e.target.value);
-  };
+  // const onSearch = (e) => {
+  //   setSearch(e.target.value);
+  // };
+
   const handleDateChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -86,7 +86,7 @@ const Expense = () => {
   return (
     <Container fluid className="mt-1">
       <Row className="w-100 mb-5 mt-3 -1 d-flex align-items-center">
-        <Col className="col-2 fs-6 fw-bolder" style={{ color: "#25316f" }}>
+        <Col className="col-2 fs-6 fw-bolder" style={{ color: "#1d1d5e" }}>
           My Expense
         </Col>
         <Col className="col-6 text-center position-relative ">
@@ -110,7 +110,7 @@ const Expense = () => {
         </Col>
         <Col className="col-4 d-flex justify-content-around">
           <div className="d-flex align-items-center ">
-            <CiCalendar className="fs-2" style={{ color: "#25316f" }} />
+            <CiCalendar className="fs-2" style={{ color: "#1d1d5e" }} />
             <DatePicker
               selected={startDate}
               onChange={handleDateChange}
@@ -124,18 +124,18 @@ const Expense = () => {
           <div className="d-flex align-items-center">
             <FaCloudUploadAlt
               className="fs-2"
-              style={{ color: "#25316f", cursor: "pointer" }}
+              style={{ color: "#1d1d5e", cursor: "pointer" }}
             />
             <FaCloudDownloadAlt
               className=" fs-2 ms-3"
-              style={{ color: "#25316f", cursor: "pointer" }}
+              style={{ color: "#1d1d5e", cursor: "pointer" }}
             />
-            <FaEye className="cursor fs-4 ms-3" style={{ color: "#25316f" }} />
+            <FaEye className="cursor fs-4 ms-3" style={{ color: "#1d1d5e" }} />
           </div>
         </Col>
       </Row>
       <Button
-        style={{ backgroundColor: "#25316f", margin: 10, borderWidth: 0 }}
+        style={{ backgroundColor: "#1d1d5e", margin: 10, borderWidth: 0 }}
         className="fs-6 fw-bolder mx-3"
       >
         <Link
@@ -156,7 +156,7 @@ const Expense = () => {
                 <th
                   key={index}
                   style={{
-                    backgroundColor: "#25316f",
+                    backgroundColor: "#1d1d5e",
                     color: "white",
                     textAlign: "center",
                   }}
