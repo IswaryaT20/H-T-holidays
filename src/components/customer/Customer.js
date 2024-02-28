@@ -14,6 +14,7 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
+import CustomerForm from "./CustomerForm";
 
 function Customer(props) {
   const [card, setCards] = useState([]);
@@ -49,6 +50,7 @@ function Customer(props) {
 
   return (
     <>
+    <div style={{width:'100%', position: 'relative'}}>
       <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
         <div className="ps-5">
           <Link to="/CustomerForm">
@@ -203,6 +205,7 @@ function Customer(props) {
             </div>
           
         ) : null}
+      </div>
       </div>
     </>
   );

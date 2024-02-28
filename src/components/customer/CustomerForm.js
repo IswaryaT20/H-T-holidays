@@ -20,8 +20,11 @@ import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
 import AddressForm from "./Addressform";
 import Bankform from "./BankForm";
+import { useSelector, useDispatch, connect } from "react-redux";
+import { MASTER_API_CALL } from "../../utils/Constant";
 
-function CustomerForm() {
+
+function CustomerForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
   const [address, setaddress] = useState(false);
@@ -31,6 +34,10 @@ function CustomerForm() {
   // const handleCustomerTypeChange = (event) => {
   //   setCustomerType(event.target.value);
   // };
+
+  const dispatch = useDispatch();
+
+  console.log(props)
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -48,7 +55,7 @@ function CustomerForm() {
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
-  const [customercategory, setcustomercategory] = useState([]);
+  const [businessType, setBusinessType] = useState([])
 
   const handleChange = (e) => {
     setCustomerType(e.target.value);
@@ -60,6 +67,10 @@ function CustomerForm() {
     if (e.target.name === "email") setEmail(e.target.value);
     if (e.target.name === "website") setWebsite(e.target.value);
   };
+
+  const selectBusinessType = (businessType) => {
+    setCustomerType(businessType.id)
+  }
   const handlesubmit = () => {
     console.log(name);
     console.log(jobposition);
@@ -86,24 +97,24 @@ function CustomerForm() {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
-  const mastercategory = () => {
-    fetch("http://68.178.161.233:8080/handt/v2/common/getmaster")
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result.data.customerCategories);
-        setcustomercategory(result.data.customerCategories);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
+  
   useEffect(() => {
-    mastercategory();
+    // mastercategory();
+    dispatch({type: MASTER_API_CALL})
   }, []);
+
+  useEffect(() => {
+      if (props.type === 1) {
+        setBusinessType(props.master.businessTypes.filter(item => {
+          return item.id === 1 || item.id === 2;
+        }))
+      }
+  }, [props.master.businessTypes])
   return (
     <>
+      <div style={{backgroundColor: '#F5F5F5', paddingLeft: 30, paddingRight:30}}>
       <Container fluid className=" f-14 ">
-        <Row className=" f-14 border border-2 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
+        <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
           <Col className=" f-14 d-flex justify-content-start  ">
             <Button
               type="submit"
@@ -165,7 +176,7 @@ function CustomerForm() {
           className=" f-14 ms-1 mt-2 w-100 "
           style={{ flex: 1 }}
         >
-          <Col xs={9} md={9} lg={9} xxl={9} className="border border-2  shadow">
+          <Col xs={6} md={8} lg={8} xxl={8} className="border border-2  shadow">
             <Row style={{ flex: 1 }} className=" ms-0 ">
               <Col
                 xs={10}
@@ -173,29 +184,23 @@ function CustomerForm() {
                 lg={10}
                 md={10}
                 xxl={10}
-                className=" f-14 d-flex ps-2 pe-2"
+                className=" f-14 d-flex p-4"
               >
                 <div key={`inline-radio`} className="mb-1 mt-2">
-                  <Form.Check
-                    inline
-                    label="Individual"
-                    name="customerType"
-                    type="radio"
-                    value="individual"
-                    checked={customerType === "individual"}
-                    onChange={(e) => handleChange(e)}
-                    id={`inline-radio-1`}
-                  />
-                  <Form.Check
-                    inline
-                    label="Company"
-                    name="customerType"
-                    type="radio"
-                    value="company"
-                    checked={customerType === "company"}
-                    onChange={(e) => handleChange(e)}
-                    id={`inline-radio-2`}
-                  />
+                  {
+                    businessType.map(item => {
+                      return <Form.Check
+                      inline
+                      label="Individual"
+                      name="customerType"
+                      type="radio"
+                      value={item.value}
+                      onChange={(e) => selectBusinessType(item)}
+                      id={item.id}
+                    />
+                    })
+                  }
+                 
                 </div>
               </Col>
               <Col
@@ -359,7 +364,7 @@ function CustomerForm() {
                     defaultValue=""
                   >
                     <option>Select the Category</option>
-                    {customercategory.map((categoryitem) => (
+                    {props.master.customerCategories.map((categoryitem) => (
                       <option key={categoryitem.id}>
                         {categoryitem.value}
                       </option>
@@ -464,7 +469,7 @@ function CustomerForm() {
             </Row>
           </Col>
 
-          <Col className="mt-2">
+          <Col className="mt-2" style={{paddingLeft: 50, paddingRight: 50}}>
             <FormGroup>
               <FormLabel>
                 <h4>Log Notes</h4>
@@ -476,11 +481,12 @@ function CustomerForm() {
                 style={{ height: "100px" }}
               />
               <Button
-                className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
+                className=" f-14 bg-blue b-none f-14 text-uppercase rounded-1"
                 style={{
                   height: "30px",
                   width: "max-content",
                   backgroundColor: "#25316f",
+                  marginTop: 25
                 }}
                 type="button"
               >
@@ -496,8 +502,16 @@ function CustomerForm() {
           {bankdetails && <Bankform banktoggle={bankmodal} />}
         </Row>
       </Container>
+
+      </div>
     </>
   );
 }
 
-export default CustomerForm;
+const mapsToProps = (state) => {
+  return {
+    master: state.masterData
+  }
+}
+
+export default connect(mapsToProps)(CustomerForm);
