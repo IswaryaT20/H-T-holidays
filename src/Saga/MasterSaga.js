@@ -7,6 +7,7 @@ function* callMasterApi() {
 
     if (response.status === 200) {
         if (response.data.code === 200) {
+            console.log("success")
             yield put({type: MASTER_API_RESPONSE, payload: response.data.data})
         }
        

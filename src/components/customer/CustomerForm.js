@@ -20,8 +20,11 @@ import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
 import AddressForm from "./Addressform";
 import Bankform from "./BankForm";
+import { useSelector, useDispatch, connect } from "react-redux";
+import { MASTER_API_CALL } from "../../utils/Constant";
 
-function CustomerForm() {
+
+function CustomerForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
   const [address, setaddress] = useState(false);
@@ -31,6 +34,10 @@ function CustomerForm() {
   // const handleCustomerTypeChange = (event) => {
   //   setCustomerType(event.target.value);
   // };
+
+  const dispatch = useDispatch();
+
+  console.log(props)
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -48,7 +55,7 @@ function CustomerForm() {
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
-  const [customercategory, setcustomercategory] = useState([]);
+  const [businessType, setBusinessType] = useState([])
 
   const handleChange = (e) => {
     setCustomerType(e.target.value);
@@ -91,15 +98,24 @@ function CustomerForm() {
       .then((response) => response.json())
       .then((result) => {
         console.log(result.data.customerCategories);
-        setcustomercategory(result.data.customerCategories);
+        // setcustomercategory(result.data.customerCategories);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   };
   useEffect(() => {
-    mastercategory();
+    // mastercategory();
+    dispatch({type: MASTER_API_CALL})
   }, []);
+
+  useEffect(() => {
+      if (props.type === 1) {
+        setBusinessType(props.master.businessTypes.filter(item => {
+          return item.id === 1 || item.id === 2;
+        }))
+      }
+  }, [props.master.businessTypes])
   return (
     <>
       <div style={{backgroundColor: '#F5F5F5', paddingLeft: 30, paddingRight:30}}>
@@ -177,26 +193,20 @@ function CustomerForm() {
                 className=" f-14 d-flex p-4"
               >
                 <div key={`inline-radio`} className="mb-1 mt-2">
-                  <Form.Check
-                    inline
-                    label="Individual"
-                    name="customerType"
-                    type="radio"
-                    value="individual"
-                    checked={customerType === "individual"}
-                    onChange={(e) => handleChange(e)}
-                    id={`inline-radio-1`}
-                  />
-                  <Form.Check
-                    inline
-                    label="Company"
-                    name="customerType"
-                    type="radio"
-                    value="company"
-                    checked={customerType === "company"}
-                    onChange={(e) => handleChange(e)}
-                    id={`inline-radio-2`}
-                  />
+                  {
+                    businessType.map(item => {
+                      return <Form.Check
+                      inline
+                      label="Individual"
+                      name="customerType"
+                      type="radio"
+                      value={item.value}
+                      onChange={(e) => handleChange(e)}
+                      id={item.id}
+                    />
+                    })
+                  }
+                 
                 </div>
               </Col>
               <Col
@@ -360,7 +370,7 @@ function CustomerForm() {
                     defaultValue=""
                   >
                     <option>Select the Category</option>
-                    {customercategory.map((categoryitem) => (
+                    {props.master.customerCategories.map((categoryitem) => (
                       <option key={categoryitem.id}>
                         {categoryitem.value}
                       </option>
@@ -504,4 +514,10 @@ function CustomerForm() {
   );
 }
 
-export default CustomerForm;
+const mapsToProps = (state) => {
+  return {
+    master: state.masterData
+  }
+}
+
+export default connect(mapsToProps)(CustomerForm);
