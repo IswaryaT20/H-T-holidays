@@ -14,6 +14,7 @@ function Login(props) {
   const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [error, setError] = useState("");
 
   console.log(props);
 
@@ -28,7 +29,7 @@ function Login(props) {
   // }, [props.users.status])
 
   const handleLogin = (e) => {
-    dispatch({type: CLEAR_ERROR_MESSAGE})
+    dispatch({ type: CLEAR_ERROR_MESSAGE });
     if (e.target.name === "name") {
       setName(e.target.value);
     } else if (e.target.name === "password") {
@@ -37,12 +38,25 @@ function Login(props) {
   };
 
   const handleSubmit = () => {
+    const usernameError = "Invalid username";
+    const passwordError = "Invalid password";
+    setError("");
+    if (name.length === 0) {
+      setError(usernameError);
+      return;
+    }
+    if (password.length === 0) {
+      setError(passwordError);
+      return;
+    }
+
+    //API Call's
     const bodyData = {
       userName: name,
       password: password,
     };
-    
-    dispatch({type: LOGIN_API_CALL, data: bodyData})
+
+    dispatch({ type: LOGIN_API_CALL, data: bodyData });
   };
 
   return (
@@ -68,6 +82,9 @@ function Login(props) {
                 placeholder="name@example.com"
                 onChange={(e) => handleLogin(e)}
               />
+              {error ? (
+                <p style={{ color: "red" }}>Please enter a valid username</p>
+              ) : null}
             </FloatingLabel>
             <FloatingLabel
               id="floatingPassword"
@@ -88,10 +105,8 @@ function Login(props) {
               <Form.Check className="ms-2 mb-2 f-14">Remember Me</Form.Check>
             </Form.Check>
 
-            <div>
-              {
-                props.users.error && <p>{props.users.error}*</p>
-              }
+            <div style={{color:"red"}}>
+              {props.users.error && <p>{props.users.error}*</p>}
             </div>
 
             <Button
@@ -116,10 +131,10 @@ function Login(props) {
   );
 }
 
-const mapToProps = (state) =>{
+const mapToProps = (state) => {
   return {
-    users: state.users
-  }
-}
+    users: state.users,
+  };
+};
 
 export default connect(mapToProps)(Login);
