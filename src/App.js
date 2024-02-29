@@ -41,7 +41,7 @@ function App() {
             element={
               <>
                 <Navbar />
-                <CustomerForm />
+                <CustomerForm type={1} />
               </>
             }
           />
