@@ -40,7 +40,7 @@ const Newproduct = (props) => {
   const createdBy = "14";
   const productUrl = "testURL@gmail.com";
 
-  console.log(props)
+  console.log(props.productsData.error)
 
   const dispatch = useDispatch()
 
@@ -495,6 +495,10 @@ const Newproduct = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {
+        props.productsData.error ? <label>[props.productsData.error]</label> : null
+      }
     </div>
   );
 };
