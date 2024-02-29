@@ -7,7 +7,7 @@ import {
   Table,
   Modal,
   Form,
-} from "react-bootstrap";
+  Alert,} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
@@ -23,24 +23,18 @@ import { GET_ALL_PRODUCTS_API_CALL } from "../../utils/Constant";
 const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showModaledit, setShowModaledit] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
   const [search, setSearch] = useState("");
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
   const handleCloseModaledit = () => setShowModaledit(false);
   const handleShowModaledit = () => setShowModaledit(true);
+  const handleCloseAlertModal = () => setShowAlertModal(false);
+  const handleShowAlertModal = () => setShowAlertModal(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
-
-
-
-
   const [supplierNameError, setSupplierNameError] = useState(false);
   const [productNameError, setProductNameError] = useState(false);
-
-
-
-
-
-  const [productType, setProductType] = useState("");
+  const [productType, setProductType] = useState(" H_T HOLIDAYS");
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [supplierName, setSupplierName] = useState("");
@@ -48,7 +42,7 @@ const Newproduct = (props) => {
   const createdBy = "14";
   const productUrl = "testURL@gmail.com";
 
-  console.log(props)
+  console.log(props.productsData.error)
 
   const dispatch = useDispatch()
 
@@ -57,8 +51,7 @@ const Newproduct = (props) => {
     dispatch({type: GET_ALL_PRODUCTS_API_CALL})
   }, []);
 
-
-
+const [success,setsuccess] = useState();
 
   const handleSubmit = () => {
     if (!supplierName.trim()) {
@@ -84,13 +77,18 @@ const Newproduct = (props) => {
     axios
       .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
       .then((response) => {
-        console.log(response.data);
+      setsuccess(response.data.status)
+      handleShowAlertModal();
+      console.log(response.data)
+             
+
       })
       .catch((error) => {
         console.error("Error adding product:", error);
       });
     setShowModal(false);
   };
+
 
   //Handlers
 
@@ -262,9 +260,9 @@ const Newproduct = (props) => {
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "22%", width: "44%", padding: "2px" }}
+                    style={{ marginLeft: "22%", width: "44%", padding: "2px",background:'#d9e1ee8c' }}
                     value={productType}
-                    onChange={(e) => setProductType(e.target.value)}
+                    onChange={(e) => setProductType(e.target.value)} readOnly
                   />
                 </div>
 
@@ -295,7 +293,7 @@ const Newproduct = (props) => {
                   />
                   
                   {supplierNameError && (
-                    <span style={{ color: "red"  }}> Required</span>
+                    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Supplier Name Required</span>
                   )}
                 </div>
 
@@ -325,7 +323,7 @@ const Newproduct = (props) => {
     }}
   />
   {productNameError && (
-    <span style={{ color: "red" }}> Required</span> 
+    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Product Name Required</span> 
   )}
 </div>
                 <div
@@ -408,15 +406,17 @@ const Newproduct = (props) => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Type <span style={{ color: 'red' }}>*</span>
+                    Product Type 
                   </label>
 
                   <Form.Control
-                    type="text"
-                    placeholder=" "
-                    className="inputfocus"
-                    style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
-                  />
+  type="text"
+  placeholder=" "
+  className="inputfocus"
+  style={{ marginLeft: "22%", width: "50%", padding: "2px", background: '#d9e1ee8c' }}
+  defaultValue="  H_T HOLIDAYS"
+  readOnly
+/>
                 </div>
                 <div
                   className="mb-3"
@@ -426,14 +426,14 @@ const Newproduct = (props) => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-               Supplier Name <span style={{ color: 'red' }}>*</span>
+               Supplier Name 
                   </label>
                   <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "78px", width: "50%", padding: "2px" }}
-                    readOnly
+                    style={{ marginLeft: "89px", width: "50%", padding: "2px" }}
+                 
                   />
                 </div>
                 <div
@@ -492,10 +492,25 @@ const Newproduct = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
+  <Modal.Header closeButton>
+    <Modal.Title>Product Data</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {success === 'Success' ? (
+      <Alert variant="success"> {success} </Alert>
+    ) : (
+      <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+    )}
+  </Modal.Body>
+</Modal>
+      {
+        props.productsData.error ? <Alert clas>[props.productsData.error.status]</Alert> : null
+
+      }
     </div>
   );
 };
-
 
 const mapsToProps = (state) => {
   return {
