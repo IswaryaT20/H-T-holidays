@@ -11,73 +11,96 @@ import {
   FormLabel,
   FormCheck,
   FormSelect,
-  Button
+  Button,
 } from "react-bootstrap";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
 import axios from "axios";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
+
 function Customerpay() {
   const [customerName, setCustomerName] = useState("");
   const [customers, setCustomers] = useState([]);
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null); // Changed to null
-  const [showInput, setShowInput] = useState(true); // Added state for input visibility
+  const [customerData, setcustomerData] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showInput, setShowInput] = useState(true);
   const [switchpayment, setswitchpayment] = useState(false);
-
-  const customerSelect = () => {
-    axios
-      .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-      .then((response) => {
-        setCustomers(response.data.data);
-        setFilteredCustomers(response.data.data);
-        console.log(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching customers:", error);
-      });
-  };
-
-  useEffect(() => {
-    customerSelect();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const handleSearchChange = (e) => {
-    const searchValue = e.target.value;
-    setCustomerName(searchValue);
-
-    const filtered = customers.filter((customer) =>
-      customer.name.includes(searchValue)
-    );
-    setFilteredCustomers(filtered);
-    setShowInput(true); // Always show input while typing
+    if (e.target.name === "customernamesearch") {
+      setCustomerName(e.target.value);
+    }
   };
 
+  const customerSelect = () => {
+    const searchname = customerName;
+    const typeid = 3;
+    const fetchname = {
+      typeId: typeid,
+      query: searchname
+    };
+  
+    if (searchname) {
+      setLoading(true);
+  
+      // Add a delay of 1 second (adjust as needed)
+      setTimeout(() => {
+        axios
+          .post(
+            `http://68.178.161.233:8080/handt/v2/customer/searchCustomer`,
+            fetchname, // Use the fetchname object directly
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((response) => {
+            setcustomerData(response.data.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching customers:", error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }, 500);
+    }
+  };
+  
+  useEffect(() => {
+    customerSelect();
+  }, [customerName]);
+  
   const customerdetails = (item) => {
     setSelectedCustomer(item);
-    setShowInput(false); // Hide input when customer is selected
+    setShowInput(false);
   };
 
   useEffect(() => {
     console.log(selectedCustomer);
   }, [selectedCustomer]);
 
-  const handleswitch = (s) => {
+  const handleswitch = () => {
     setswitchpayment(!switchpayment);
   };
+
   return (
     <>
-      <Container fluid className="flex ">
-        <Row className="w-100 ms-0 mt-2 bg-blur" style={{ flex: 1, backgroundColor:'#e7e7e761' }}>
-          <Col lg={2} style={{
-          }}></Col>
+      <Container fluid className="flex">
+        <Row
+          className="w-100 ms-0 mt-2 bg-blur"
+          style={{ flex: 1, backgroundColor: "#e7e7e761" }}
+        >
+          <Col lg={2}></Col>
           <Col
             className="border shadow p-3 w-80 "
             style={{
               minHeight: 520,
               maxHeight: 820,
-              backgroundColor:'white '
+              backgroundColor: "white ",
             }}
           >
             <Stack
@@ -96,7 +119,7 @@ function Customerpay() {
                 <p className="f-20 ms-auto d-flex align-items-center">
                   <IoMdContact style={{ fontSize: 40 }} />
                   <span className="ms-2 f-18 text-capitalize">
-                    Supplier details
+                    Contact details
                   </span>
                 </p>
                 <FormGroup>
@@ -104,20 +127,21 @@ function Customerpay() {
                     <FormControl
                       id="name"
                       type="search"
+                      name="customernamesearch"
                       className="inputfocus f-14 br_b-2 rounded-0 mt-2"
                       style={{ border: "2px dotted #25316f" }}
-                      placeholder="Search Supplier Name"
+                      placeholder="Search Customer Name"
                       value={customerName}
-                      onChange={handleSearchChange}
+                      onChange={(name) => handleSearchChange(name)}
                     />
                   )}
-                  {showInput && filteredCustomers.length > 0 && (
+                  {showInput && customerData && customerData.length > 0 && (
                     <Card className="mt-3" style={{ width: "18rem" }}>
                       <ListGroup
                         variant="flush"
                         style={{ maxHeight: "15rem", overflowY: "scroll" }}
                       >
-                        {filteredCustomers.map((item) => (
+                        {customerData.map((item) => (
                           <ListGroup.Item
                             key={item.id}
                             onClick={() => customerdetails(item)}
@@ -131,7 +155,7 @@ function Customerpay() {
                           </ListGroup.Item>
                         ))}
                       </ListGroup>
-                      <Button variant='link'>Add Supplier +</Button>
+                      <Button variant="link">Add Customer +</Button>
                     </Card>
                   )}
                   {selectedCustomer ? (
@@ -158,7 +182,6 @@ function Customerpay() {
                               style={{
                                 fontSize: 16,
                                 fontWeight: "500",
-
                                 flex: "flex-wrap",
                               }}
                             >
@@ -182,11 +205,9 @@ function Customerpay() {
                             </p>
                           </div>
                         )}
-                        
                     </div>
-                    
                   ) : (
-                    <span>Select a Supplier</span>
+                    <span>Select a customer</span>
                   )}
                 </FormGroup>
               </Col>
@@ -247,7 +268,7 @@ function Customerpay() {
                     <FormCheck
                       type="switch"
                       className="fs-4 ms-3 mt-1"
-                      onClick={(s)=>handleswitch(s)}
+                      onClick={handleswitch}
                     ></FormCheck>
                   </FormLabel>
                 </FormGroup>
@@ -320,35 +341,30 @@ function Customerpay() {
 
             <div className="d-flex flex-column align-item-center text-end pe-3 pt-3">
               <p className="txt-ht_blue f-16 fw-bold">
-                
                 Due Amount :
                 <span
                   className="fst-normal"
                   style={{
                     color: "black",
-                    marginLeft: '10px',
+                    marginLeft: "10px",
                   }}
                 >
-                  
                   ₹ 51,117.60
                 </span>
               </p>
               <p className="txt-ht_blue f-16 fw-bolder">
-                
                 Paid Amount :
                 <span
                   className="fst-normal"
                   style={{
                     color: "black",
-                    marginLeft: '10px',
+                    marginLeft: "10px",
                   }}
                 >
-                  
                   ₹ 51,117.60
                 </span>
               </p>
-              <p className="txt-ht_blue f-16 fw-bolder">
-                
+              {/* <p className="txt-ht_blue f-16 fw-bolder">
                 Knock Off Amount :
                 <span
                   className="fst-normal"
@@ -357,21 +373,18 @@ function Customerpay() {
                     marginLeft: '10px',
                   }}
                 >
-                  
                   ₹ 51,117.60
                 </span>
-              </p>
+              </p> */}
               <p className="txt-ht_blue f-16 fw-bolder">
-                
                 Remaining Amount :
                 <span
                   className="fst-normal"
                   style={{
                     color: "black",
-                    marginLeft: '10px',
+                    marginLeft: "10px",
                   }}
                 >
-                  
                   ₹ 51,117.60
                 </span>
               </p>

@@ -16,6 +16,7 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import { useSelector } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
+import Receipt from "./components/payment/SupplierPay"
 
 import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
@@ -128,19 +129,35 @@ function App() {
               </>
             }
           />
-          <Route path="/VendorForm" element={<><Navbar /> <VendorForm /></>} />
-
           <Route
-          path="/Customerpay"
-          element={
-            <>
-              <Navbar />
-              <Customerpay />
-            </>
-          }
-        />
-        
+            path="/VendorForm"
+            element={
+              <>
+                <Navbar /> <VendorForm />
+              </>
+            }
+          />        
+          <Route
+            path="/Customerpay"
+            element={
+              <>
+                <Navbar />
+                <Customerpay />
+              </>
+            }
+          />
+          <Route
+            path="/Receipt"
+            element={
+              <>
+                <Navbar />
+                <Receipt />
+              </>
+            }
+          />
         </Routes>
+     
+      
       ) : (
         <Routes>
           <Route path="/" element={<Login />} />
