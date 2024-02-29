@@ -79,6 +79,7 @@ function CustomerForm(props) {
   };
 
   const selectBusinessType = (businessType) => {
+    console.log(businessType)
     setCustomerType(businessType.id)
   }
 
@@ -103,7 +104,7 @@ function CustomerForm(props) {
       email: email,
       website: website,
       isRegistered: vattreatment,
-      category: category.id,
+      category: category,
       title: title,
       customeraddress: customeraddress,
       city: city,
@@ -115,7 +116,7 @@ function CustomerForm(props) {
       businessTypeId: customerType,
     };
 
-    dispatch({type: REGISTER_API_CALL, payload: requestData})
+    dispatch({type: CREATE_CUSTOMER_API_CALL, payload: requestData})
 
   };
 
@@ -142,7 +143,6 @@ function CustomerForm(props) {
 
   useEffect(() => {
       if (props.type === 1 && props.master.businessTypes.length > 0) {
-        console.log(props.master.businessTypes[0].id)
         setCustomerType(props.master.businessTypes[0].id)
         setBusinessType(props.master.businessTypes.filter(item => {
           return item.id === 1 || item.id === 2;
