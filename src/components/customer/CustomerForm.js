@@ -45,7 +45,6 @@ function CustomerForm(props) {
   const [zip, setZip] = useState("");
   const [title, setTitle] = useState("");
   const [vattreatment, setVattreatment] = useState("false");
-  const createby = 1;
 
   const [customerType, setCustomerType] = useState(); // individual
 
@@ -111,7 +110,7 @@ function CustomerForm(props) {
       emirates: emirates,
       country: country,
       zip: zip,
-      createdBy: createby,
+      createdBy: props.loggedInUser.loginId,
       customerCategoryId: category,
       businessTypeId: customerType,
     };
@@ -569,7 +568,8 @@ function CustomerForm(props) {
 
 const mapsToProps = (state) => {
   return {
-    master: state.masterData
+    master: state.masterData,
+    loggedInUser: state.users
   }
 }
 
