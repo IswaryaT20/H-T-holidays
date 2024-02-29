@@ -219,7 +219,10 @@ const InvoiceForm = () => {
               {invoiceData.map((item) => (
                 <tr key={item.id}>
                   <td className="table-td">
-                    <Form.Select className="inputfocus rounded-0" style={{ width: 170, height:30, fontSize:14 }}>
+                    <Form.Select
+                      className="inputfocus rounded-0"
+                      style={{ width: 170, height: 30, fontSize: 14 }}
+                    >
                       <option disabled>Select Product</option>
                     </Form.Select>
                   </td>
@@ -237,7 +240,7 @@ const InvoiceForm = () => {
                       type="number"
                       className="inputfocus border-0 rounded-0"
                       placeholder="Quantity"
-                      style={{width: 170,height:30, fontSize:14}}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
                       value={isNaN(item.qty) ? "" : item.qty}
                       onChange={(e) =>
                         handleInputChange(item.id, "qty", e.target.value)
@@ -249,7 +252,7 @@ const InvoiceForm = () => {
                       type="number"
                       className="inputfocus border-0 rounded-0"
                       placeholder="Price (AED)"
-                      style={{width: 170,height:30, fontSize:14}}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
                       value={isNaN(item.price) ? "" : item.price}
                       onChange={(e) =>
                         handleInputChange(item.id, "price", e.target.value)
@@ -261,7 +264,7 @@ const InvoiceForm = () => {
                       type="number"
                       className="inputfocus border-0 rounded-0"
                       placeholder="Dicount"
-                      style={{width: 170,height:30, fontSize:14}}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
                       value={isNaN(item.discount) ? "" : item.discount}
                       onChange={(e) =>
                         handleInputChange(item.id, "discount", e.target.value)
@@ -273,7 +276,7 @@ const InvoiceForm = () => {
                       type="number"
                       className="inputfocus border-0 rounded-0"
                       placeholder="VAT"
-                      style={{width: 170,height:30, fontSize:14}}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
                       value={isNaN(item.vat) ? "" : item.vat}
                       onChange={(e) =>
                         handleInputChange(item.id, "vat", e.target.value)
@@ -322,9 +325,8 @@ const InvoiceForm = () => {
             onClick={handleAddRow}
             style={{
               backgroundColor: "#1d1d5e",
-              margin: 10,
               borderWidth: 0,
-              width: 120,
+              width: 110,
               fontWeight: "bolder",
             }}
           >
@@ -334,20 +336,23 @@ const InvoiceForm = () => {
 
         <Row className="mt-3">
           <Col className="col-8">
-            <Form>
-              <Form.Group>
-                <Form.Control
-                  as="textarea"
-                  row={4}
-                  placeholder="Description"
-                  style={{ width: "400px", height: "100px" }}
-                />
-              </Form.Group>
-            </Form>
+            <Form.Control
+              as="textarea"
+              row={4}
+              placeholder="Description"
+              style={{ width: "400px", height: "100px" }}
+            />
           </Col>
           <Col>
             <div className="table-container">
-              <Table className="w-75" style={{marginLeft:"20%"}} hover bordered responsive size="sm">
+              <Table
+                className="w-75"
+                style={{ marginLeft: "20%" }}
+                hover
+                bordered
+                responsive
+                size="sm"
+              >
                 <tbody>
                   <tr>
                     <td
@@ -383,16 +388,24 @@ const InvoiceForm = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan={2}>
+                    <td colSpan={2} className="text-start fw-bolder">
                       {!showGlobalDiscount ? (
-                        <p style={{marginBottom:"2px"}} onClick={handleGlobalDiscountClick}>
+                        <p
+                          className="text-decoration-underline"
+                          style={{
+                            marginBottom: "2px",
+                            color: "#1d1d5e",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleGlobalDiscountClick}
+                        >
                           Global Discount
                         </p>
                       ) : (
                         <div className="d-flex justify-content-between">
                           <Form.Control
                             type="number"
-                            style={{ width: 170, height:"30px" }}
+                            style={{ width: 170, height: "30px" }}
                             placeholder="Enter Discount"
                             value={globalDiscountValue}
                             onChange={handleGlobalDiscountChange}

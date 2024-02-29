@@ -16,6 +16,7 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import { useSelector, useDispatch } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
+import Receipt from "./components/payment/SupplierPay"
 import { KEY_IS_LOGGED_IN, KEY_USER_ID, storeToLocalStorage, getFromLocalStorage, UPDATE_USER_ID_LOCALLY } from "./utils/Constant";
 
 import "./App.css";
@@ -127,7 +128,7 @@ function App() {
           />
 
           <Route
-            path="/Index"
+            path="/Purchaseorder"
             element={
               <>
                 <Navbar />
@@ -153,19 +154,35 @@ function App() {
               </>
             }
           />
-          <Route path="/VendorForm" element={<><Navbar /> <VendorForm /></>} />
-
           <Route
-          path="/Customerpay"
-          element={
-            <>
-              <Navbar />
-              <Customerpay />
-            </>
-          }
-        />
-        
+            path="/VendorForm"
+            element={
+              <>
+                <Navbar /> <VendorForm />
+              </>
+            }
+          />        
+          <Route
+            path="/Customerpay"
+            element={
+              <>
+                <Navbar />
+                <Customerpay />
+              </>
+            }
+          />
+          <Route
+            path="/Receipt"
+            element={
+              <>
+                <Navbar />
+                <Receipt />
+              </>
+            }
+          />
         </Routes>
+     
+      
       ) : (
         <Routes>
           <Route path="/" element={<Login />} />

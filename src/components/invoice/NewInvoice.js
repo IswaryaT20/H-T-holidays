@@ -63,10 +63,10 @@ const NewInvoice = () => {
         </Row>
 
         <h1
-          className="d-flex justify-content-center fs-5 fw-bolder"
+          className="d-flex justify-content-center fs-6 fw-bolder"
           style={{ color: "#1d1d5e" }}
         >
-          {isDraft ? "DRAFT INVOICE" : "INVOICE"}
+          {isDraft ? "DRAFT INVOICE" : "NEW INVOICE"}
         </h1>
 
         <>
@@ -119,7 +119,7 @@ const NewInvoice = () => {
             <Col className="col-4 d-flex justify-content-center">
               <Form.Group>
                 <Form.Control
-                  className="text-center rounded-0"
+                  className="inputfocus text-center rounded-0"
                   type="search"
                   placeholder="+ Add Client"
                   style={{ backgroundColor: "#dedef8", width: "250px" }}
@@ -146,7 +146,7 @@ const NewInvoice = () => {
 
         <>
           <Row className="mt-2 mb-3">
-            <Col className="col-7 d-flex justify-content-around">
+            <Col className="col-7 d-flex justify-content-start">
               <Form.Group>
                 <Form.Label style={{ fontSize: 14, fontWeight:"500" }}>Invoice Date</Form.Label>
                 <Form.Control
@@ -158,7 +158,7 @@ const NewInvoice = () => {
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group className="ms-2">
                 <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Due Date</Form.Label>
                 <Form.Control
                   className="inputfocus rounded-0"
@@ -167,7 +167,7 @@ const NewInvoice = () => {
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group className="ms-2">
                 <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Net *</Form.Label>
                 <Form.Select
                   className="inputfocus rounded-0"
@@ -181,7 +181,7 @@ const NewInvoice = () => {
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group className="ms-2">
                 <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Sales Person</Form.Label>
                 <Form.Select
                   className="inputfocus rounded-0"

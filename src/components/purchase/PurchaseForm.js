@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { FaTrashCan } from "react-icons/fa6";
 import { MdOutlineClose } from "react-icons/md";
+import { GrAttachment } from "react-icons/gr";
 
 const PurchaseForm = () => {
   const [subTotal, setSubTotal] = useState(0);
@@ -11,6 +12,14 @@ const PurchaseForm = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [showGlobalDiscount, setShowGlobalDiscount] = useState(false);
   const [globalDiscountValue, setGlobalDiscountValue] = useState(0);
+
+  // Use State for Unit Price Excluding
+  const [unitExcluding, setUnitExcluding] = useState(false);
+  const [excludingSubTotal, setExcludingSubTotal] = useState(0);
+  const [excludingTotalVAT, setExcludingTotalVAT] = useState(0);
+  const [excludingBeforeVAT, setExcludingBeforeVAT] = useState(0);
+  const [excludingTotalAmount, setExcludingTotalAmount] = useState(0);
+  const [excludingTotalDiscount, setExcludingTotalDiscount] = useState(0);
 
   const tableHeader = [
     "Product",
@@ -56,17 +65,16 @@ const PurchaseForm = () => {
     setpuchaseData(puchaseData.filter((item) => item.id !== id));
   };
 
+  //unit price handlers:
+  const handleUnitExcluding = () => {
+    setUnitExcluding(!unitExcluding);
+  };
+
   const handleInputChange = (id, fieldName, value) => {
     const updatedData = puchaseData.map((item) => {
       if (item.id === id) {
-        let amount = 0;
-        let totalAmount = 0;
-
-        // Convert value(string) to number
-        const numericValue = parseFloat(value);
-
         // Update the field value
-        const updatedItem = { ...item, [fieldName]: numericValue };
+        const updatedItem = { ...item, [fieldName]: parseFloat(value) };
 
         // Calculate amount
         const qty = updatedItem.qty || 1;
@@ -74,7 +82,23 @@ const PurchaseForm = () => {
         const discount = updatedItem.discount || 0;
         const vat = updatedItem.vat || 0;
 
-        amount = qty * price; // Calculate amount without discount and VAT
+        let amount = qty * price;
+        let totalAmount = 0;
+
+        // unit price
+        let vatExcludingAmount = 0; // unit VAT
+        let totalExcludingAmount = 0; // unit subTotal
+        let totalExcludingDiscount = 0; // unit discount
+        let totalUnitPrice = 0; //  unit Total
+
+        if (unitExcluding) {
+          // Unit Excluding Calculation
+          totalExcludingDiscount = amount - (amount * discount) / 100;
+          vatExcludingAmount =
+            totalExcludingDiscount - totalExcludingDiscount / (1 + vat / 100);
+          totalExcludingAmount = totalExcludingDiscount - vatExcludingAmount;
+          totalUnitPrice = totalExcludingAmount + vatExcludingAmount;
+        }
 
         // Apply discount
         amount -= (amount * discount) / 100;
@@ -82,9 +106,16 @@ const PurchaseForm = () => {
         // Apply VAT
         amount += (amount * vat) / 100;
 
-        totalAmount = amount.toFixed(2); // Round to 2 decimal places
+        totalAmount = amount.toFixed(2);
 
-        return { ...updatedItem, amount: totalAmount };
+        return {
+          ...updatedItem,
+          amount: totalAmount,
+          totalExcludingDiscount: totalExcludingDiscount.toFixed(2),
+          vatExcludingAmount: vatExcludingAmount.toFixed(2),
+          totalExcludingAmount: totalExcludingAmount.toFixed(2),
+          totalUnitPrice: totalUnitPrice.toFixed(2),
+        };
       }
       return item;
     });
@@ -97,6 +128,10 @@ const PurchaseForm = () => {
     let newTotalDiscount = 0;
     let newTotalVAT = 0;
 
+    let newExcludingDiscount = 0;
+    let newExcluingSubTotal = 0;
+    let newExcludingTotalVAT = 0;
+
     puchaseData.forEach((item) => {
       const qty = parseFloat(item.qty || 1);
       const amount = parseFloat(item.price || 0);
@@ -108,20 +143,41 @@ const PurchaseForm = () => {
       const itemDiscount = (itemTotal * discount) / 100;
       const itemVAT = ((itemTotal - itemDiscount) * vat) / 100;
 
+      //Stores Unit Excluding Values:
+      const itemExcludingDiscount = (itemTotal * discount) / 100;
+      const itemExcludingTotal = itemTotal - itemExcludingDiscount;
+      const itemExcludingVAT =
+        itemExcludingTotal - itemExcludingTotal / (1 + vat / 100);
+      const itemExcludingSubTotal = itemExcludingTotal - itemExcludingVAT;
+
       newSubTotal += itemTotal;
       newTotalDiscount += itemDiscount;
       newTotalVAT += itemVAT;
+
+      newExcludingDiscount += itemExcludingDiscount;
+      newExcluingSubTotal += itemExcludingSubTotal;
+      newExcludingTotalVAT += itemExcludingVAT;
     });
 
     const newBeforeVAT = newSubTotal - newTotalDiscount;
     const newTotalAmount = newBeforeVAT + newTotalVAT;
+
+    const newExcludingBeforeVAT = newExcluingSubTotal;
+    const newExcludingTotalAmount =
+      newExcludingBeforeVAT + newExcludingTotalVAT;
 
     setSubTotal(newSubTotal.toFixed(2));
     setTotalDiscount(newTotalDiscount.toFixed(2));
     setTotalVAT(newTotalVAT.toFixed(2));
     setBeforeVAT(newBeforeVAT.toFixed(2));
     setTotalAmount(newTotalAmount.toFixed(2));
-  }, [puchaseData]);
+
+    setExcludingTotalDiscount(newExcludingDiscount.toFixed(2));
+    setExcludingSubTotal(newExcluingSubTotal.toFixed(2));
+    setExcludingBeforeVAT(newExcludingBeforeVAT.toFixed(2));
+    setExcludingTotalVAT(newExcludingTotalVAT.toFixed(2));
+    setExcludingTotalAmount(newExcludingTotalAmount.toFixed(2));
+  }, [puchaseData, unitExcluding]);
 
   const handleGlobalDiscountClick = () => {
     setShowGlobalDiscount(true);
@@ -129,6 +185,7 @@ const PurchaseForm = () => {
 
   const handleGlobalDiscountClose = () => {
     setShowGlobalDiscount(false);
+    setGlobalDiscountValue(0);
   };
 
   const handleGlobalDiscountChange = (e) => {
@@ -136,20 +193,16 @@ const PurchaseForm = () => {
     setGlobalDiscountValue(discount);
   };
 
-  const totalAmountWithGlobalDiscount = (
-    parseFloat(totalAmount) - globalDiscountValue
-  ).toFixed(2);
-
   return (
     <>
       <Container fluid className="mt-1">
-        <div className="m-4">
-          <Table hover>
+        {/* Main Table */}
+        <div>
+          <Table hover size="sm" responsive>
             <thead style={{ padding: "0.75rem" }}>
               <tr>
                 {tableHeader.map((header, index) => (
                   <th
-                    className="f-14"
                     key={index}
                     style={{
                       textAlign: "center",
@@ -165,29 +218,31 @@ const PurchaseForm = () => {
             </thead>
             <tbody>
               {puchaseData.map((item) => (
-                <tr key={item.id} className="w-100 h-30">
-                  <td className="table-td f-14">
+                <tr key={item.id}>
+                  <td className="table-td">
                     <Form.Select
-                      className="rounded inputfocus"
-                      style={{ width: 175 }}
+                      className="inputfocus rounded-0"
+                      style={{ width: 170, height: 30, fontSize: 14 }}
                     >
-                      <option></option>
+                      <option disabled>Select Product</option>
                     </Form.Select>
                   </td>
                   <td className="table-td">
                     <Form.Control
-                      className="border-0 rounded-0 f-14 inputfocus"
+                      className="inputfocus border-0 rounded-0"
                       as="textarea"
+                      placeholder="Description"
                       rows={1}
-                      style={{ height: 50 }}
+                      style={{ height: 40 }}
                     />
                   </td>
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14 inputfocus"
+                      className="inputfocus border-0 rounded-0"
                       placeholder="Quantity"
-                      value={item.qty}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
+                      value={isNaN(item.qty) ? "" : item.qty}
                       onChange={(e) =>
                         handleInputChange(item.id, "qty", e.target.value)
                       }
@@ -196,9 +251,10 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14 inputfocus"
+                      className="inputfocus border-0 rounded-0"
                       placeholder="Price (AED)"
-                      value={item.price}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
+                      value={isNaN(item.price) ? "" : item.price}
                       onChange={(e) =>
                         handleInputChange(item.id, "price", e.target.value)
                       }
@@ -207,9 +263,10 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14 inputfocus"
+                      className="inputfocus border-0 rounded-0"
                       placeholder="Dicount"
-                      value={item.discount}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
+                      value={isNaN(item.discount) ? "" : item.discount}
                       onChange={(e) =>
                         handleInputChange(item.id, "discount", e.target.value)
                       }
@@ -218,18 +275,25 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Control
                       type="number"
-                      className="rounded-0 f-14 inputfocus"
+                      className="inputfocus border-0 rounded-0"
                       placeholder="VAT"
-                      value={item.vat}
+                      style={{ width: 170, height: 30, fontSize: 14 }}
+                      value={isNaN(item.vat) ? "" : item.vat}
                       onChange={(e) =>
                         handleInputChange(item.id, "vat", e.target.value)
                       }
                     />
                   </td>
                   <td className="table-td">
-                    {item.price ? <span>{item.amount}</span> : <span>-</span>}
+                    {unitExcluding ? (
+                      item.totalUnitPrice
+                    ) : item.price ? (
+                      <span>{item.amount}</span>
+                    ) : (
+                      <span>-</span>
+                    )}
                   </td>
-                  <td className="table-td f-14">
+                  <td className="table-td">
                     <FaTrashCan
                       style={{ color: "red", cursor: "pointer" }}
                       onClick={() => handleDeleteRow(item.id)}
@@ -240,16 +304,30 @@ const PurchaseForm = () => {
             </tbody>
           </Table>
         </div>
-        <div className="ms-3">
+
+        <div className="w-100 d-flex justify-content-end align-items-center">
+          <Form.Group className="d-flex">
+            <Form.Check
+              type="checkbox"
+              id="custom-checkbox"
+              onChange={handleUnitExcluding}
+            />
+            <Form.Label
+              className="ms-1"
+              style={{ fontSize: 14, fontWeight: "500", color: "#1d1d5e" }}
+            >
+              Unit price is VAT inclusive
+            </Form.Label>
+          </Form.Group>
+        </div>
+
+        <div className="w-100">
           <Button
             onClick={handleAddRow}
-            className="f-14"
             style={{
               backgroundColor: "#1d1d5e",
-              margin: 10,
               borderWidth: 0,
-              height: "h-max",
-              width: "w-max",
+              width: 110,
               fontWeight: "bolder",
             }}
           >
@@ -257,72 +335,85 @@ const PurchaseForm = () => {
           </Button>
         </div>
 
-        <Row className="p-2 ms-1 me-1 w-100 ">
-          <Col xs={8} md={8} lg={8} xxl={8} className="">
-            <Form>
-              <Form.Group>
-                <Form.Control
-                  as="textarea"
-                  row={4}
-                  placeholder="Momo optional"
-                  className="w-60 inputfocus"
-                  style={{ height: "170px" }}
-                />
-              </Form.Group>
-            </Form>
+        <Row className="mt-3">
+          <Col className="col-8">
+            <Form.Control
+              as="textarea"
+              row={4}
+              placeholder="Description"
+              style={{ width: "400px", height: "100px" }}
+            />
+            <br />
+            <Button style={{
+              backgroundColor: "#1d1d5e",
+              borderWidth: 0,
+              width: 100,
+              fontWeight: "bolder",
+            }}><GrAttachment /> Attach</Button>
           </Col>
-
-          <Col
-            xs={4}
-            md={4}
-            lg={4}
-            xxl={4}
-            className="text-end d-flex justify-content-end "
-          >
-            <div className="w-70 me-2">
-              <Table hover bordered className="text-end me-5 border border-3">
+          <Col>
+            <div className="table-container">
+              <Table
+                className="w-75"
+                style={{ marginLeft: "20%" }}
+                hover
+                bordered
+                responsive
+                size="sm"
+              >
                 <tbody>
-                  <tr className="w-max">
+                  <tr>
                     <td
-                      className="fw-bolder f-14 text-start w-max"
+                      className="fw-bolder text-start"
                       style={{ color: "#1d1d5e" }}
                     >
                       Sub-Total
                     </td>
-                    <td className="text-end w-30 f-14">{subTotal}</td>
+                    <td className="text-end">
+                      {!unitExcluding ? subTotal : excludingSubTotal}
+                    </td>
                   </tr>
                   <tr>
                     <td
-                      className="fw-bolder f-14 text-start"
+                      className="fw-bolder text-start"
                       style={{ color: "#1d1d5e" }}
                     >
                       Total Discount
                     </td>
-                    <td className="text-end f-14">{totalDiscount}</td>
+                    <td className="text-end">
+                      {!unitExcluding ? totalDiscount : excludingTotalDiscount}
+                    </td>
                   </tr>
                   <tr>
                     <td
-                      className="fw-bolder f-14 text-start"
+                      className="fw-bolder text-start"
                       style={{ color: "#1d1d5e" }}
                     >
                       Before VAT
                     </td>
-                    <td className="text-end f-14 ">{beforeVAT}</td>
+                    <td className="text-end">
+                      {!unitExcluding ? beforeVAT : excludingBeforeVAT}
+                    </td>
                   </tr>
                   <tr>
-                    <td colSpan={2}>
+                    <td colSpan={2} className="text-start fw-bolder">
                       {!showGlobalDiscount ? (
-                        <Button
-                          className="btn-globalDiscount rounded-1 f-14"
+                        <p
+                          className="text-decoration-underline"
+                          style={{
+                            marginBottom: "2px",
+                            color: "#1d1d5e",
+                            cursor: "pointer",
+                          }}
                           onClick={handleGlobalDiscountClick}
                         >
                           Global Discount
-                        </Button>
+                        </p>
                       ) : (
-                        <div className="d-flex justify-content-between inputfocus">
+                        <div className="d-flex justify-content-between">
                           <Form.Control
                             type="number"
-                            style={{ width: 175 }}
+                            style={{ width: 170, height: "30px" }}
                             placeholder="Enter Discount"
                             value={globalDiscountValue}
                             onChange={handleGlobalDiscountChange}
@@ -337,22 +428,31 @@ const PurchaseForm = () => {
                   </tr>
                   <tr>
                     <td
-                      className="fw-bolder f-14 text-start"
+                      className="fw-bolder text-start"
                       style={{ color: "#1d1d5e" }}
                     >
                       VAT (AED)
                     </td>
-                    <td className="text-end f-14">{totalVAT}</td>
+                    <td className="text-end">
+                      {!unitExcluding ? totalVAT : excludingTotalVAT}
+                    </td>
                   </tr>
                   <tr>
                     <td
-                      className="fw-bolder f-16 text-start"
+                      className="fw-bolder text-start"
                       style={{ color: "#1d1d5e" }}
                     >
                       Total Amount (AED)
                     </td>
-                    <td className="text-end f-16">
-                      {totalAmountWithGlobalDiscount}
+                    <td className="text-end">
+                      {!unitExcluding
+                        ? (
+                            parseFloat(totalAmount) - globalDiscountValue
+                          ).toFixed(2)
+                        : (
+                            parseFloat(excludingTotalAmount) -
+                            globalDiscountValue
+                          ).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
