@@ -5,7 +5,7 @@ import logo from "../Assets/images/htnav.png";
 import { Link } from "react-router-dom";
 
 const NavigationItems = [
-  { id: 2, title: "Customers", link: "#" },
+  { id: 2, title: "Customers", link: "/" },
   { id: 3, title: "Vendors", link: "#" },
   { id: 4, title: "Products", link: "/Product" },
   { id: 5, title: "Accounting", link: "#" },
@@ -17,8 +17,6 @@ const NavigationItems = [
 const dropdownActions = {
   2: [{ id: 1, title: "Customers", link: "/" }, {id:2, title: "Invoice", link:"/Invoice"}],
   3: [{ id: 1, title: "Vendors", link: "/vendor" }, {id:2, title:"Purchase", link:"/Purchase"}],
-  2: [{ id: 1, title: "Customers", link: "/Customer" }],
-  3: [{ id: 1, title: "Vendors", link: "/vendor" }],
   5: [
     {
       id: 1,
