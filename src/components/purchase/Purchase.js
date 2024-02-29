@@ -75,7 +75,7 @@ const Newproduct = () => {
       <Row style={{ marginTop: '2%' }}>
         <Col className='col-8' style={{ paddingLeft: '2%' }}>
           <div className='d-flex'>
-          <Link to="/Index" style={{textDecoration:"none", color:"white"}}><Button style={{backgroundColor:"#1d1d5e", borderColor:"#1d1d5e", width:"80px"}}>New +</Button></Link>
+          <Link to="/Purchaseorder" style={{textDecoration:"none", color:"white"}}><Button style={{backgroundColor:"#1d1d5e", borderColor:"#1d1d5e", width:"80px"}}>New +</Button></Link>
             <InputGroup
             style={{ height: "10px", width: "39%", marginLeft: "10%" }}
           >

@@ -204,7 +204,7 @@ function Signup(props) {
             </Button>
           </div>
           {
-            props.users.error && <p className="alert">{props.users.error}</p>
+          <Alert variant="danger"> {props.users.error}</Alert>
           }
           <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}
@@ -219,7 +219,6 @@ function Signup(props) {
     </div>
   );
 }
-
 const mapsToProps = (state) => {
   return {
     users: state.users
