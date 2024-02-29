@@ -28,12 +28,17 @@ function App() {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    const isLogged = getFromLocalStorage(KEY_IS_LOGGED_IN)
+    if (isLoggedIn === 'true' || isLogged) {
+      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: parseInt(getFromLocalStorage(KEY_USER_ID))})
+    }
     setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN))
   }, [])
 
   useState(() => {
+    console.log(isLoggedIn)
     if (isLoggedIn) {
-      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: getFromLocalStorage(KEY_USER_ID)})
+      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: parseInt(getFromLocalStorage(KEY_USER_ID))})
     }
   }, [isLoggedIn])
   
@@ -46,7 +51,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      {state.users.isLoggedIn ? (
+      {state.users.isLoggedIn || isLoggedIn ? (
         <Routes>
           <Route
             path="/"

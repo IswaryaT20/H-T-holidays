@@ -7,7 +7,8 @@ import {
   Table,
   Modal,
   Form,
-  Alert,} from "react-bootstrap";
+  Alert,
+} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
@@ -18,7 +19,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { GET_ALL_PRODUCTS_API_CALL } from "../../utils/Constant";
+import { GET_ALL_PRODUCTS_API_CALL, ADD_PRODUCT_API_CALL } from "../../utils/Constant";
 
 const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -39,7 +40,6 @@ const Newproduct = (props) => {
   const [description, setDescription] = useState("");
   const [supplierName, setSupplierName] = useState("");
   const supplierId = "007";
-  const createdBy = "14";
   const productUrl = "testURL@gmail.com";
 
   console.log(props.productsData.error)
@@ -48,10 +48,10 @@ const Newproduct = (props) => {
 
   useEffect(() => {
     // fetchTableData();
-    dispatch({type: GET_ALL_PRODUCTS_API_CALL})
+    dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
   }, []);
 
-const [success,setsuccess] = useState();
+  const [success, setsuccess] = useState();
 
   const handleSubmit = () => {
     if (!supplierName.trim()) {
@@ -59,33 +59,36 @@ const [success,setsuccess] = useState();
       return;
     }
     if (!productName.trim()) {
-      setProductNameError(true); 
+      setProductNameError(true);
       return;
     }
 
 
-    const BodyData = {
+    const bodyData = {
       productName: productName,
       supplierId: supplierId,
       productType: productType,
       productDescription: description,
       supplierName: supplierName,
-      createdBy: createdBy,
+      createdBy: props.loggedInUser.loginId,
       productUrl: productUrl,
     };
 
-    axios
-      .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
-      .then((response) => {
-      setsuccess(response.data.status)
-      handleShowAlertModal();
-      console.log(response.data)
-             
 
-      })
-      .catch((error) => {
-        console.error("Error adding product:", error);
-      });
+    dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData })
+
+    // axios
+    //   .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
+    //   .then((response) => {
+    //   setsuccess(response.data.status)
+    //   handleShowAlertModal();
+    //   console.log(response.data)
+
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error adding product:", error);
+    //   });
     setShowModal(false);
   };
 
@@ -186,15 +189,15 @@ const [success,setsuccess] = useState();
           </thead>
           <tbody>
             {props.productsData.products.filter((items) => {
-                return search.toLowerCase() === ""
-                  ? items
-                  : items.productName
-                      .toLowerCase()
-                      .includes(search.toLowerCase());
-              })
+              return search.toLowerCase() === ""
+                ? items
+                : items.productName
+                  .toLowerCase()
+                  .includes(search.toLowerCase());
+            })
               .map((items) => (
                 <tr key={items.id}>
-                <td > 
+                  <td >
                     <div
                       style={{
                         display: "flex",
@@ -203,8 +206,8 @@ const [success,setsuccess] = useState();
                       }}
                       onClick={() => handleShowModaledit(items.productCode)}
                     >
-                    
-                      <FaEdit 
+
+                      <FaEdit
                         onClick={() => handleOptionClick1(items.id)} style={{ alignItems: 'center', marginLeft: '22px', marginBottom: '-19px' }}
                       />
                     </div>
@@ -243,7 +246,7 @@ const [success,setsuccess] = useState();
             </p>
           </div>
           <Row>
-          <Col>
+            <Col>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <div
                   className="mb-3"
@@ -253,14 +256,14 @@ const [success,setsuccess] = useState();
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Type 
+                    Product Type
                   </label>
 
                   <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "22%", width: "44%", padding: "2px",background:'#d9e1ee8c' }}
+                    style={{ marginLeft: "22%", width: "44%", padding: "2px", background: '#d9e1ee8c' }}
                     value={productType}
                     onChange={(e) => setProductType(e.target.value)} readOnly
                   />
@@ -288,44 +291,44 @@ const [success,setsuccess] = useState();
                     value={supplierName}
                     onChange={(e) => {
                       setSupplierName(e.target.value);
-                setSupplierNameError(false);
+                      setSupplierNameError(false);
                     }}
                   />
-                  
+
                   {supplierNameError && (
-                    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Supplier Name Required</span>
+                    <span style={{ color: "red", marginTop: '48px', marginLeft: '-29%', fontSize: '12px' }}>Supplier Name Required</span>
                   )}
                 </div>
 
                 <div
-  className={`mb-3 ${productNameError ? "has-error" : ""}`}
-  style={{ display: "flex", alignItems: "center" }}
->
-  <label
-    className="control-label mr-3"
-    style={{ fontSize: "14px", padding: "0px" }}
-  >
-    Product Name <span style={{ color: 'red' }}>*</span>
-  </label>
-  <Form.Control
-    type="text"
-    placeholder=" "
-    className="inputfocus"
-    style={{
-      marginLeft: "18%",
-      width: "45%",
-      padding: "2px",
-    }}
-    value={productName}
-    onChange={(e) => {
-      setProductName(e.target.value);
-      setProductNameError(false); 
-    }}
-  />
-  {productNameError && (
-    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Product Name Required</span> 
-  )}
-</div>
+                  className={`mb-3 ${productNameError ? "has-error" : ""}`}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <label
+                    className="control-label mr-3"
+                    style={{ fontSize: "14px", padding: "0px" }}
+                  >
+                    Product Name <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <Form.Control
+                    type="text"
+                    placeholder=" "
+                    className="inputfocus"
+                    style={{
+                      marginLeft: "18%",
+                      width: "45%",
+                      padding: "2px",
+                    }}
+                    value={productName}
+                    onChange={(e) => {
+                      setProductName(e.target.value);
+                      setProductNameError(false);
+                    }}
+                  />
+                  {productNameError && (
+                    <span style={{ color: "red", marginTop: '48px', marginLeft: '-29%', fontSize: '12px' }}>Product Name Required</span>
+                  )}
+                </div>
                 <div
                   className="mb-3"
                   style={{ display: "flex", alignItems: "center" }}
@@ -406,17 +409,17 @@ const [success,setsuccess] = useState();
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Type 
+                    Product Type
                   </label>
 
                   <Form.Control
-  type="text"
-  placeholder=" "
-  className="inputfocus"
-  style={{ marginLeft: "22%", width: "50%", padding: "2px", background: '#d9e1ee8c' }}
-  defaultValue="  H_T HOLIDAYS"
-  readOnly
-/>
+                    type="text"
+                    placeholder=" "
+                    className="inputfocus"
+                    style={{ marginLeft: "22%", width: "50%", padding: "2px", background: '#d9e1ee8c' }}
+                    defaultValue="  H_T HOLIDAYS"
+                    readOnly
+                  />
                 </div>
                 <div
                   className="mb-3"
@@ -426,14 +429,14 @@ const [success,setsuccess] = useState();
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-               Supplier Name 
+                    Supplier Name
                   </label>
                   <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
                     style={{ marginLeft: "89px", width: "50%", padding: "2px" }}
-                 
+
                   />
                 </div>
                 <div
@@ -493,17 +496,17 @@ const [success,setsuccess] = useState();
         </Modal.Footer>
       </Modal>
       <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Product Data</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {success === 'Success' ? (
-      <Alert variant="success"> {success} </Alert>
-    ) : (
-      <Alert variant="danger">Data Saved Unsuccessfully</Alert>
-    )}
-  </Modal.Body>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Product Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {success === 'Success' ? (
+            <Alert variant="success"> {success} </Alert>
+          ) : (
+            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+          )}
+        </Modal.Body>
+      </Modal>
       {
         props.productsData.error ? <Alert clas>[props.productsData.error.status]</Alert> : null
 
@@ -514,7 +517,8 @@ const [success,setsuccess] = useState();
 
 const mapsToProps = (state) => {
   return {
-    productsData: state.productsData
+    productsData: state.productsData,
+    loggedInUser: state.users
   }
 }
 
