@@ -5,7 +5,6 @@ import logo from "../Assets/images/htnav.png";
 import { Link } from "react-router-dom";
 
 const NavigationItems = [
-  { id: 1, title: "Dashboard", link: "#" },
   { id: 2, title: "Customers", link: "#" },
   { id: 3, title: "Vendors", link: "#" },
   { id: 4, title: "Products", link: "/Product" },
@@ -16,6 +15,8 @@ const NavigationItems = [
 ];
 
 const dropdownActions = {
+  2: [{ id: 1, title: "Customers", link: "/" }, {id:2, title: "Invoice", link:"/Invoice"}],
+  3: [{ id: 1, title: "Vendors", link: "/vendor" }, {id:2, title:"Purchase", link:"/Purchase"}],
   2: [{ id: 1, title: "Customers", link: "/Customer" }],
   3: [{ id: 1, title: "Vendors", link: "/vendor" }],
   5: [
@@ -54,7 +55,7 @@ function Navigation2() {
       expand="lg"
       style={{ paddingLeft: "17px" }}
     >
-      <Navbar.Brand className="w-10" href="#">
+      <Navbar.Brand className="w-10" href="/">
         <img
           className="w-100"
           style={{ height: "40px" }}

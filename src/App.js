@@ -5,99 +5,132 @@ import Login from "./components/login/Login";
 import Signup from "./components/login/Signup";
 import Navbar from "./components/Navbar";
 import Customer from "./components/customer/Customer";
-import "./App.css";
 import CustomerForm from "./components/customer/CustomerForm";
 import Vendor from "./components/vendors/Vendors";
+import Product from "./components/product/Product";
+import Invoice from "./components/invoice/Invoice";
+import Purchase from "./components/purchase/Purchase";
+import NewPurchase from "./components/purchase/Index";
+import NewInvoice from "./components/invoice/NewInvoice";
 import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
-import Product from "./components/product/Product";
-import Purchase from "./components/purchase/Index";
+import { useSelector } from "react-redux";
+import VendorForm from "./components/vendors/Vendorform";
+
+import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
 
 function App() {
-
-  const state = useSelector(state => state)
-
-  console.log(state)
+  const state = useSelector((state) => state);
+  console.log(state);
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/Signup" element={<Signup />} />
-        <Route
-          path="/Customer"
-          element={
-            <>
-              <Navbar />
-              <Customer />
-            </>
-          }
-        />
-        <Route
-          path="/CustomerForm"
-          element={
-            <>
-              <Navbar />
-              <CustomerForm />
-            </>
-          }
-        />
-        <Route
-          path="/Vendor"
-          element={
-            <>
-              <Navbar />
-              <Vendor />
-            </>
-          }
-        />
-        <Route
-          path="/Expense"
-          element={
-            <>
-              <Navbar />
-              <Expense />
-            </>
-          }
-        />
-        <Route
-          path="/NewExpense"
-          element={
-            <>
-              <Navbar />
-              <NewExpense />
-            </>
-          }
-        />
-        <Route
-          path="/Vendor"
-          element={
-            <>
-              <Navbar />
-              <Vendor />
-            </>
-          }
-        />
-        <Route
-          path="/Product"
-          element={
-            <>
-              <Navbar />
-              <Product />
-            </>
-          }
-        />
-        <Route
-          path="/Index"
-          element={
-            <>
-              <Navbar />
-              <Purchase />
-            </>
-          }
-        />
-        <Route
+      {state.users.isLoggedIn ? (
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Navbar />
+                <Customer />
+              </>
+            }
+          />
+          <Route
+            path="/CustomerForm"
+            element={
+              <>
+                <Navbar />
+                <CustomerForm type={1} />
+              </>
+            }
+          />
+          <Route
+            path="/Vendor"
+            element={
+              <>
+                <Navbar />
+                <Vendor />
+              </>
+            }
+          />
+          <Route
+            path="/Expense"
+            element={
+              <>
+                <Navbar />
+                <Expense />
+              </>
+            }
+          />
+          <Route
+            path="/NewExpense"
+            element={
+              <>
+                <Navbar />
+                <NewExpense />
+              </>
+            }
+          />
+          <Route
+            path="/Vendor"
+            element={
+              <>
+                <Navbar />
+                <Vendor />
+              </>
+            }
+          />
+          <Route
+            path="/Product"
+            element={
+              <>
+                <Navbar />
+                <Product />
+              </>
+            }
+          />
+          <Route
+            path="/Purchase"
+            element={
+              <>
+                <Navbar />
+                <Purchase />
+              </>
+            }
+          />
+
+          <Route
+            path="/Index"
+            element={
+              <>
+                <Navbar />
+                <NewPurchase />
+              </>
+            }
+          />
+
+          <Route
+            path="/Invoice"
+            element={
+              <>
+                <Navbar /> <Invoice />
+              </>
+            }
+          />
+
+          <Route
+            path="/NewInvoice"
+            element={
+              <>
+                <Navbar /> <NewInvoice />{" "}
+              </>
+            }
+          />
+          <Route path="/VendorForm" element={<><Navbar /> <VendorForm /></>} />
+
+          <Route
           path="/Customerpay"
           element={
             <>
@@ -106,7 +139,14 @@ function App() {
             </>
           }
         />
-      </Routes>
+        
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/Signup" element={<Signup />} />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }

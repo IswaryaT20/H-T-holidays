@@ -1,0 +1,44 @@
+.table-td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 0.5rem !important;
+}
+
+.btn-globalDiscount {
+  background-color: #25316f !important;
+  border-color: #25316f !important;
+  width: 130px !important;
+  padding: 5px !important;
+  border-radius: 8px !important;
+}
+
+.btn-save {
+  background-color: #25316f !important;
+  border-color: #25316f !important;
+  color:"white" !important;
+  width: 120px !important;
+}
+
+.btn-c {
+  background-color: "white" !important;
+  border-color: #25316f !important;
+  color:#25316f !important;
+  width: 90px !important;
+}
+
+/* .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 86%;
+  
+  margin-top: 15%;
+} */
+.square {
+  height: 13px;
+  width: 13px;
+  background-color: #0d6efd;
+  margin-right: 54px;
+  margin-left: 44px;
+  margin-top: 7px;
+}
