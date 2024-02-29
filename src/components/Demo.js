@@ -1,58 +1,30 @@
-import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+function* createCustomerAPICall(bodyData) {
+  const response = yield call(CreateCustomerApiCall, bodyData.payload);
 
-function Demo() {
-  const [address, setAddress] = useState(false);
-
-  const addressmodal = (event) => {
-    if (event.target.id === "address") {
-      setAddress(true);
+  try {
+    if (response.status === 200) {
+      if (response.data.code === 200) {
+        yield put({
+          type: CREATE_CUSTOMER_API_RESPONSE,
+          payload: response.data.code,
+        });
+        alert("Successfully added customers");
+      } else {
+        yield put({
+          type: ERROR_MESSAGE,
+          payload: { message: response.data.message },
+        });
+        alert(response.data.message);
+      }
+    } else {
+      yield put({
+        type: ERROR_MESSAGE,
+        payload: { message: "try after some time" },
+      });
+      alert("try after some time");
     }
-  };
-
-  const handleClose = () => {
-    setAddress(false);
-  };
-
-  return (
-    <>
-      <Button
-        className="m-1 bg-blue f-12 rounded-1 b-none"
-        style={{ backgroundColor: "#25316f", width: "max-content" }}
-        id="address"
-        onClick={addressmodal}
-      >
-        Contact & Address
-      </Button>
-
-      <Modal
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={address}
-        onHide={handleClose}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Modal heading
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h4>Centered Modal</h4>
-          <p>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-            ac consectetur ac, vestibulum at eros.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
+  } catch (error) {
+    alert("Error: ", error);
+  }
 }
 
-export default Demo;

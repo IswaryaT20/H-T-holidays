@@ -7,14 +7,14 @@ import {
   Table,
   Modal,
   Form,
-} from "react-bootstrap";
+  Alert,} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaCloudArrowDown } from "react-icons/fa6";
-import { SlOptionsVertical } from "react-icons/sl";
-import { MdDeleteForever } from "react-icons/md";
-import { CiEdit } from "react-icons/ci";
+
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector, connect } from "react-redux";
@@ -23,24 +23,26 @@ import { GET_ALL_PRODUCTS_API_CALL } from "../../utils/Constant";
 const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showModaledit, setShowModaledit] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
   const [search, setSearch] = useState("");
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
   const handleCloseModaledit = () => setShowModaledit(false);
   const handleShowModaledit = () => setShowModaledit(true);
+  const handleCloseAlertModal = () => setShowAlertModal(false);
+  const handleShowAlertModal = () => setShowAlertModal(true);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [tableData, setTableData] = useState([]);
-
-  const [productId, setProductId] = useState("HT-");
-  const [productType, setProductType] = useState("");
+  const [supplierNameError, setSupplierNameError] = useState(false);
+  const [productNameError, setProductNameError] = useState(false);
+  const [productType, setProductType] = useState(" H_T HOLIDAYS");
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
+  const [supplierName, setSupplierName] = useState("");
   const supplierId = "007";
   const createdBy = "14";
   const productUrl = "testURL@gmail.com";
 
-  console.log(props)
+  console.log(props.productsData.error)
 
   const dispatch = useDispatch()
 
@@ -49,12 +51,25 @@ const Newproduct = (props) => {
     dispatch({type: GET_ALL_PRODUCTS_API_CALL})
   }, []);
 
+const [success,setsuccess] = useState();
+
   const handleSubmit = () => {
+    if (!supplierName.trim()) {
+      setSupplierNameError(true);
+      return;
+    }
+    if (!productName.trim()) {
+      setProductNameError(true); 
+      return;
+    }
+
+
     const BodyData = {
       productName: productName,
       supplierId: supplierId,
       productType: productType,
       productDescription: description,
+      supplierName: supplierName,
       createdBy: createdBy,
       productUrl: productUrl,
     };
@@ -62,7 +77,11 @@ const Newproduct = (props) => {
     axios
       .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
       .then((response) => {
-        console.log(response.data);
+      setsuccess(response.data.status)
+      handleShowAlertModal();
+      console.log(response.data)
+             
+
       })
       .catch((error) => {
         console.error("Error adding product:", error);
@@ -70,11 +89,9 @@ const Newproduct = (props) => {
     setShowModal(false);
   };
 
+
   //Handlers
-  const handleOptionClick = (index) => {
-    setSelectedIndex(index);
-    setShowForm(!showForm);
-  };
+
 
   const handleOptionClick1 = (index) => {
     setSelectedIndex(index);
@@ -82,11 +99,11 @@ const Newproduct = (props) => {
   };
 
   const tableValue = [
-    "",
-    "PRODUCT ID",
-    "PRODUCT NAME",
-    "PRODUCT TYPE",
-    "DESCRIPTION",
+    "Action",
+    "Product ID",
+    "Product Name",
+    "Product Type",
+    "Description",
   ];
 
   return (
@@ -177,67 +194,21 @@ const Newproduct = (props) => {
               })
               .map((items) => (
                 <tr key={items.id}>
-                  <td style={{ position: "relative" }}>
-                    <SlOptionsVertical
-                      onClick={() => handleOptionClick(items)}
-                    />
-                    {selectedIndex === items && showForm && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          left: 0,
-                          zIndex: 999,
-                          backgroundColor: "white",
-                          padding: "10px",
-                          marginTop: "-5px",
-                          boxShadow:
-                            "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "10px",
-                          }}
-                          onClick={() => handleShowModaledit(items.productCode)}
-                        >
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
-                            Edit
-                          </p>
-                          <CiEdit
-                            onClick={() => handleOptionClick1(items.id)}
-                          />
-                        </div>
-                        <hr style={{ margin: "8px 0 !important" }} />
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "10px",
-                          }}
-                        >
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
-                            Delete
-                          </p>
-                          <MdDeleteForever />
-                        </div>
-                        <hr />
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "20px",
-                          }}
-                        >
-                          <p style={{ margin: "0px", fontSize: "14px" }}>
-                            Download
-                          </p>
-                          <MdOutlineFileDownload />
-                        </div>
-                      </div>
-                    )}
+                <td > 
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "10px",
+                      }}
+                      onClick={() => handleShowModaledit(items.productCode)}
+                    >
+                    
+                      <FaEdit 
+                        onClick={() => handleOptionClick1(items.id)} style={{ alignItems: 'center', marginLeft: '22px', marginBottom: '-19px' }}
+                      />
+                    </div>
+                    <MdDelete style={{ marginLeft: '13px' }} />
                   </td>
                   <td>{items.productId}</td>
                   <td>{items.productName}</td>
@@ -272,7 +243,7 @@ const Newproduct = (props) => {
             </p>
           </div>
           <Row>
-            <Col>
+          <Col>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <div
                   className="mb-3"
@@ -282,70 +253,94 @@ const Newproduct = (props) => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Type
+                    Product Type 
                   </label>
 
                   <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "22%", width: "50%", padding: "2px" }}
+                    style={{ marginLeft: "22%", width: "44%", padding: "2px",background:'#d9e1ee8c' }}
                     value={productType}
-                    onChange={(e) => setProductType(e.target.value)}
+                    onChange={(e) => setProductType(e.target.value)} readOnly
                   />
                 </div>
 
                 <div
-                  className="mb-3"
+                  className={`mb-3 ${supplierNameError ? "has-error" : ""}`}
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <label
                     className="control-label mr-3"
-                    style={{ fontSize: "14px" }}
+                    style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Code
+                    Supplier Name <span style={{ color: "red" }}>*</span>
                   </label>
-                  <Form.Control
-                    type="text"
-                    placeholder=""
-                    className="inputfocus"
-                    style={{ marginLeft: "21%", width: "50%", padding: "2px" }}
-                    value={productId}
-                    onChange={(e) => setProductId(e.target.value)}
-                    readOnly
-                  />
-                </div>
-                <div
-                  className="mb-3"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <label
-                    className="control-label mr-3"
-                    style={{ fontSize: "14px" }}
-                  >
-                    Product Name
-                  </label>
-                  <Form.Control
+                  <FormControl
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
+                    style={{
+                      marginLeft: "79px",
+                      width: "45%",
+                      padding: "2px",
+                    }}
+                    value={supplierName}
+                    onChange={(e) => {
+                      setSupplierName(e.target.value);
+                setSupplierNameError(false);
+                    }}
                   />
+                  
+                  {supplierNameError && (
+                    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Supplier Name Required</span>
+                  )}
                 </div>
+
+                <div
+  className={`mb-3 ${productNameError ? "has-error" : ""}`}
+  style={{ display: "flex", alignItems: "center" }}
+>
+  <label
+    className="control-label mr-3"
+    style={{ fontSize: "14px", padding: "0px" }}
+  >
+    Product Name <span style={{ color: 'red' }}>*</span>
+  </label>
+  <Form.Control
+    type="text"
+    placeholder=" "
+    className="inputfocus"
+    style={{
+      marginLeft: "18%",
+      width: "45%",
+      padding: "2px",
+    }}
+    value={productName}
+    onChange={(e) => {
+      setProductName(e.target.value);
+      setProductNameError(false); 
+    }}
+  />
+  {productNameError && (
+    <span style={{ color: "red",marginTop:'48px',marginLeft:'-29%' ,fontSize:'12px'}}>Product Name Required</span> 
+  )}
+</div>
                 <div
                   className="mb-3"
                   style={{ display: "flex", alignItems: "center" }}
                 >
-                  <label className="control-label" style={{ fontSize: "14px" }}>
+                  <label
+                    className="control-label"
+                    style={{ fontSize: "14px" }}
+                  >
                     Description
                   </label>
                   <textarea
                     className="form-control inputfocus"
                     rows="4"
                     placeholder="Enter your message"
-                    style={{ marginLeft: "25%", width: "50%" }}
+                    style={{ marginLeft: "25%", width: "45%" }}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
@@ -411,15 +406,17 @@ const Newproduct = (props) => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px" }}
                   >
-                    Product Type
+                    Product Type 
                   </label>
 
                   <Form.Control
-                    type="text"
-                    placeholder=" "
-                    className="inputfocus"
-                    style={{ marginLeft: "22%", width: "50%", padding: "2px" }}
-                  />
+  type="text"
+  placeholder=" "
+  className="inputfocus"
+  style={{ marginLeft: "22%", width: "50%", padding: "2px", background: '#d9e1ee8c' }}
+  defaultValue="  H_T HOLIDAYS"
+  readOnly
+/>
                 </div>
                 <div
                   className="mb-3"
@@ -429,14 +426,14 @@ const Newproduct = (props) => {
                     className="control-label mr-3"
                     style={{ fontSize: "14px" }}
                   >
-                    Product Code
+               Supplier Name 
                   </label>
-                  <Form.Control
+                  <FormControl
                     type="text"
-                    placeholder=""
+                    placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "21%", width: "50%", padding: "2px" }}
-                    readOnly
+                    style={{ marginLeft: "89px", width: "50%", padding: "2px" }}
+                 
                   />
                 </div>
                 <div
@@ -495,10 +492,25 @@ const Newproduct = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Modal show={showAlertModal} onHide={handleCloseAlertModal}>
+  <Modal.Header closeButton>
+    <Modal.Title>Product Data</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {success === 'Success' ? (
+      <Alert variant="success"> {success} </Alert>
+    ) : (
+      <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+    )}
+  </Modal.Body>
+</Modal>
+      {
+        props.productsData.error ? <Alert clas>[props.productsData.error.status]</Alert> : null
+
+      }
     </div>
   );
 };
-
 
 const mapsToProps = (state) => {
   return {

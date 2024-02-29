@@ -1,5 +1,5 @@
 import { takeEvery, call, put } from "redux-saga/effects";
-import { GET_ALL_PRODUCTS_API_CALL, GET_ALL_PRODUCTS_RESPONSE, ERROR_MESSAGE } from "../utils/Constant";
+import { GET_ALL_PRODUCTS_API_CALL, GET_ALL_PRODUCTS_RESPONSE, PRODUCT_ERROR } from "../utils/Constant";
 import { GetAllProducts } from "../Reducer/Action/ProductAction";
 
 function* getAllProducts() {
@@ -11,12 +11,12 @@ function* getAllProducts() {
                 yield put({type: GET_ALL_PRODUCTS_RESPONSE, payload: response.data.data})
             }
             else {
-                yield put({type: ERROR_MESSAGE, payload: {message: response.data.message}}) 
+                yield put({type: PRODUCT_ERROR, payload: {message: response.data.message}}) 
             }
         }
     }
     catch(error) {
-
+        yield put({type: PRODUCT_ERROR, payload: {message: "Please Try After some time"}}) 
     }
 }
 
