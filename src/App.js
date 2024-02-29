@@ -102,7 +102,7 @@ function App() {
           />
 
           <Route
-            path="/Index"
+            path="/Purchaseorder"
             element={
               <>
                 <Navbar />
