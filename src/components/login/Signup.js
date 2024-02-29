@@ -30,11 +30,8 @@ function Signup(props) {
    * 
    * } e 
    */
-
   const handleChanges = (e) => {
-
     dispatch({type: CLEAR_ERROR_MESSAGE})
-
     const { name, value } = e.target;
     if (name === "username") {
       setUsername(value);
@@ -57,34 +54,27 @@ function Signup(props) {
 
   function handlesubmit(e) {
     e.preventDefault();
-
     const nameerror = "Invalid username";
     const emailerror = "Invalid email";
     const passworderror = "Invalid password";
     const cpassworderror = "Invalid confirm";
-
     seterror("");
-
     if (username.length === 0) {
       seterror(nameerror);
       return;
     }
-
     if (email.length === 0) {
       seterror(emailerror);
       return;
     }
-
     if (password.length === 0) {
       seterror(passworderror);
       return;
     }
-
     if (cpassword.length === 0 || !passwordMatch) {
       seterror(cpassworderror);
       return;
     }
-
     // api data's sending
     const args = {
       name: username,
@@ -213,9 +203,8 @@ function Signup(props) {
               Signup
             </Button>
           </div>
-
           {
-            props.users.error && <p>{props.users.error}</p>
+            props.users.error && <p className="alert">{props.users.error}</p>
           }
           <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}

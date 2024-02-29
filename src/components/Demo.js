@@ -1,59 +1,58 @@
-import React, { useState } from 'react';
-import { Row, Col, Image } from 'react-bootstrap';
-import avtar1 from '../Assets/avatars/1.jpg';
-import avtar2 from '../Assets/avatars/2.jpg';
-import avtar3 from '../Assets/avatars/3.jpg';
-import avtar4 from '../Assets/avatars/4.png';
-import avtar5 from '../Assets/avatars/5.png';
-import profile from '../Assets/images/profile.jpg';
+import React, { useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 
-const AvatarSelection = () => {
-  const [selectedAvatars, setSelectedAvatars] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(profile);
-  const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
+function Demo() {
+  const [address, setAddress] = useState(false);
 
-  const avatars = [
-    { id: '1', name: 'avatar1', src: avtar1 },
-    { id: '2', name: 'avatar2', src: avtar2 },
-    { id: '3', name: 'avatar3', src: avtar3 },
-    { id: '4', name: 'avatar4', src: avtar4 },
-    { id: '5', name: 'avatar5', src: avtar5 },
-    { id: '6', name: 'avatar6', src: profile },
-  ];
-
-  const openAvatars = () => {
-    setIsAvatarsOpen(!isAvatarsOpen);
+  const addressmodal = (event) => {
+    if (event.target.id === "address") {
+      setAddress(true);
+    }
   };
 
-  const captureImage = (e) => {
-    const selectedImageSrc = e.target.src;
-    setSelectedImage(selectedImageSrc);
-    setIsAvatarsOpen(false);
+  const handleClose = () => {
+    setAddress(false);
   };
 
   return (
-    <div>
-      <Row>
-        <Image className='h-10 w-10 rounded-circle' src={selectedImage} alt='no image found' onClick={openAvatars} />
-        {isAvatarsOpen && (
-          <div className='border h-max m-2'>
-            <Col xs={6} md={4}>
-              {avatars.map((item) => (
-                <Image
-                  className='h-20 w-20 ms-2 cursor-pointer  rounded-full border p-1'
-                  name={item.name}
-                  key={item.id}
-                  src={item.src}
-                  rounded
-                  onClick={captureImage}
-                />
-              ))}
-            </Col>
-          </div>
-        )}
-      </Row>
-    </div>
-  );
-};
+    <>
+      <Button
+        className="m-1 bg-blue f-12 rounded-1 b-none"
+        style={{ backgroundColor: "#25316f", width: "max-content" }}
+        id="address"
+        onClick={addressmodal}
+      >
+        Contact & Address
+      </Button>
 
-export default AvatarSelection;
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={address}
+        onHide={handleClose}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Modal heading
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h4>Centered Modal</h4>
+          <p>
+            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
+            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
+            ac consectetur ac, vestibulum at eros.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+export default Demo;

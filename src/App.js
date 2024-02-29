@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
 
 import "./App.css";
+import Customerpay from "./components/payment/Customerpay";
 
 function App() {
   const state = useSelector((state) => state);
@@ -41,7 +42,7 @@ function App() {
             element={
               <>
                 <Navbar />
-                <CustomerForm />
+                <CustomerForm type={1} />
               </>
             }
           />
@@ -128,6 +129,17 @@ function App() {
             }
           />
           <Route path="/VendorForm" element={<><Navbar /> <VendorForm /></>} />
+
+          <Route
+          path="/Customerpay"
+          element={
+            <>
+              <Navbar />
+              <Customerpay />
+            </>
+          }
+        />
+        
         </Routes>
       ) : (
         <Routes>
