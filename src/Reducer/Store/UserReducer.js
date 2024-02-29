@@ -10,7 +10,7 @@ const INITIAL_STATE = {
     loginEmail: '',
     loginMobile: '',
     isActive: true,
-    isLoggedIn: true,
+    isLoggedIn: false,
     error: ''
 }
 

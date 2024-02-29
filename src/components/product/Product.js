@@ -17,8 +17,10 @@ import { MdDeleteForever } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineFileDownload } from "react-icons/md";
 import axios from "axios";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { GET_ALL_PRODUCTS_API_CALL } from "../../utils/Constant";
 
-const Newproduct = () => {
+const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showModaledit, setShowModaledit] = useState(false);
   const [search, setSearch] = useState("");
@@ -38,20 +40,13 @@ const Newproduct = () => {
   const createdBy = "14";
   const productUrl = "testURL@gmail.com";
 
-  const fetchTableData = () => {
-    axios
-      .post("http://68.178.161.233:8080/handt/v2/products/getProducts")
-      .then((response) => {
-        console.log(response);
-        setTableData(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
+  console.log(props)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    fetchTableData();
+    // fetchTableData();
+    dispatch({type: GET_ALL_PRODUCTS_API_CALL})
   }, []);
 
   const handleSubmit = () => {
@@ -173,8 +168,7 @@ const Newproduct = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData
-              .filter((items) => {
+            {props.productsData.products.filter((items) => {
                 return search.toLowerCase() === ""
                   ? items
                   : items.productName
@@ -505,4 +499,11 @@ const Newproduct = () => {
   );
 };
 
-export default Newproduct;
+
+const mapsToProps = (state) => {
+  return {
+    productsData: state.productsData
+  }
+}
+
+export default connect(mapsToProps)(Newproduct);
