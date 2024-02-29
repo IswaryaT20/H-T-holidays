@@ -17,6 +17,11 @@ export const GET_ALL_PRODUCTS_API_CALL = 'Get-All-Products'
 export const GET_ALL_PRODUCTS_RESPONSE = 'Get-All-Rroducts-Response'
 export const PRODUCT_ERROR = 'Eroduct-Error'
 export const CLEAR_PRODUCT_ERROR = 'Clear-Product-Error'
+export const UPDATE_USER_ID_LOCALLY = 'UPDATE-USER-ID-LOCALLY'
+
+
+export const KEY_IS_LOGGED_IN = "loggedIn"
+export const KEY_USER_ID = "userId"
 
 
 

@@ -1,4 +1,4 @@
-import { LOGIN_API_RESPONSE, ERROR_TYPE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE } from "../../utils/Constant";
+import { LOGIN_API_RESPONSE, ERROR_TYPE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE, UPDATE_USER_ID_LOCALLY } from "../../utils/Constant";
 
 
 const INITIAL_STATE = {
@@ -31,6 +31,10 @@ const UserReducer = (state = INITIAL_STATE, action) => {
 
         case REGISTER_API_RESPONSE: {
             return {...state, error: action.payload.errorMessage, status: action.payload.code, isLoggedIn: true}
+        }
+
+        case UPDATE_USER_ID_LOCALLY: {
+            return {...state, loginId: action.payload}
         }
 
     }

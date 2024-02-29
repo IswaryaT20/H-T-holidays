@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/login/Login";
@@ -14,15 +14,35 @@ import NewPurchase from "./components/purchase/Index";
 import NewInvoice from "./components/invoice/NewInvoice";
 import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
+import { KEY_IS_LOGGED_IN, KEY_USER_ID, storeToLocalStorage, getFromLocalStorage, UPDATE_USER_ID_LOCALLY } from "./utils/Constant";
 
 import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
 
 function App() {
   const state = useSelector((state) => state);
-  console.log(state);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN))
+  }, [])
+
+  useState(() => {
+    if (isLoggedIn) {
+      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: getFromLocalStorage(KEY_USER_ID)})
+    }
+  }, [isLoggedIn])
+  
+  useEffect(() => {
+    if (state.users.isLoggedIn) {
+      storeToLocalStorage(KEY_IS_LOGGED_IN, true)
+      storeToLocalStorage(KEY_USER_ID, state.users.loginId)
+    }
+  }, [state.users.isLoggedIn])
 
   return (
     <BrowserRouter>
