@@ -38,11 +38,7 @@ const dropdownActions = {
       title: "Payment",
       link: "/Payment",
     },
-  ],
-  7: [
-    { id: 1, title: "purchase", link: "/Index" },
-    { id: 2, title: "Payment", link: "/Customerpay" },
-  ],
+  ]
 };
 
 function Navigation2() {
