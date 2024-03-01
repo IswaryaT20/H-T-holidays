@@ -3,8 +3,10 @@ import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { FaTrashCan } from "react-icons/fa6";
 import { MdOutlineClose } from "react-icons/md";
 import { GrAttachment } from "react-icons/gr";
+import axios from "axios";
 
 const PurchaseForm = () => {
+  const [product, setProduct] = useState([]);
   const [subTotal, setSubTotal] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [totalVAT, setTotalVAT] = useState(0);
@@ -46,6 +48,18 @@ const PurchaseForm = () => {
   ]);
 
   //Handlers
+  const selectProduct = () => {
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/products/getProducts")
+      .then((res) => {
+        console.log(res.data.data);
+        setProduct(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => selectProduct, []);
+
   const handleAddRow = () => {
     setpuchaseData([
       ...puchaseData,
@@ -222,10 +236,20 @@ const PurchaseForm = () => {
                   <td className="table-td">
                     <Form.Select
                       className="inputfocus rounded-0"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
+                      style={{ width: 170, height: 30, fontSize: 12 }}
                     >
                       <option disabled>Select Product</option>
-                    </Form.Select>
+                      {product.map((item) => (
+                        <option
+                          key={item.id}
+                          value={product}
+                          onChange={(e) => setProduct(e.target.value)}
+                          style={{fontSize:12}}
+                        >
+                          {item.productName}
+                        </option>
+                      ))}
+                    </Form.Select>  
                   </td>
                   <td className="table-td">
                     <Form.Control
@@ -344,12 +368,16 @@ const PurchaseForm = () => {
               style={{ width: "400px", height: "100px" }}
             />
             <br />
-            <Button style={{
-              backgroundColor: "#1d1d5e",
-              borderWidth: 0,
-              width: 100,
-              fontWeight: "bolder",
-            }}><GrAttachment /> Attach</Button>
+            <Button
+              style={{
+                backgroundColor: "#1d1d5e",
+                borderWidth: 0,
+                width: 100,
+                fontWeight: "bolder",
+              }}
+            >
+              <GrAttachment /> Attach
+            </Button>
           </Col>
           <Col>
             <div className="table-container">
