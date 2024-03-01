@@ -49,7 +49,7 @@ const Expense = () => {
       No: "1",
       Contact: "8220390465",
       Pay_For: "Bill",
-      Payment_date: "02-20-2024",
+      Payment_date: "02-01-2024",
       VAT_amt: "500",
       amt_paid: "3500",
       payment_type: "cash",
@@ -58,7 +58,7 @@ const Expense = () => {
       No: "2",
       Contact: "8220390465",
       Pay_For: "Bill",
-      Payment_date: "02-25-2024",
+      Payment_date: "02-02-2024",
       VAT_amt: "500",
       amt_paid: "3500",
       payment_type: "cash",
@@ -81,124 +81,173 @@ const Expense = () => {
       amt_paid: "3500",
       payment_type: "cash",
     },
+    {
+      No: "5",
+      Contact: "8220390465",
+      Pay_For: "Bill",
+      Payment_date: "27-09-2024",
+      VAT_amt: "500",
+      amt_paid: "3500",
+      payment_type: "cash",
+    },
+    {
+      No: "6",
+      Contact: "8220390465",
+      Pay_For: "Bill",
+      Payment_date: "27-05-2024",
+      VAT_amt: "500",
+      amt_paid: "3500",
+      payment_type: "cash",
+    },
+    {
+      No: "7",
+      Contact: "8220390465",
+      Pay_For: "Bill",
+      Payment_date: "27-03-2024",
+      VAT_amt: "500",
+      amt_paid: "3500",
+      payment_type: "cash",
+    },
+    {
+      No: "8",
+      Contact: "8220390465",
+      Pay_For: "Bill",
+      Payment_date: "27-02-2024",
+      VAT_amt: "500",
+      amt_paid: "3500",
+      payment_type: "cash",
+    },
+    {
+      No: "9",
+      Contact: "8220390465",
+      Pay_For: "Bill",
+      Payment_date: "03-07-2024",
+      VAT_amt: "500",
+      amt_paid: "3500",
+      payment_type: "cash",
+    },
   ];
 
   return (
-    <Container fluid className="mt-1">
-      <Row className="w-100 mb-5 mt-3 -1 d-flex align-items-center">
-        <Col className="col-2 fs-6 fw-bolder" style={{ color: "#1d1d5e" }}>
-          My Expense
-        </Col>
-        <Col className="col-6 text-center position-relative ">
-          <InputGroup
-            style={{ height: "10px", width: "39%", marginLeft: "10%" }}
+    <>
+      <Container fluid className="mt-1">
+        <Row className="w-100 mt-2 p-2">
+          <Col
+            className="col-2 fw-bolder"
+            style={{ color: "#1d1d5e", fontSize: 16 }}
           >
-            <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
-              <FaSearch className="text-white" />
-            </InputGroupText>
-            <FormControl
-              placeholder="Search Products..."
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                background: "#80808036",
-                boxShadow: "none",
-                outline: "none",
-                borderColor: "white",
-              }}
-            />
-          </InputGroup>
-        </Col>
-        <Col className="col-4 d-flex justify-content-around">
-          <div className="d-flex align-items-center ">
-            <CiCalendar className="fs-2" style={{ color: "#1d1d5e" }} />
-            <DatePicker
-              selected={startDate}
-              onChange={handleDateChange}
-              startDate={startDate}
-              endDate={endDate}
-              selectsRange
-              placeholderText="Select Date Range"
-              className="form-control rounded ms-2 inputfocus"
-            />
-          </div>
-          <div className="d-flex align-items-center">
-            <FaCloudUploadAlt
-              className="fs-2"
-              style={{ color: "#1d1d5e", cursor: "pointer" }}
-            />
-            <FaCloudDownloadAlt
-              className=" fs-2 ms-3"
-              style={{ color: "#1d1d5e", cursor: "pointer" }}
-            />
-            <FaEye className="cursor fs-4 ms-3" style={{ color: "#1d1d5e" }} />
-          </div>
-        </Col>
-      </Row>
-      <Button
-        style={{ backgroundColor: "#1d1d5e", margin: 10, borderWidth: 0 }}
-        className="fs-6 fw-bolder mx-3"
-      >
-        <Link
-          to="/newexpense"
-          style={{ textDecoration: "none", color: "white" }}
-        >
-          New Transaction +
-        </Link>
-      </Button>
-      <div
-        className="d-flex mt-3 w-100"
-        style={{ height: 350, overflowY: "auto" }}
-      >
-        <Table striped hover>
-          <thead>
-            <tr>
-              {tableHeader.map((header, index) => (
-                <th
-                  key={index}
-                  style={{
-                    backgroundColor: "#1d1d5e",
-                    color: "white",
-                    textAlign: "center",
-                  }}
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {fakeData
-              .filter((item) => {
-                return (
-                  (search.toLowerCase() === ""
-                    ? item
-                    : item.Contact.toLowerCase().includes(
-                        search.toLowerCase()
-                      )) &&
-                  (!startDate ||
-                    new Date(item.Payment_date) >= new Date(startDate)) &&
-                  (!endDate || new Date(item.Payment_date) <= new Date(endDate))
-                );
-              })
-              .map((item, index) => (
-                <tr
-                  key={index}
-                  style={{ textAlign: "center" }}
-                  className="fs-6"
-                >
-                  <td>{item.No}</td>
-                  <td>{item.Contact}</td>
-                  <td>{item.Pay_For}</td>
-                  <td>{item.Payment_date}</td>
-                  <td>{item.VAT_amt}</td>
-                  <td>{item.amt_paid}</td>
-                  <td>{item.payment_type}</td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
-      </div>
-    </Container>
+            My Expense
+          </Col>
+          <Col className="col-4">
+            <InputGroup style={{ width: 300 }}>
+              <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
+                <FaSearch className="text-white" />
+              </InputGroupText>
+              <FormControl
+                placeholder="Search Expense..."
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  background: "#80808036",
+                  boxShadow: "none",
+                  outline: "none",
+                  borderColor: "white",
+                }}
+              />
+            </InputGroup>
+          </Col>
+          <Col className="col-6 d-flex justify-content-end">
+            <div>
+              <DatePicker
+                selected={startDate}
+                onChange={handleDateChange}
+                startDate={startDate}
+                endDate={endDate}
+                dateFormat={"dd/MM/yyyy"}
+                selectsRange
+                placeholderText="Select Date Range"
+                className="form-control rounded ms-2 inputfocus"
+              />
+            </div>
+            <div className="d-flex align-items-center ms-4">
+              <FaCloudUploadAlt
+                className="fs-2"
+                style={{ color: "#1d1d5e", cursor: "pointer" }}
+              />
+              <FaCloudDownloadAlt
+                className=" fs-2 ms-3"
+                style={{ color: "#1d1d5e", cursor: "pointer" }}
+              />
+              <FaEye
+                className="cursor fs-4 ms-3"
+                style={{ color: "#1d1d5e", cursor: "pointer" }}
+              />
+            </div>
+          </Col>
+        </Row>
+
+        <div>
+          <Link to="/NewExpense">
+          <Button
+            style={{ backgroundColor: "#1d1d5e", fontWeight: "500", border: 0 }}
+          >
+            New Expense
+          </Button>
+          </Link>
+        </div>
+        {/* Table */}
+        <div className="table-container mt-2">
+          <Table striped hover>
+            <thead>
+              <tr>
+                {tableHeader.map((header, index) => (
+                  <th
+                    key={index}
+                    style={{
+                      backgroundColor: "#1d1d5e",
+                      color: "white",
+                      textAlign: "center",
+                    }}
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {fakeData
+                .filter((item) => {
+                  return (
+                    (search.toLowerCase() === ""
+                      ? item
+                      : item.Contact.toLowerCase().includes(
+                          search.toLowerCase()
+                        )) &&
+                    (!startDate ||
+                      new Date(item.Payment_date) >= new Date(startDate)) &&
+                    (!endDate ||
+                      new Date(item.Payment_date) <= new Date(endDate))
+                  );
+                })
+                .map((item, index) => (
+                  <tr
+                    key={index}
+                    style={{ textAlign: "center" }}
+                    className="fs-6"
+                  >
+                    <td>{item.No}</td>
+                    <td>{item.Contact}</td>
+                    <td>{item.Pay_For}</td>
+                    <td>{item.Payment_date}</td>
+                    <td>{item.VAT_amt}</td>
+                    <td>{item.amt_paid}</td>
+                    <td>{item.payment_type}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </Table>
+        </div>
+      </Container>
+    </>
   );
 };
 

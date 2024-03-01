@@ -16,39 +16,52 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import { useSelector, useDispatch } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
-import Receipt from "./components/payment/SupplierPay"
-import { KEY_IS_LOGGED_IN, KEY_USER_ID, storeToLocalStorage, getFromLocalStorage, UPDATE_USER_ID_LOCALLY } from "./utils/Constant";
+import Receipt from "./components/payment/SupplierPay";
+import {
+  KEY_IS_LOGGED_IN,
+  KEY_USER_ID,
+  storeToLocalStorage,
+  getFromLocalStorage,
+  UPDATE_USER_ID_LOCALLY,
+} from "./utils/Constant";
 
 import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
+import Employee from "./components/employee/Employee";
 
 function App() {
   const state = useSelector((state) => state);
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const isLogged = getFromLocalStorage(KEY_IS_LOGGED_IN)
-    if (isLoggedIn === 'true' || isLogged) {
-      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: parseInt(getFromLocalStorage(KEY_USER_ID))})
+    const isLogged = getFromLocalStorage(KEY_IS_LOGGED_IN);
+    if (isLoggedIn === "true" || isLogged) {
+      dispatch({
+        type: UPDATE_USER_ID_LOCALLY,
+        payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
+      });
     }
-    setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN))
-  }, [])
+    setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN));
+  }, []);
 
   useState(() => {
-    console.log(isLoggedIn)
+    console.log(isLoggedIn);
     if (isLoggedIn) {
-      dispatch({type: UPDATE_USER_ID_LOCALLY, payload: parseInt(getFromLocalStorage(KEY_USER_ID))})
+      dispatch({
+        type: UPDATE_USER_ID_LOCALLY,
+        payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
+      });
     }
-  }, [isLoggedIn])
-  
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (state.users.isLoggedIn) {
-      storeToLocalStorage(KEY_IS_LOGGED_IN, true)
-      storeToLocalStorage(KEY_USER_ID, state.users.loginId)
+      storeToLocalStorage(KEY_IS_LOGGED_IN, true);
+      storeToLocalStorage(KEY_USER_ID, state.users.loginId);
     }
-  }, [state.users.isLoggedIn])
+  }, [state.users.isLoggedIn]);
 
   return (
     <BrowserRouter>
@@ -161,7 +174,7 @@ function App() {
                 <Navbar /> <VendorForm />
               </>
             }
-          />        
+          />
           <Route
             path="/Customerpay"
             element={
@@ -180,9 +193,15 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/Employee"
+            element={
+              <>
+                <Navbar /> <Employee />
+              </>
+            }
+          />
         </Routes>
-     
-      
       ) : (
         <Routes>
           <Route path="/" element={<Login />} />

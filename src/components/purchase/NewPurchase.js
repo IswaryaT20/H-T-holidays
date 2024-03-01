@@ -111,7 +111,7 @@ const NewPurchase = () => {
 
         <>
           <Row className="mt-2 mb-3">
-            <Col className="col-6 d-flex justify-content-start">
+            <Col className="col-8 d-flex justify-content-start">
               <Form.Group>
                 <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
                   Invoice Date
@@ -134,6 +134,14 @@ const NewPurchase = () => {
                   style={{ height: "30px", fontSize: 14 }}
                   type="date"
                 />
+              </Form.Group>
+
+              <Form.Group className="ms-2">
+                <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Net *</Form.Label>
+                <Form.Select className="inputfocus rounded-0"
+                  style={{ width: 160, height: "30px", fontSize: 14 }}>
+                  <option></option>
+                </Form.Select>
               </Form.Group>
 
               <Form.Group className="ms-2">
