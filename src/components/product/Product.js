@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Row,
   Col,
@@ -19,7 +19,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { GET_ALL_PRODUCTS_API_CALL, ADD_PRODUCT_API_CALL } from "../../utils/Constant";
+import { GET_ALL_PRODUCTS_API_CALL, ADD_PRODUCT_API_CALL, GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 
 const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -39,30 +39,37 @@ const Newproduct = (props) => {
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [supplierName, setSupplierName] = useState("");
-  const supplierId = "007";
+  const [supplierId, setSupplierId] = useState();
+  const [startingIndex, setStartIndex] = useState(0)
+  const [endingIndex, setEndingIndex] = useState(10)
   const productUrl = "testURL@gmail.com";
-
-  console.log(props.productsData.error)
+  
+  const [success, setsuccess] = useState();
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     // fetchTableData();
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
+
+    if (props.customers.customersList.lengh === 0) {
+      dispatch({type: GET_ALL_CUSTOMERS_API_CALL})
+    }
   }, []);
 
-  const [success, setsuccess] = useState();
+
+  const handleSelectSupplier = (e) => {
+    console.log(e.target.value)
+    setSupplierId(parseInt(e.target.value))
+  }
+
 
   const handleSubmit = () => {
-    if (!supplierName.trim()) {
-      setSupplierNameError(true);
-      return;
-    }
+
     if (!productName.trim()) {
       setProductNameError(true);
       return;
     }
-
 
     const bodyData = {
       productName: productName,
@@ -76,19 +83,6 @@ const Newproduct = (props) => {
 
 
     dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData })
-
-    // axios
-    //   .post("http://68.178.161.233:8080/handt/v2/products/addProduct", BodyData)
-    //   .then((response) => {
-    //   setsuccess(response.data.status)
-    //   handleShowAlertModal();
-    //   console.log(response.data)
-
-
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error adding product:", error);
-    //   });
     setShowModal(false);
   };
 
@@ -101,6 +95,12 @@ const Newproduct = (props) => {
     handleCloseModaledit();
   };
 
+  const paginationEvent = (index) => {
+    setEndingIndex(index * 10)
+    setStartIndex((index -1) * 10 + 1)
+    // setStartIndex()
+  }
+
   const tableValue = [
     "Action",
     "Product ID",
@@ -108,6 +108,29 @@ const Newproduct = (props) => {
     "Product Type",
     "Description",
   ];
+
+
+  const renderPagination =  useCallback(() => {
+    console.log("inwanted refresh", props.productsData.products)
+    const findSupplier =  props.productsData.products
+    const noOfPages = findSupplier.length /10;
+    const reminder = findSupplier.length % 10
+
+    console.log("total supplier", findSupplier.length)
+    console.log("co", parseInt(noOfPages))
+
+    const totalPages = parseInt(noOfPages) + (reminder > 0 ? 1 : 0)
+
+    return <div style={{display: 'flex', flexDirection: 'row'}}>
+      {
+        Array.from({length: totalPages}, (_, index) => {
+          return <div style={{paddingLeft: 10, paddingRight: 10, paddingTop: 5, paddingBottom: 5, borderWidth: 1, borderColor: '#AAAAAA', borderStyle: 'solid', display: 'flex', cursor: 'pointer'}} onClick={() => paginationEvent(index + 1)}>
+            {index + 1}
+          </div>
+        })  
+      }
+    </div>
+  }, [])
 
   return (
     <div>
@@ -170,9 +193,9 @@ const Newproduct = (props) => {
         </Col>
       </Row>
       <div
-        className="mt-4 table-container"
+        className="mt-4"
         fluid
-        style={{ paddingLeft: "2%", paddingRight: "2%" }}
+        style={{ paddingLeft: 50, paddingRight: 50, flex: 1 }}
       >
         <Table striped hover>
           <thead>
@@ -194,7 +217,7 @@ const Newproduct = (props) => {
                 : items.productName
                   .toLowerCase()
                   .includes(search.toLowerCase());
-            })
+            }).slice(startingIndex, endingIndex)
               .map((items) => (
                 <tr key={items.id}>
                   <td >
@@ -254,7 +277,7 @@ const Newproduct = (props) => {
                 >
                   <label
                     className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px" }}
+                    style={{ fontSize: "14px", padding: "0px", flex: 1 }}
                   >
                     Product Type
                   </label>
@@ -263,7 +286,7 @@ const Newproduct = (props) => {
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{ marginLeft: "22%", width: "44%", padding: "2px", background: '#d9e1ee8c' }}
+                    style={{ flex: 1, padding: "2px", background: '#d9e1ee8c' }}
                     value={productType}
                     onChange={(e) => setProductType(e.target.value)} readOnly
                   />
@@ -275,29 +298,27 @@ const Newproduct = (props) => {
                 >
                   <label
                     className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px" }}
+                    style={{ fontSize: "14px", padding: "0px", flex: 1 }}
                   >
                     Supplier Name <span style={{ color: "red" }}>*</span>
                   </label>
-                  <FormControl
+                  <Form.Select
                     type="text"
                     placeholder=" "
                     className="inputfocus"
-                    style={{
-                      marginLeft: "79px",
-                      width: "45%",
-                      padding: "2px",
-                    }}
-                    value={supplierName}
-                    onChange={(e) => {
-                      setSupplierName(e.target.value);
-                      setSupplierNameError(false);
-                    }}
-                  />
+                    style={{ flex: 1, padding: "2px" }}
+                    onChange={(e) => { handleSelectSupplier(e)}}
+                  >
+                    {
+                      props.customers.customersList.filter(item => item.businessTypeId !== 1).map(item => {
+                        return <option value={item.id}>{item.name}</option>
+                      })
+                    }
+                  </Form.Select>
 
-                  {supplierNameError && (
+                  {/* {supplierNameError && (
                     <span style={{ color: "red", marginTop: '48px', marginLeft: '-29%', fontSize: '12px' }}>Supplier Name Required</span>
-                  )}
+                  )} */}
                 </div>
 
                 <div
@@ -306,7 +327,7 @@ const Newproduct = (props) => {
                 >
                   <label
                     className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px" }}
+                    style={{ fontSize: "14px", padding: "0px", flex: 1 }}
                   >
                     Product Name <span style={{ color: 'red' }}>*</span>
                   </label>
@@ -315,8 +336,7 @@ const Newproduct = (props) => {
                     placeholder=" "
                     className="inputfocus"
                     style={{
-                      marginLeft: "18%",
-                      width: "45%",
+                      flex: 1,
                       padding: "2px",
                     }}
                     value={productName}
@@ -335,7 +355,7 @@ const Newproduct = (props) => {
                 >
                   <label
                     className="control-label"
-                    style={{ fontSize: "14px" }}
+                    style={{ fontSize: "14px", flex: 1 }}
                   >
                     Description
                   </label>
@@ -343,7 +363,7 @@ const Newproduct = (props) => {
                     className="form-control inputfocus"
                     rows="4"
                     placeholder="Enter your message"
-                    style={{ marginLeft: "25%", width: "45%" }}
+                    style={{ flex: 1 }}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
@@ -511,6 +531,13 @@ const Newproduct = (props) => {
         props.productsData.error ? <Alert clas>[props.productsData.error.status]</Alert> : null
 
       }
+
+      <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'end', paddingLeft: 50, paddingRight: 50, marginTop: 20}}>
+      {
+        props.productsData.products?.length > 0 ? renderPagination() : null
+      }
+      </div>
+     
     </div>
   );
 };
@@ -518,7 +545,8 @@ const Newproduct = (props) => {
 const mapsToProps = (state) => {
   return {
     productsData: state.productsData,
-    loggedInUser: state.users
+    loggedInUser: state.users,
+    customers: state.customers
   }
 }
 
