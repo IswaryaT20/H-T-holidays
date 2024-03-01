@@ -14,6 +14,8 @@
     "react-avatar": "^5.0.3",
     "react-avatar-generator": "^1.0.3",
     "react-bootstrap": "^2.10.1",
+    "react-bootstrap-select": "^0.14.0",
+    "react-bootstrap-typeahead": "^6.3.2",
     "react-datepicker": "^6.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",

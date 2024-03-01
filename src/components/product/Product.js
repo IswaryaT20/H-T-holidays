@@ -13,7 +13,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaCloudArrowDown } from "react-icons/fa6";
-
+import { Typeahead } from 'react-bootstrap-typeahead';
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -48,7 +48,6 @@ const Newproduct = (props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    // fetchTableData();
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
     
     if (props.customers.customersList.length === 0) {
@@ -56,19 +55,20 @@ const Newproduct = (props) => {
     }
   }, []);
 
-
-  const handleSelectSupplier = (e) => {
-    setSupplierId(parseInt(e.target.value))
-  }
-
+  const handleSelectSupplier = (selected) => {
+    if(selected && selected.length > 0) {
+      setSupplierName(selected[0].name);
+      setSupplierId(selected[0].id);
+      setSupplierNameError(false);
+    }
+  };
 
   const handleSubmit = () => {
-
     if (!productName.trim()) {
       setProductNameError(true);
       return;
     }
-
+  
     const bodyData = {
       productName: productName,
       supplierId: supplierId,
@@ -78,10 +78,18 @@ const Newproduct = (props) => {
       createdBy: props.loggedInUser.loginId,
       productUrl: productUrl,
     };
-
-
-    dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData })
+  
+    dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData });
+  
     setShowModal(false);
+  
+    // Reset the input fields
+    setProductType(" SERVICES");
+    setProductName("");
+    setProductUrl("");
+    setDescription("");
+    setSupplierNameError(false);
+    setProductNameError(false);
   };
 
   const handleOptionClick1 = (index) => {
@@ -92,21 +100,17 @@ const Newproduct = (props) => {
   const paginationEvent = (index) => {
     setEndingIndex(index * 15)
     setStartIndex((index -1) * 15 )
-    // setStartIndex()
   }
 
   const tableValue = [
-    "Action",
-    "Product ID",
+    "Suppliier Name",
     "Product Name",
     "Product Type",
     "Description",
+    "Action",
   ];
 
-
   const renderPagination =  useCallback(() => {
-
-    console.log(props)
     const totalNoOfProducts =  props.productsData.products
     const noOfPages = totalNoOfProducts.length /15;
     const reminder = totalNoOfProducts.length % 15
@@ -209,9 +213,15 @@ const Newproduct = (props) => {
                 : items.productName
                   .toLowerCase()
                   .includes(search.toLowerCase());
-            }).slice(startingIndex, endingIndex)
+            })
+            .sort((a, b) => b.id - a.id)
+            .slice(startingIndex, endingIndex)
               .map((items) => (
                 <tr key={items.id}>
+                  <td>{items.suppliername}</td>
+                  <td>{items.productName}</td>
+                  <td>{items.productType}</td>
+                  <td>{items.productDescription}</td>
                   <td >
                     <div
                       style={{
@@ -221,17 +231,12 @@ const Newproduct = (props) => {
                       }}
                       onClick={() => handleShowModaledit(items.productCode)}
                     >
-
                       <FaEdit
                         onClick={() => handleOptionClick1(items.id)} style={{ alignItems: 'center', marginLeft: '22px', marginBottom: '-19px' }}
                       />
                     </div>
                     <MdDelete style={{ marginLeft: '13px' }} />
                   </td>
-                  <td>{items.productId}</td>
-                  <td>{items.productName}</td>
-                  <td>{items.productType}</td>
-                  <td>{items.productDescription}</td>
                 </tr>
               ))}
           </tbody>
@@ -263,7 +268,7 @@ const Newproduct = (props) => {
           <Row>
             <Col>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <div
+              <div
                   className="mb-3"
                   style={{ display: "flex", alignItems: "center" }}
                 >
@@ -283,7 +288,6 @@ const Newproduct = (props) => {
                     onChange={(e) => setProductType(e.target.value)} readOnly
                   />
                 </div>
-
                 <div
                   className={`mb-3 ${supplierNameError ? "has-error" : ""}`}
                   style={{ display: "flex", alignItems: "center" }}
@@ -294,23 +298,20 @@ const Newproduct = (props) => {
                   >
                     Supplier Name <span style={{ color: "red" }}>*</span>
                   </label>
-                  <Form.Select
-                    type="text"
-                    placeholder=" "
+                  <Typeahead
                     className="inputfocus"
                     style={{ flex: 3, padding: "2px" }}
-                    onChange={(e) => { handleSelectSupplier(e)}}
-                  >
-                    {
-                      props.customers.customersList.filter(item => item.businessTypeId !== 1).map(item => {
-                        return <option value={item.id}>{item.name}</option>
-                      })
+                    options={props.customers.customersList
+                      .filter(item => item.businessTypeId === 3)
+                      .map(item => ({ id: item.id, name: item.name }))
                     }
-                  </Form.Select>
-
-                  {/* {supplierNameError && (
+                    labelKey="name"
+                    onChange={handleSelectSupplier}
+                    placeholder="Search..."
+                  />
+                  {supplierNameError && (
                     <span style={{ color: "red", marginTop: '48px', marginLeft: '-29%', fontSize: '12px' }}>Supplier Name Required</span>
-                  )} */}
+                  )}
                 </div>
 
                 <div
@@ -343,32 +344,6 @@ const Newproduct = (props) => {
                 </div>
 
                 <div
-                  className={`mb-3 ${productNameError ? "has-error" : ""}`}
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <label
-                    className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px", flex: 2 }}
-                  >
-                    Product URL
-                  </label>
-                  <Form.Control
-                    type="text"
-                    placeholder=" "
-                    className="inputfocus"
-                    style={{
-                      flex: 3,
-                      padding: "2px",
-                    }}
-                    value={productUrl}
-                    onChange={(e) => {
-                      setProductUrl(e.target.value);
-                      setProductNameError(false);
-                    }}
-                  />
-                  </div>
-
-                <div
                   className="mb-3"
                   style={{ display: "flex", alignItems: "center" }}
                 >
@@ -379,10 +354,10 @@ const Newproduct = (props) => {
                     Description
                   </label>
                   <textarea
-                    className="form-control inputfocus"
+                    className="form-control inputfocus description"
                     rows="4"
                     placeholder="Enter your message"
-                    style={{ flex: 3 }}
+                    style={{ flex: 3, marginLeft: '13px' }}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
@@ -409,7 +384,6 @@ const Newproduct = (props) => {
           >
             Save
           </Button>
-        
         </Modal.Footer>
       </Modal>
       <Modal
@@ -549,7 +523,6 @@ const Newproduct = (props) => {
       </Modal>
       {
         props.productsData.error ? <Alert clas>[props.productsData.error.status]</Alert> : null
-
       }
 
       <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'end', marginTop: 20, paddingBottom: 100}}>
@@ -557,10 +530,12 @@ const Newproduct = (props) => {
         props.productsData.products?.length > 0 ? renderPagination() : null
       }
       </div>
-     
+
     </div>
   );
 };
+
+
 
 const mapsToProps = (state) => {
   return {
