@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+
 import {
   Col,
   Row,
@@ -28,21 +31,27 @@ import {
   INITIAL_STATE,
 } from "../../utils/Constant";
 
+const isEmailValid = (email1) => {
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return emailPattern.test(email1);
+};
 function CustomerForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
   const [address, setaddress] = useState(false);
   const [bankdetails, setbankdetails] = useState(false);
   const [nameError, setNameError] = useState(false);
-  const [mobileError, setMobileError] = useState(false);
   const [categoryError, setCategoryError] = useState(false);
   const [vatError, setVatError] = useState(false);
   const [name, setName] = useState("");
   const [jobposition, setJobposition] = useState("");
   const [trnnum, setTrnnum] = useState("");
   const [phone, setPhone] = useState("");
-  const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [mobileError, setMobileError] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
   const [website, setWebsite] = useState("");
   const [category, setCategory] = useState();
   const [customeraddress, setAddress] = useState("");
@@ -66,14 +75,22 @@ function CustomerForm(props) {
   const [businessType, setBusinessType] = useState([]);
 
   console.log("props message:", props);
-
   const handleChange = (e) => {
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
     if (e.target.name === "phone") setPhone(e.target.value);
-    if (e.target.name === "mobile") setMobile(e.target.value);
-    if (e.target.name === "email") setEmail(e.target.value);
+
+    if (e.target.name === "mobile") {
+      setMobile(e.target.value);
+    }
+
+    if (e.target.name === "email") {
+      setEmail(e.target.value);
+      setEmailError(
+        isEmailValid(e.target.value) ? "" : "Invalid email format."
+      );
+    }
     if (e.target.name === "website") setWebsite(e.target.value);
     if (e.target.name === "customeraddress") setAddress(e.target.value);
     if (e.target.name === "city") setCity(e.target.value);
@@ -103,7 +120,7 @@ function CustomerForm(props) {
       setNameError(true);
       return;
     }
-    if (!mobile.trim()) {
+    if (!mobile.trim() || mobileError) {
       setMobileError(true);
       return;
     }
@@ -131,20 +148,23 @@ function CustomerForm(props) {
       isRegistered: vattreatment,
       category: category,
       title: title,
+      country:country,
       emirates: emirates,
       zip: zip,
       createdBy: props.loggedInUser.loginId,
       customerCategoryId: category,
       businessTypeId: customerType,
-      addresses: [{
-        addressLine1: customeraddress,
-        addressLine2: city,
-        city: city,
-        zipcode: zip,
-        country: 1,
-        state: city,
-        addressTypeId: 1
-      }]
+      addresses: [
+        {
+          addressLine1: customeraddress,
+          addressLine2: city,
+          city: city,
+          zipcode: zip,
+          country: 1,
+          state: city,
+          addressTypeId: 1,
+        },
+      ],
     };
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
@@ -166,11 +186,7 @@ function CustomerForm(props) {
   };
   const bankmodal = () => {
     setbankdetails(!bankdetails);
-  };
-  // useEffect(() => {
-  //   if (props.status === "success") {
-  //   }
-  // }, [props.status]);
+  }; 
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
@@ -192,6 +208,7 @@ function CustomerForm(props) {
       <div
         style={{
           backgroundColor: "#F5F5F5",
+
           paddingLeft: 30,
           paddingRight: 30,
         }}
@@ -317,31 +334,27 @@ function CustomerForm(props) {
                       }}
                       onClick={openAvatars}
                     />
+                    <Modal show={isAvatarsOpen} onHide={openAvatars}>
+                      <Modal.Body>Kindly choose the profile picture</Modal.Body>
 
-                    {isAvatarsOpen && (
-                      <div className=" h-max w-100 p-2">
-                        <div
-                          className="d-flex flex-wrap position-relative"
-                          style={{
-                            width: "fit-content",
-                            overflowY: "scroll",
-                            WebkitScrollSnapType: "inline",
-                          }}
-                        >
-                          {avatars.map((item) => (
-                            <img
-                              className="ms-2 p-2 cursor-pointer  rounded-full border p-1"
-                              style={{ zIndex: "99", width: "42%" }}
-                              name={item.name}
-                              key={item.id}
-                              src={item.src}
-                              rounded
-                              onClick={captureImage}
-                            />
-                          ))}
+                      {isAvatarsOpen && (
+                        <div className=" h-20 p-2">
+                          <div className="d-flex w-100 flex-wrap position-relative border">
+                            {avatars.map((item) => (
+                              <img
+                                className="ms-2 p-2 cursor-pointer  rounded-full border p-1"
+                                style={{ zIndex: "99", width: "30%" }}
+                                name={item.name}
+                                key={item.id}
+                                src={item.src}
+                                rounded
+                                onClick={captureImage}
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </Modal>
                     <Form.Label className="">Profile Picture</Form.Label>
                   </Form.Group>
                 </Col>
@@ -547,6 +560,7 @@ function CustomerForm(props) {
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Phone
                       <FormControl
+                        type="number"
                         className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f", height: "2rem" }}
                         name="phone"
@@ -560,35 +574,43 @@ function CustomerForm(props) {
                       <FormLabel className=" b txt-ht_blue w-100 f-14">
                         Mobile
                         <div key={`inline-radio`} className="mb-3">
-                          <FormControl
-                            className={`inputfocus f-14   br_b-2 rounded-0 inputfocus ${
+                          <PhoneInput
+                            placeholder="Enter phone number"
+                            value={mobile}
+                            onChange={(value) => {
+                              setMobile(value);
+                              setMobileError(false);
+                            }}
+                            className={`inputfocus f-14 br_b-2 rounded-0 ${
                               mobileError ? "has-error" : ""
-                            } `}
+                            }`}
                             style={{
+                              border: "none",
+                              backgroundColor: "white",
                               border: "2px dotted #25316f",
                               height: "2rem",
                             }}
                             name="mobile"
-                            onChange={(e) => {
-                              handleChange(e);
-                              setMobileError(false);
-                            }}
-                          ></FormControl>
+                            limitMaxLength
+                          />
                         </div>
                       </FormLabel>
                       {mobileError && (
                         <span style={{ color: "red" }}>Required</span>
                       )}
                     </div>
+
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Email
                       <FormControl
+                        type="email"
                         className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f", height: "2rem" }}
                         name="email"
                         onChange={(e) => handleChange(e)}
                       ></FormControl>
                     </FormLabel>
+                    {emailError && <p style={{ color: "red" }}>{emailError}</p>}
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Website
                       <FormControl
@@ -663,18 +685,7 @@ function CustomerForm(props) {
                   placeholder="Leave a comment here"
                   style={{ height: "100px" }}
                 />
-                <Button
-                  className=" f-14 bg-blue b-none f-14 text-uppercase rounded-1"
-                  style={{
-                    height: "30px",
-                    width: "max-content",
-                    backgroundColor: "#25316f",
-                    marginTop: 25,
-                  }}
-                  type="button"
-                >
-                  Save
-                </Button>
+               
               </FormGroup>
             </Col>
 
@@ -695,8 +706,7 @@ function CustomerForm(props) {
 const mapsToProps = (state) => {
   return {
     master: state.masterData,
-    loggedInUser: state.users
-  }
-}
-
+    loggedInUser: state.users,
+  };
+};
 export default connect(mapsToProps)(CustomerForm);
