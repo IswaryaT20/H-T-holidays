@@ -19,8 +19,9 @@ export const ADD_PRODUCT_API_CALL = 'Add_Product_Api_call'
 export const ADD_PRODUCT_API_RESPONSE = 'Add_Product_Api_response'
 export const PRODUCT_ERROR = 'Eroduct-Error'
 export const CLEAR_PRODUCT_ERROR = 'Clear-Product-Error'
-export const UPDATE_USER_ID_LOCALLY = 'UPDATE-USER-ID-LOCALLY'
-
+export const UPDATE_USER_ID_LOCALLY = 'Update_User_id_Locally'
+export const SEARCH_CUSTOMER_API_CALL = 'Search_Customer_API_Call'
+export const SEARCH_CUSTOMER_API_RESPONSE = 'Search_Customer_API_Response'
 
 export const KEY_IS_LOGGED_IN = "loggedIn"
 export const KEY_USER_ID = "userId"
