@@ -23,7 +23,7 @@ import Bankform from "./VendorBankForm";
 import { useSelector, useDispatch, connect } from "react-redux";
 import {
   MASTER_API_CALL,
-  GET_ALL_CUSTOMERS_API_CALL,
+  CREATE_CUSTOMER_API_CALL,
   REGISTER_API_CALL,
   INITIAL_STATE,
 } from "../../utils/Constant";
@@ -114,9 +114,7 @@ function VendorForm(props) {
     if (suppliername.length === 0) {
       seterror("the suppliername is required");
       return;
-    }
-
-  
+    } 
 
     const sendsupplierdata = {
       name: suppliername,
@@ -143,19 +141,16 @@ function VendorForm(props) {
       ],
     };
     dispatch({
-      type: GET_ALL_CUSTOMERS_API_CALL,
+      type: CREATE_CUSTOMER_API_CALL,
       payload: sendsupplierdata,
-     
-
     });
-    console.log("supplier data", props.data);
-    console.log(props.payload);
+    console.log("supplier data", props.customers);
     console.log(sendsupplierdata);
   };
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
-    console.log("message :", props);
+    console.log("message :", props.message);
   },[]);
 
   const handleVatreatment = (item) => {
