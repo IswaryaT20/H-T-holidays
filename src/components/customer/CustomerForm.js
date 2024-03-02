@@ -131,14 +131,20 @@ function CustomerForm(props) {
       isRegistered: vattreatment,
       category: category,
       title: title,
-      customeraddress: customeraddress,
-      city: city,
       emirates: emirates,
-      country: country,
       zip: zip,
       createdBy: props.loggedInUser.loginId,
       customerCategoryId: category,
       businessTypeId: customerType,
+      addresses: [{
+        addressLine1: customeraddress,
+        addressLine2: city,
+        city: city,
+        zipcode: zip,
+        country: 1,
+        state: city,
+        addressTypeId: 1
+      }]
     };
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });

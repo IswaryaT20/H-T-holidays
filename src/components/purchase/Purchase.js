@@ -83,7 +83,7 @@ const Newproduct = () => {
               <FaSearch className="text-white" />
             </InputGroupText>
             <FormControl
-              placeholder="Search Products..."
+              placeholder="Search Purchase Order..."
               onChange={(e) => setSearch(e.target.value)}
               style={{
                 background: "#80808036",

@@ -32,3 +32,9 @@ td {
   width: 86%;
   margin-top: 15%;
 }
+.form-control.inputfocus.description {
+  margin-left: 17px;
+}
+.pagination {
+  margin-left: 64%;
+}
