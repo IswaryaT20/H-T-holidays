@@ -148,7 +148,7 @@ function CustomerForm(props) {
       isRegistered: vattreatment,
       category: category,
       title: title,
-      country:country,
+      country: country,
       emirates: emirates,
       zip: zip,
       createdBy: props.loggedInUser.loginId,
@@ -186,7 +186,7 @@ function CustomerForm(props) {
   };
   const bankmodal = () => {
     setbankdetails(!bankdetails);
-  }; 
+  };
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
@@ -685,7 +685,6 @@ function CustomerForm(props) {
                   placeholder="Leave a comment here"
                   style={{ height: "100px" }}
                 />
-               
               </FormGroup>
             </Col>
 
