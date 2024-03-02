@@ -41,7 +41,7 @@ function Vendors(props) {
 
   useEffect(() => {
     const customerfilter = props.customers.customersList.filter(
-      (customerdata) => customerdata.businessTypeId === 2
+      (customerdata) => customerdata.businessTypeId === 3
     );
     setCards(customerfilter);
     // setTablevalue(customerfilter);
