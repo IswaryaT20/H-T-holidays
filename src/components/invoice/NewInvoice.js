@@ -128,17 +128,7 @@ const NewInvoice = () => {
             </Col>
             <Col className="col-4 d-flex justify-content-end">
               <p>
-                {isDraft ? (
-                  <strong>
-                    Draft Number: <span>INV-DR/2024/001</span>
-                  </strong>
-                ) : (
-                  <strong>
-                    Invoice Number: <span>INV/2024/001</span>
-                  </strong>
-                )}
-                <br />
-                <small>Balance: ₹ </small>
+                <strong>Balance: ₹ </strong>
               </p>
             </Col>
           </Row>
