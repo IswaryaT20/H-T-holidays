@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 
@@ -9,7 +8,6 @@ import {
   Button,
   Container,
   Modal,
-  FloatingLabel,
   Form,
   FormControl,
   FormLabel,
@@ -35,6 +33,7 @@ const isEmailValid = (email1) => {
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   return emailPattern.test(email1);
 };
+
 function CustomerForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
@@ -213,10 +212,6 @@ function CustomerForm(props) {
           paddingRight: 30,
         }}
       >
-        {/* {
-            props.status.error && <p className="alert">{props.status.error}</p>
-          } */}
-
         <Container fluid className=" f-14 ">
           <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
             <Col className=" f-14 d-flex justify-content-start  ">
@@ -231,19 +226,6 @@ function CustomerForm(props) {
                 onClick={handlesubmit}
               >
                 Save
-              </Button>
-              <Button
-                className=" f-14 bg-gray m-1 text-black rounded-1 b-none mt-1 ms-2"
-                variant="light"
-                type="submit"
-                style={{
-                  PaddingLeft: "5px",
-                  height: "30px",
-                  width: "max-content",
-                  fontWeight: "bolder",
-                }}
-              >
-                Invoice
               </Button>
             </Col>
             <Col className="d-flex justify-content-end me-3 ">
