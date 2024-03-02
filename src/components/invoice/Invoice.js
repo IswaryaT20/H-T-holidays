@@ -42,6 +42,7 @@ const Newproduct = () => {
 
     <Container fluid className="mt-2">
 
+      <div style={{paddingLeft: 50, paddingRight: 50}}>
       <Row className='ms-1'>
       <Col lg={6} xxl={6} className='col-6 p-1' >
           <div className='p-2 shadow rounded-3' style={{ background: '#87ceeb2e', height: 180 }}>
@@ -138,6 +139,7 @@ const Newproduct = () => {
               ))}
           </tbody>
         </Table>
+      </div>
       </div>
     </Container>
   );

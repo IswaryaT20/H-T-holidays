@@ -5,6 +5,9 @@ export const GetAllCustomersCall = () => {
 }
 
 export const CreateCustomerApiCall = (bodyData) => {
-    console.log(bodyData)
     return AxiosConfig.post('v2/customer/addcustomer', bodyData)
+}
+
+export const SearchCustomerApiCall = (bodyData) => {
+    return AxiosConfig.post('v2/customer/searchCustomer', bodyData)
 }

@@ -18,8 +18,10 @@ import { IoCalendar } from "react-icons/io5";
 import axios from "axios";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
 
-function Customerpay() {
+function Customerpay(props) {
   const [customerName, setCustomerName] = useState("");
   const [customers, setCustomers] = useState([]);
   const [customerData, setcustomerData] = useState([]);
@@ -27,6 +29,8 @@ function Customerpay() {
   const [showInput, setShowInput] = useState(true);
   const [switchpayment, setswitchpayment] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch()
 
   const handleSearchChange = (e) => {
     if (e.target.name === "customernamesearch") {
@@ -42,26 +46,27 @@ function Customerpay() {
 
       // Add a delay of 1 second (adjust as needed)
       setTimeout(() => {
-        axios
-          .post(
-            `http://68.178.161.233:8080/handt/v2/customer/searchCustomer`,
-            { query: searchname },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => {
-            setcustomerData(response.data.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching customers:", error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }, 500);
+        dispatch({type: SEARCH_CUSTOMER_API_CALL, payload: {query: searchname}})
+        // axios
+        //   .post(
+        //     `http://68.178.161.233:8080/handt/v2/customer/searchCustomer`,
+        //     { query: searchname },
+        //     {
+        //       headers: {
+        //         "Content-Type": "application/json",
+        //       },
+        //     }
+        //   )
+        //   .then((response) => {
+        //     setcustomerData(response.data.data);
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error fetching customers:", error);
+        //   })
+        //   .finally(() => {
+        //     setLoading(false);
+        //   });
+      }, 1000);
     }
   };
 
@@ -130,13 +135,13 @@ function Customerpay() {
                       onChange={(name) => handleSearchChange(name)}
                     />
                   )}
-                  {showInput && customerData && customerData.length > 0 && (
+                  {showInput && props.customers.searchList && props.customers.searchList.length > 0 && (
                     <Card className="mt-3" style={{ width: "18rem" }}>
                       <ListGroup
                         variant="flush"
                         style={{ maxHeight: "15rem", overflowY: "scroll" }}
                       >
-                        {customerData.map((item) => (
+                        {props.customers.searchList.map((item) => (
                           <ListGroup.Item
                             key={item.id}
                             onClick={() => customerdetails(item)}
@@ -392,4 +397,10 @@ function Customerpay() {
   );
 }
 
-export default Customerpay;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(Customerpay);
