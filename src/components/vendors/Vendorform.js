@@ -17,7 +17,21 @@ import avtar3 from "../../Assets/avatars/3.jpg";
 import avtar4 from "../../Assets/avatars/4.png";
 import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 import Bankform from "./VendorBankForm";
+import { useSelector, useDispatch, connect } from "react-redux";
+import {
+  MASTER_API_CALL,
+  CREATE_CUSTOMER_API_CALL,
+  REGISTER_API_CALL,
+  INITIAL_STATE,
+} from "../../utils/Constant";
+
+const isEmailValid = (email1) => {
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return emailPattern.test(email1);
+};
 
 function VendorForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
@@ -37,13 +51,13 @@ function VendorForm(props) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [error, seterror] = useState("");
-
   const [bankdetails, setBankDetails] = useState("");
-  const [mobileError, setMobileError] = useState("");
-
+  const [emailError, setEmailError] = useState("");
+  const [mobileError, setMobileError] = useState(false);
   const [vatError, setVatError] = useState(false);
 
-  const [supllierType, setSupplierType] = useState(); // individual
+  const dispatch = useDispatch();
+  console.log("props message : ",props);
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -73,6 +87,13 @@ function VendorForm(props) {
   };
 
   const handleChange = (e) => {
+    if (e.target.name === "email") {
+      setEmail(e.target.value);
+      setEmailError(
+        isEmailValid(e.target.value) ? "" : "Invalid email format"
+      );
+    }
+
     if (e.target.name === "suppliername") setSupplierName(e.target.value);
     if (e.target.name === "supllieraddress") setSupplierAddress(e.target.value);
     if (e.target.name === "city") setCity(e.target.value);
@@ -93,26 +114,7 @@ function VendorForm(props) {
     if (suppliername.length === 0) {
       seterror("the suppliername is required");
       return;
-    }
-
-    const isEmailValid = (email) => {
-      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-      return emailPattern.test(email);
-    };
-    const isMobileValid = (mobile) => {
-      return /^\d{10}$/.test(mobile);
-    };
-
-    const isInteger = /^\d+$/.test(mobile);
-    if (!isMobileValid && mobile.length === 0 && mobile.length <= 13 ) {
-      setMobileError("Invalid Entry, it must be 10 digits");
-      return;
-    } else if (!isInteger) {
-      setMobileError("The number must be integer");
-      return;
-    } else {
-      setMobileError("");
-    }
+    } 
 
     const sendsupplierdata = {
       name: suppliername,
@@ -124,41 +126,32 @@ function VendorForm(props) {
       website: website,
       isRegistered: vattreatment,
       title: title,
-      customeraddress: supllieraddress,
-      city: city,
-      state: emirates,
-      countryName: country,
-      zipcode: zip,
-      addressTypeId: 2,
       createdBy: 1,
-      customerCategoryId: 1,
       businessTypeId: 3,
-    };
-
-    axios
-      .post(
-        "http://68.178.161.233:8080/handt/v2/customer/addcustomer",
-        sendsupplierdata,
+      addresses: [
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        console.log(sendsupplierdata);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+          addressLine1: supllieraddress,
+          addressLine2: city,
+          city: city,
+          state: emirates,
+          country: country,
+          zipcode: zip,
+          addressTypeId: 1,
+        },
+      ],
+    };
+    dispatch({
+      type: CREATE_CUSTOMER_API_CALL,
+      payload: sendsupplierdata,
+    });
+    console.log("supplier data", props.customers);
+    console.log(sendsupplierdata);
   };
-  const bankmodal = () => {};
 
-  const selectBusinessType = (businessType) => {
-    console.log(businessType);
-    setSupplierType(businessType.id);
-  };
+  useEffect(() => {
+    dispatch({ type: MASTER_API_CALL });
+    console.log("message :", props.message);
+  },[]);
 
   const handleVatreatment = (item) => {
     console.log(item.target.value);
@@ -194,7 +187,7 @@ function VendorForm(props) {
               <Button
                 className="m-1 bg-blue f-12 rounded-1 b-none"
                 style={{ backgroundColor: "#25316f", width: "max-content" }}
-                onClick={bankmodal}
+                // onClick={bankmodal}
               >
                 Accounting
               </Button>
@@ -475,35 +468,40 @@ function VendorForm(props) {
                       ></FormControl>
                     </FormLabel>
 
-                    <FormLabel className=" b txt-ht_blue w-100 f-14">
-                      Mobile{" "}
-                      <span
-                        style={{
-                          color: "red",
-                        }}
-                      >
-                        *
-                      </span>
-                      <div key={`inline-radio`} className="mb-3">
-                        <FormControl
-                          className={`inputfocus f-14   br_b-2 rounded-0 inputfocus ${
-                            mobileError ? "has-error" : ""
-                          } `}
-                          style={{
-                            border: "2px dotted #25316f",
-                            height: "2rem",
-                          }}
-                          name="mobile"
-                          onChange={(e) => {
-                            handleChange(e);
-                            setMobileError("");
-                          }}
-                        ></FormControl>
-                        {mobileError && !mobile && (
-                          <span style={{ color: "red" }}>{mobileError}</span>
-                        )}
-                      </div>
-                    </FormLabel>
+                    <div
+                      className={`mb-3 ${mobileError ? "has-error" : ""}}
+                      style={{ display: "flex", alignItems: "center" }`}
+                    >
+                      <FormLabel className=" b txt-ht_blue w-100 f-14">
+                        Mobile
+                        <div  className="mb-3">
+                          <PhoneInput
+                            placeholder="Enter phone number"
+                            value={mobile}
+                            onChange={(value) => {
+                              setMobile(value);
+                              setMobileError(false);
+                            }}
+                            className={`inputfocus f-14 br_b-2 rounded-0 ${
+                              mobileError ? "has-error" : ""
+                            }`}
+                            style={{
+                              border: "none",
+                              backgroundColor: "white",
+                              border: "2px dotted #25316f",
+                              height: "2rem",
+                            }}
+                            name="mobile"
+                            limitMaxLength
+                          />
+                        </div>
+                      </FormLabel>
+                      {mobileError && (
+                        <span style={{ color: "red" }}>Required</span>
+                      )}
+                    </div>
+
+           
 
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Email
@@ -514,6 +512,7 @@ function VendorForm(props) {
                         onChange={(e) => handleChange(e)}
                       ></FormControl>
                     </FormLabel>
+                    {emailError && <p style={{ color: "red" }}>{emailError}</p>}
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Website
                       <FormControl
@@ -556,12 +555,18 @@ function VendorForm(props) {
 
             {/*bamk modal for the bank details */}
 
-            {bankdetails && <Bankform banktoggle={bankmodal} />}
+            {/* {bankdetails && <Bankform banktoggle={bankmodal} />} */}
           </Row>
         </Container>
       </div>
     </>
   );
 }
+const mapsToProps = (state) => {
+  return {
+    master: state.masterData,
+    loggedInUser: state.users,
+  };
+};
 
-export default VendorForm;
+export default connect(mapsToProps)(VendorForm);
