@@ -134,7 +134,7 @@ function VendorForm(props) {
           addressLine2: city,
           city: city,
           state: emirates,
-          country: country,
+          country: 1,
           zipcode: zip,
           addressTypeId: 1,
         },
