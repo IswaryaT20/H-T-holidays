@@ -208,9 +208,9 @@ const InvoiceForm = (props) => {
     if (vatChecked) {
       const finalAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
+        // let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
 
-        return total + discountedAmount;
+        return total + findTotalAmount;
       }, 0)
 
       setSubTotal(finalAmount);
@@ -222,7 +222,7 @@ const InvoiceForm = (props) => {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
         let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
 
-        return total + discountedAmount;
+        return total + findTotalAmount;
       }, 0)
 
       setSubTotal(finalAmount);
@@ -253,7 +253,14 @@ const InvoiceForm = (props) => {
                 ))}
               </tr>
             </thead>
-            <InvoiceTableBody products={props.productsData.products} invoiceData={props.invoiceData} handleDeleteRow={handleDeleteRow} unitExcluding={unitExcluding} rowCount={rowCount} vatChecked={vatChecked} itemChanges={itemChanges} />
+            <InvoiceTableBody 
+              products={props.productsData.products} 
+              invoiceData={props.invoiceData} 
+              handleDeleteRow={handleDeleteRow} 
+              unitExcluding={unitExcluding} 
+              rowCount={rowCount} 
+              vatChecked={vatChecked} 
+              itemChanges={itemChanges} />
           </Table>
         </div>
 
