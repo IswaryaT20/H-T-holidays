@@ -15,6 +15,8 @@
     "react-avatar-generator": "^1.0.3",
     "react-bootstrap": "^2.10.1",
     "react-bootstrap-select": "^0.14.0",
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-bootstrap-table2-paginator": "^2.1.2",
     "react-bootstrap-typeahead": "^6.3.2",
     "react-datepicker": "^6.2.0",
     "react-dom": "^18.2.0",

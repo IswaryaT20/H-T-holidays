@@ -11,7 +11,6 @@ const NavigationItems = [
   { id: 5, title: "Accounting", link: "#" },
   { id: 6, title: "Report", link: "#" },
   { id: 7, title: "Procurement", link: "#" },
-  { id: 8, title: "Expense", link: "/Expense" },
 ];
 
 const dropdownActions = {
@@ -25,19 +24,15 @@ const dropdownActions = {
     },
     {
       id: 2,
-      title: "Customer Pay",
+      title: "Customer Receipt",
       link: "/CustomerPay",
     },
     {
       id: 3,
-      title: "Receipt",
-      link: "/Receipt",
+      title: "Supplier Receipt",
+      link: "/SupplierPay",
     },
-    {
-      id: 3,
-      title: "Payment",
-      link: "/Payment",
-    },
+   
   ]
 };
 
