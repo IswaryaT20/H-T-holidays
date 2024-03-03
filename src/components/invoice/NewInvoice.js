@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { GET_ALL_PRODUCTS_API_CALL, GET_ALL_PRODUCTS_RESPONSE, GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 
-const NewInvoice = () => {
+const NewInvoice = (props) => {
+
+  const dispatch = useDispatch();
   //use State
   const netOption = [
     "Net 0",
@@ -26,11 +30,15 @@ const NewInvoice = () => {
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
     setInvoiceDate(currentDate);
+
+      dispatch({type: GET_ALL_PRODUCTS_API_CALL})
+      dispatch({type: GET_ALL_CUSTOMERS_API_CALL})
   }, []);
 
   return (
     <>
       <Container fluid className="mt-2">
+        <div style={{paddingLeft: 50, paddingRight: 50}}>
         <Row>
           <Col>
             <Form>
@@ -187,6 +195,7 @@ const NewInvoice = () => {
             </Col>
           </Row>
         </>
+        </div>
       </Container>
       <InvoiceForm />
     </>

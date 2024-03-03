@@ -1,7 +1,11 @@
 * {
   font-size: 14px;
 }
-/* Apply styles for focused state */
+input.PhoneInputInput {
+  background-color: white;
+  border: none;
+}
+/* Apply styles for focused state in the data */
 .inputfocus:focus {
   border-color: rgb(233, 228, 228);
   box-shadow: none;

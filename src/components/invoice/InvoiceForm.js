@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
-import { FaTrashCan } from "react-icons/fa6";
 import { MdOutlineClose } from "react-icons/md";
+import { GET_ALL_PRODUCTS_API_CALL, GET_ALL_PRODUCTS_RESPONSE, GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import "./Invoice.css";
+import { useDispatch, useSelector, connect } from "react-redux";
+import InvoiceTableBody from "./InvoiceTableBody";
 
-const InvoiceForm = () => {
+
+const InvoiceForm = (props) => {
+
+  const dispatch = useDispatch()
   const tableHeader = [
     "Product",
     "Description",
@@ -43,30 +48,23 @@ const InvoiceForm = () => {
   const [excludingBeforeVAT, setExcludingBeforeVAT] = useState(0);
   const [excludingTotalAmount, setExcludingTotalAmount] = useState(0);
   const [excludingTotalDiscount, setExcludingTotalDiscount] = useState(0);
+  const [rowCount, setRowCount] = useState(1)
+  const [vatChecked, setVatChecked] = useState(true)
 
   //Handlers
   const handleAddRow = () => {
-    setInvoiceData([
-      ...invoiceData,
-      {
-        id: invoiceData.length + 1,
-        product: "",
-        description: "",
-        qty: "",
-        price: "",
-        discount: "",
-        vat: "",
-        amount: "",
-      },
-    ]);
-  };
+    setRowCount(rowCount + 1)
+  }
+
   const handleDeleteRow = (id) => {
     setInvoiceData(invoiceData.filter((item) => item.id !== id));
   };
 
   //unit price handlers:
-  const handleUnitExcluding = () => {
-    setUnitExcluding(!unitExcluding);
+  const handleUnitExcluding = (e) => {
+    // setUnitExcluding(!unitExcluding);
+    console.log(e.target.checked)
+    setVatChecked(e.target.checked)
   };
 
   const handleInputChange = (id, fieldName, value) => {
@@ -121,6 +119,12 @@ const InvoiceForm = () => {
     setInvoiceData(updatedData);
   };
 
+  useEffect(() => {
+    dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
+  }, [])
+
+  console.log(props)
   // Bottom Table Calculation:
   useEffect(() => {
     let newSubTotal = 0;
@@ -192,11 +196,45 @@ const InvoiceForm = () => {
     setGlobalDiscountValue(discount);
   };
 
+  const itemChanges = (allItems) => {
+
+    const findDiscount = allItems.reduce(function (total, item) {
+      let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+      return total + Math.round((item.discount / 100) * findTotalAmount)
+    }, 0)
+
+    setTotalDiscount(findDiscount);
+
+    if (vatChecked) {
+      const finalAmount = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        // let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
+
+        return total + findTotalAmount;
+      }, 0)
+
+      setSubTotal(finalAmount);
+
+    }
+    else {
+
+      const finalAmount = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
+
+        return total + findTotalAmount;
+      }, 0)
+
+      setSubTotal(finalAmount);
+    }
+
+  }
+
   return (
     <>
       <Container fluid className="mt-1">
         {/* Main Table */}
-        <div>
+        <div style={{ paddingLeft: 50, paddingRight: 50 }}>
           <Table hover size="sm" responsive>
             <thead style={{ padding: "0.75rem" }}>
               <tr>
@@ -215,100 +253,23 @@ const InvoiceForm = () => {
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {invoiceData.map((item) => (
-                <tr key={item.id}>
-                  <td className="table-td">
-                    <Form.Select
-                      className="inputfocus rounded-0"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
-                    >
-                      <option disabled>Select Product</option>
-                    </Form.Select>
-                  </td>
-                  <td className="table-td">
-                    <Form.Control
-                      className="inputfocus border-0 rounded-0"
-                      as="textarea"
-                      placeholder="Description"
-                      rows={1}
-                      style={{ height: 40 }}
-                    />
-                  </td>
-                  <td className="table-td">
-                    <Form.Control
-                      type="number"
-                      className="inputfocus border-0 rounded-0"
-                      placeholder="Quantity"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
-                      value={isNaN(item.qty) ? "" : item.qty}
-                      onChange={(e) =>
-                        handleInputChange(item.id, "qty", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td className="table-td">
-                    <Form.Control
-                      type="number"
-                      className="inputfocus border-0 rounded-0"
-                      placeholder="Price (AED)"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
-                      value={isNaN(item.price) ? "" : item.price}
-                      onChange={(e) =>
-                        handleInputChange(item.id, "price", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td className="table-td">
-                    <Form.Control
-                      type="number"
-                      className="inputfocus border-0 rounded-0"
-                      placeholder="Dicount"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
-                      value={isNaN(item.discount) ? "" : item.discount}
-                      onChange={(e) =>
-                        handleInputChange(item.id, "discount", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td className="table-td">
-                    <Form.Control
-                      type="number"
-                      className="inputfocus border-0 rounded-0"
-                      placeholder="VAT"
-                      style={{ width: 170, height: 30, fontSize: 14 }}
-                      value={isNaN(item.vat) ? "" : item.vat}
-                      onChange={(e) =>
-                        handleInputChange(item.id, "vat", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td className="table-td">
-                    {unitExcluding ? (
-                      item.totalUnitPrice
-                    ) : item.price ? (
-                      <span>{item.amount}</span>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
-                  <td className="table-td">
-                    <FaTrashCan
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => handleDeleteRow(item.id)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            <InvoiceTableBody 
+              products={props.productsData.products} 
+              invoiceData={props.invoiceData} 
+              handleDeleteRow={handleDeleteRow} 
+              unitExcluding={unitExcluding} 
+              rowCount={rowCount} 
+              vatChecked={vatChecked} 
+              itemChanges={itemChanges} />
           </Table>
         </div>
 
-        <div className="w-100 d-flex justify-content-end align-items-center">
+        <div className="w-100 d-flex justify-content-end align-items-center" style={{ paddingLeft: 50, paddingRight: 50 }}>
           <Form.Group className="d-flex">
             <Form.Check
               type="checkbox"
               id="custom-checkbox"
+              checked={vatChecked}
               onChange={handleUnitExcluding}
             />
             <Form.Label
@@ -320,7 +281,7 @@ const InvoiceForm = () => {
           </Form.Group>
         </div>
 
-        <div className="w-100">
+        <div className="w-100" style={{ paddingLeft: 50, paddingRight: 50 }}>
           <Button
             onClick={handleAddRow}
             style={{
@@ -330,11 +291,11 @@ const InvoiceForm = () => {
               fontWeight: "bolder",
             }}
           >
-            + Add Items
+            Add Items
           </Button>
         </div>
 
-        <Row className="mt-3">
+        <Row className="mt-3" style={{paddingLeft: 50}}>
           <Col className="col-8">
             <Form.Control
               as="textarea"
@@ -439,12 +400,12 @@ const InvoiceForm = () => {
                     <td className="text-end">
                       {!unitExcluding
                         ? (
-                            parseFloat(totalAmount) - globalDiscountValue
-                          ).toFixed(2)
+                          parseFloat(totalAmount) - globalDiscountValue
+                        ).toFixed(2)
                         : (
-                            parseFloat(excludingTotalAmount) -
-                            globalDiscountValue
-                          ).toFixed(2)}
+                          parseFloat(excludingTotalAmount) -
+                          globalDiscountValue
+                        ).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
@@ -457,4 +418,12 @@ const InvoiceForm = () => {
   );
 };
 
-export default InvoiceForm;
+
+const mapsToProps = (state) => {
+  return {
+    productsData: state.productsData,
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(InvoiceForm);
