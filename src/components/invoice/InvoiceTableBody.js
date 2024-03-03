@@ -68,19 +68,48 @@ const InvoiceTableBody = (props) => {
   }
 
   const renderTotalAmount = (item) => {
-    // {props.vatChecked ? (
-    //   item.totalUnitPrice
-    // ) : item.price ? (
-    //   <span>{item.amount}</span>
-    // ) : (
-    //   <span>-</span>
-    // )}
 
-    let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-    let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
+    let findTotalAmount;
+    if (item.qty && !isNaN(item.qty)) {
+      findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+    }
+    else {
+      findTotalAmount = (!isNaN(item.price) ? item.price : 0) 
+    }
+    // let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+    let discountAmount;
+    if (item.discount && !isNaN(item.discount)) {
+      discountAmount =  (item.discount / 100) * findTotalAmount
+    }
+    else {
+      discountAmount = 0;
+    }
 
-    let vatIncludedPrice = discountedAmount + ((Math.round((item.vat / 100) * discountedAmount)))
-    return <span>{props.vatChecked ? discountedAmount : vatIncludedPrice}</span>
+    let vatIncludedPrice;
+    if (props.vatChecked) {
+      if (item.vat && !isNaN(item.vat)) {
+        let findVatAmount = (findTotalAmount - discountAmount) - ((findTotalAmount - discountAmount)/(1 + (!isNaN(item.vat)/100)))
+        let priceWithoutVat = findTotalAmount - discountAmount - findVatAmount
+        vatIncludedPrice = priceWithoutVat + findVatAmount
+      }
+      else {
+        let findVatAmount = 0
+        vatIncludedPrice = parseFloat(findTotalAmount - discountAmount - findVatAmount).toFixed(2)
+      }
+      
+    }
+    else {
+      if (item.vat && !isNaN(item.vat)) {
+        let findVatAmount =  (findTotalAmount - discountAmount) - ((findTotalAmount - discountAmount)/(1 + (item.vat/100)))
+        vatIncludedPrice = parseFloat(findTotalAmount - discountAmount + findVatAmount).toFixed(2)
+      }
+      else {
+        vatIncludedPrice = (findTotalAmount - discountAmount).toFixed(2)
+      }
+     
+    }
+    
+    return <span>{vatIncludedPrice}</span>
   }
 
   const handleInputChange = (id, fieldName, value) => {
