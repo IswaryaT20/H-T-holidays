@@ -49,7 +49,7 @@ const InvoiceForm = (props) => {
   const [excludingTotalAmount, setExcludingTotalAmount] = useState(0);
   const [excludingTotalDiscount, setExcludingTotalDiscount] = useState(0);
   const [rowCount, setRowCount] = useState(1)
-  const [vatChecked, setVatChecked] = useState(true)
+  const [vatChecked, setVatChecked] = useState(false)
 
   //Handlers
   const handleAddRow = () => {
@@ -198,36 +198,94 @@ const InvoiceForm = (props) => {
 
   const itemChanges = (allItems) => {
 
-    const findDiscount = allItems.reduce(function (total, item) {
-      let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-      return total + Math.round((item.discount / 100) * findTotalAmount)
-    }, 0)
-
-    setTotalDiscount(findDiscount);
+    let findTotalAmount;
+    let totalDiscountTemp;
+    let findBeforeVat;
+    let findVatAmount;
 
     if (vatChecked) {
-      const finalAmount = allItems.reduce(function (total, item) {
+     
+      findTotalAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        // let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
 
-        return total + findTotalAmount;
+        return total + findTotalAmount - discount - vat
       }, 0)
 
-      setSubTotal(finalAmount);
+      totalDiscountTemp = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        return total + discount
+      }, 0)
 
+
+      findBeforeVat = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : findTotalAmount - discount
+        let priceWithoutVat = findTotalAmount - discount - vat
+        return total + priceWithoutVat
+      }, 0)
+
+      findVatAmount = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
+        
+        return total + vat
+      }, 0)
+
+
+      setSubTotal(findTotalAmount.toFixed(2))
+      setTotalDiscount(totalDiscountTemp.toFixed(2))
+      setBeforeVAT(findBeforeVat.toFixed(2))
+      setTotalVAT(findVatAmount.toFixed(2))
     }
     else {
 
-      const finalAmount = allItems.reduce(function (total, item) {
+      findTotalAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discountedAmount = findTotalAmount - (Math.round((item.discount / 100) * findTotalAmount))
-
-        return total + findTotalAmount;
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
+        return total + findTotalAmount + vat - discount
       }, 0)
 
-      setSubTotal(finalAmount);
+      totalDiscountTemp = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        return total + discount
+      }, 0)
+
+
+      findBeforeVat = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : findTotalAmount - discount
+        let priceWithoutVat = findTotalAmount - discount - vat
+        return total + priceWithoutVat
+      }, 0)
+
+      findVatAmount = allItems.reduce(function (total, item) {
+        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
+        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
+        
+        return total + vat
+      }, 0)
+
+
+      setSubTotal(findTotalAmount.toFixed(2))
+      setTotalDiscount(totalDiscountTemp.toFixed(2))
+      setBeforeVAT(findBeforeVat.toFixed(2))
+      setTotalVAT(findVatAmount.toFixed(2))
     }
 
+    
   }
 
   return (
@@ -323,7 +381,7 @@ const InvoiceForm = (props) => {
                       Sub-Total
                     </td>
                     <td className="text-end">
-                      {!unitExcluding ? subTotal : excludingSubTotal}
+                     {subTotal}
                     </td>
                   </tr>
                   <tr>
@@ -345,7 +403,7 @@ const InvoiceForm = (props) => {
                       Before VAT
                     </td>
                     <td className="text-end">
-                      {!unitExcluding ? beforeVAT : excludingBeforeVAT}
+                      {beforeVAT}
                     </td>
                   </tr>
                   <tr>
@@ -387,7 +445,7 @@ const InvoiceForm = (props) => {
                       VAT (AED)
                     </td>
                     <td className="text-end">
-                      {!unitExcluding ? totalVAT : excludingTotalVAT}
+                      {totalVAT}
                     </td>
                   </tr>
                   <tr>
