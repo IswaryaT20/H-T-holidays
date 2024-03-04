@@ -42,14 +42,16 @@ const InvoiceForm = (props) => {
   const [globalDiscountValue, setGlobalDiscountValue] = useState(0);
 
   // Use State for Unit Price Excluding
-  const [unitExcluding, setUnitExcluding] = useState(false);
-  const [excludingSubTotal, setExcludingSubTotal] = useState(0);
-  const [excludingTotalVAT, setExcludingTotalVAT] = useState(0);
-  const [excludingBeforeVAT, setExcludingBeforeVAT] = useState(0);
-  const [excludingTotalAmount, setExcludingTotalAmount] = useState(0);
-  const [excludingTotalDiscount, setExcludingTotalDiscount] = useState(0);
+  // const [unitExcluding, setUnitExcluding] = useState(false);
+  const [inclusiveSubTotal, setInclusiveSubTotal] = useState(0);
+  const [inclusiveTotalVAT, setInclusiveTotalVAT] = useState(0);
+  const [inclusiveBeforeVAT, setInclusiveBeforeVAT] = useState(0);
+  const [inclusiveTotalAmount, setInclusiveTotalAmount] = useState(0);
+  const [inclusiveTotalDiscount, setInclusiveTotalDiscount] = useState(0);
   const [rowCount, setRowCount] = useState(1)
   const [vatChecked, setVatChecked] = useState(false)
+
+  const [items, setItems] = useState([]);
 
   //Handlers
   const handleAddRow = () => {
@@ -61,62 +63,11 @@ const InvoiceForm = (props) => {
   };
 
   //unit price handlers:
-  const handleUnitExcluding = (e) => {
-    // setUnitExcluding(!unitExcluding);
+  const handleVatChecked = (e) => {
     console.log(e.target.checked)
     setVatChecked(e.target.checked)
-  };
 
-  const handleInputChange = (id, fieldName, value) => {
-    const updatedData = invoiceData.map((item) => {
-      if (item.id === id) {
-        // Update the field value
-        const updatedItem = { ...item, [fieldName]: parseFloat(value) };
-
-        // Calculate amount
-        const qty = updatedItem.qty || 1;
-        const price = updatedItem.price || 0;
-        const discount = updatedItem.discount || 0;
-        const vat = updatedItem.vat || 0;
-
-        let amount = qty * price;
-        let totalAmount = 0;
-
-        // unit price
-        let vatExcludingAmount = 0; // unit VAT
-        let totalExcludingAmount = 0; // unit subTotal
-        let totalExcludingDiscount = 0; // unit discount
-        let totalUnitPrice = 0; //  unit Total
-
-        if (unitExcluding) {
-          // Unit Excluding Calculation
-          totalExcludingDiscount = amount - (amount * discount) / 100;
-          vatExcludingAmount =
-            totalExcludingDiscount - totalExcludingDiscount / (1 + vat / 100);
-          totalExcludingAmount = totalExcludingDiscount - vatExcludingAmount;
-          totalUnitPrice = totalExcludingAmount + vatExcludingAmount;
-        }
-
-        // Apply discount
-        amount -= (amount * discount) / 100;
-
-        // Apply VAT
-        amount += (amount * vat) / 100;
-
-        totalAmount = amount.toFixed(2);
-
-        return {
-          ...updatedItem,
-          amount: totalAmount,
-          totalExcludingDiscount: totalExcludingDiscount.toFixed(2),
-          vatExcludingAmount: vatExcludingAmount.toFixed(2),
-          totalExcludingAmount: totalExcludingAmount.toFixed(2),
-          totalUnitPrice: totalUnitPrice.toFixed(2),
-        };
-      }
-      return item;
-    });
-    setInvoiceData(updatedData);
+    itemChanges(items, true)
   };
 
   useEffect(() => {
@@ -124,64 +75,8 @@ const InvoiceForm = (props) => {
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, [])
 
-  console.log(props)
+  // console.log(props)
   // Bottom Table Calculation:
-  useEffect(() => {
-    let newSubTotal = 0;
-    let newTotalDiscount = 0;
-    let newTotalVAT = 0;
-
-    let newExcludingDiscount = 0;
-    let newExcluingSubTotal = 0;
-    let newExcludingTotalVAT = 0;
-
-    invoiceData.forEach((item) => {
-      const qty = parseFloat(item.qty || 1);
-      const amount = parseFloat(item.price || 0);
-      const discount = parseFloat(item.discount || 0);
-      const vat = parseFloat(item.vat || 0);
-
-      //Stores the value seperatly for getting the values on point!
-      const itemTotal = qty * amount;
-      const itemDiscount = (itemTotal * discount) / 100;
-      const itemVAT = ((itemTotal - itemDiscount) * vat) / 100;
-
-      //Stores Unit Excluding Values:
-      const itemExcludingDiscount = (itemTotal * discount) / 100;
-      const itemExcludingTotal = itemTotal - itemExcludingDiscount;
-      const itemExcludingVAT =
-        itemExcludingTotal - itemExcludingTotal / (1 + vat / 100);
-      const itemExcludingSubTotal = itemExcludingTotal - itemExcludingVAT;
-
-      newSubTotal += itemTotal;
-      newTotalDiscount += itemDiscount;
-      newTotalVAT += itemVAT;
-
-      newExcludingDiscount += itemExcludingDiscount;
-      newExcluingSubTotal += itemExcludingSubTotal;
-      newExcludingTotalVAT += itemExcludingVAT;
-    });
-
-    const newBeforeVAT = newSubTotal - newTotalDiscount;
-    const newTotalAmount = newBeforeVAT + newTotalVAT;
-
-    const newExcludingBeforeVAT = newExcluingSubTotal;
-    const newExcludingTotalAmount =
-      newExcludingBeforeVAT + newExcludingTotalVAT;
-
-    setSubTotal(newSubTotal.toFixed(2));
-    setTotalDiscount(newTotalDiscount.toFixed(2));
-    setTotalVAT(newTotalVAT.toFixed(2));
-    setBeforeVAT(newBeforeVAT.toFixed(2));
-    setTotalAmount(newTotalAmount.toFixed(2));
-
-    setExcludingTotalDiscount(newExcludingDiscount.toFixed(2));
-    setExcludingSubTotal(newExcluingSubTotal.toFixed(2));
-    setExcludingBeforeVAT(newExcludingBeforeVAT.toFixed(2));
-    setExcludingTotalVAT(newExcludingTotalVAT.toFixed(2));
-    setExcludingTotalAmount(newExcludingTotalAmount.toFixed(2));
-  }, [invoiceData, unitExcluding]);
-
   const handleGlobalDiscountClick = () => {
     setShowGlobalDiscount(true);
   };
@@ -196,8 +91,12 @@ const InvoiceForm = (props) => {
     setGlobalDiscountValue(discount);
   };
 
-  const itemChanges = (allItems) => {
-
+  const itemChanges = (allItems, isChecked = false) => {
+    console.log(allItems)
+    if (isChecked) {
+      setItems(allItems)
+    }
+    
     let findTotalAmount;
     let totalDiscountTemp;
     let findBeforeVat;
@@ -211,13 +110,13 @@ const InvoiceForm = (props) => {
         let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
 
         return total + findTotalAmount - discount - vat
-      }, 0)
+      }, 0) //inclusive sub-total vat
 
       totalDiscountTemp = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
         let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
         return total + discount
-      }, 0)
+      }, 0) // inclusive discount
 
 
       findBeforeVat = allItems.reduce(function (total, item) {
@@ -227,7 +126,7 @@ const InvoiceForm = (props) => {
         let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : findTotalAmount - discount
         let priceWithoutVat = findTotalAmount - discount - vat
         return total + priceWithoutVat
-      }, 0)
+      }, 0) // inclusive before vat
 
       findVatAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
@@ -236,45 +135,41 @@ const InvoiceForm = (props) => {
         let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
         
         return total + vat
-      }, 0)
+      }, 0) // inclusive VAT
 
 
-      setSubTotal(findTotalAmount.toFixed(2))
-      setTotalDiscount(totalDiscountTemp.toFixed(2))
-      setBeforeVAT(findBeforeVat.toFixed(2))
-      setTotalVAT(findVatAmount.toFixed(2))
+      setInclusiveSubTotal(findTotalAmount.toFixed(2))
+      setInclusiveTotalDiscount(totalDiscountTemp.toFixed(2))
+      setInclusiveBeforeVAT(findBeforeVat.toFixed(2))
+      setInclusiveTotalVAT(findVatAmount.toFixed(2))
+      setInclusiveTotalAmount((findBeforeVat+findVatAmount).toFixed(2))
     }
     else {
 
       findTotalAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
-        return total + findTotalAmount + vat - discount
-      }, 0)
+        return total + findTotalAmount
+      }, 0) // subtotal
 
       totalDiscountTemp = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
         let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
         return total + discount
-      }, 0)
+      }, 0) // discount
 
 
       findBeforeVat = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
         let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : findTotalAmount - discount
-        let priceWithoutVat = findTotalAmount - discount - vat
+        let priceWithoutVat = findTotalAmount - discount
         return total + priceWithoutVat
-      }, 0)
+      }, 0) // Before VAT
 
       findVatAmount = allItems.reduce(function (total, item) {
         let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
         let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
 
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
-        
+        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) * (item.vat/100) : 0
         return total + vat
       }, 0)
 
@@ -283,6 +178,7 @@ const InvoiceForm = (props) => {
       setTotalDiscount(totalDiscountTemp.toFixed(2))
       setBeforeVAT(findBeforeVat.toFixed(2))
       setTotalVAT(findVatAmount.toFixed(2))
+      setTotalAmount((findBeforeVat+findVatAmount).toFixed(2))
     }
 
     
@@ -315,7 +211,7 @@ const InvoiceForm = (props) => {
               products={props.productsData.products} 
               invoiceData={props.invoiceData} 
               handleDeleteRow={handleDeleteRow} 
-              unitExcluding={unitExcluding} 
+              // unitExcluding={unitExcluding} 
               rowCount={rowCount} 
               vatChecked={vatChecked} 
               itemChanges={itemChanges} />
@@ -328,7 +224,7 @@ const InvoiceForm = (props) => {
               type="checkbox"
               id="custom-checkbox"
               checked={vatChecked}
-              onChange={handleUnitExcluding}
+              onChange={handleVatChecked}
             />
             <Form.Label
               className="ms-1"
@@ -381,7 +277,7 @@ const InvoiceForm = (props) => {
                       Sub-Total
                     </td>
                     <td className="text-end">
-                     {subTotal}
+                     {!vatChecked ? subTotal : inclusiveSubTotal}
                     </td>
                   </tr>
                   <tr>
@@ -392,7 +288,7 @@ const InvoiceForm = (props) => {
                       Total Discount
                     </td>
                     <td className="text-end">
-                      {!unitExcluding ? totalDiscount : excludingTotalDiscount}
+                      {!vatChecked ? totalDiscount : inclusiveTotalDiscount}
                     </td>
                   </tr>
                   <tr>
@@ -403,7 +299,7 @@ const InvoiceForm = (props) => {
                       Before VAT
                     </td>
                     <td className="text-end">
-                      {beforeVAT}
+                      {!vatChecked ? beforeVAT : inclusiveBeforeVAT}
                     </td>
                   </tr>
                   <tr>
@@ -445,7 +341,7 @@ const InvoiceForm = (props) => {
                       VAT (AED)
                     </td>
                     <td className="text-end">
-                      {totalVAT}
+                      {!vatChecked ? totalVAT : inclusiveTotalVAT}
                     </td>
                   </tr>
                   <tr>
@@ -456,12 +352,12 @@ const InvoiceForm = (props) => {
                       Total Amount (AED)
                     </td>
                     <td className="text-end">
-                      {!unitExcluding
+                      {!vatChecked
                         ? (
                           parseFloat(totalAmount) - globalDiscountValue
                         ).toFixed(2)
                         : (
-                          parseFloat(excludingTotalAmount) -
+                          parseFloat(inclusiveTotalAmount) -
                           globalDiscountValue
                         ).toFixed(2)}
                     </td>

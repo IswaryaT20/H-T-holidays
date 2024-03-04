@@ -16,6 +16,7 @@ const NewPurchase = () => {
 
   return (
     <>
+    <div style={{paddingRight: 50, paddingLeft: 50}}>
       <Container fluid className="mt-2">
         <Row>
           <Col className="d-flex justify-content-end">
@@ -157,6 +158,7 @@ const NewPurchase = () => {
           </Row>
         </>
       </Container>
+      </div>
     </>
   );
 };

@@ -39,6 +39,7 @@ const Newproduct = () => {
 
   return (
 
+    <div style={{paddingRight: 50, paddingLeft: 50}}>
     <Container fluid className='mt-2'>
 
       <Row className='ms-1'>
@@ -141,6 +142,7 @@ const Newproduct = () => {
         </Table>
       </div>
     </Container>
+    </div>
   );
 }
 
