@@ -2,67 +2,67 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { FaTrashCan } from "react-icons/fa6";
 
-const InvoiceTableBody = (props) => {
+const PruchaseTableBody = (props) => {
 
-  const [invoiceData, setInvoiceData] = useState([])
+  const [purchaseData, setPurchaseData] = useState([])
 
   useEffect(() => {
-    if (invoiceData.length != props.rowCount) {
-      setInvoiceData([...invoiceData, { id: 0, product: '', description: '', qty: '', price: '', discount: '', vat: '', amount: '' }])
+    if (purchaseData.length != props.rowCount) {
+      setPurchaseData([...purchaseData, { id: 0, product: '', description: '', qty: '', price: '', discount: '', vat: '', amount: '' }])
     }
   }, [props.rowCount])
 
 
   const handleItemSelect = (id, index) => {
-    setInvoiceData(invoiceData.map((item, itemIndex) => {
+    setPurchaseData(purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: id, price: item.price, description: item.description, discount: item.discount, vat: item.vat } : item
     }));
   }
 
   const handleQuantityChange = (quantity, index) => {
-    const updateQuantity = invoiceData.map((item, itemIndex) => {
+    const updateQuantity = purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: quantity, id: item.id, price: item.price, description: item.description, discount: item.discount, vat: item.vat } : item
     })
-    setInvoiceData(updateQuantity);
+    setPurchaseData(updateQuantity);
     props.itemChanges(updateQuantity);
   }
 
   const handleDescription = (description, index) => {
-    setInvoiceData(invoiceData.map((item, itemIndex) => {
+    setPurchaseData(purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: item.id, description: description, price: item.price, discount: item.discount, vat: item.vat } : item
     }));
 
   }
 
   const handlePriceChange = (price, index) => {
-    const updatePriceChange = invoiceData.map((item, itemIndex) => {
+    const updatePriceChange = purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: item.id, description: item.description, price: price, discount: item.discount, vat: item.vat } : item
     })
     props.itemChanges(updatePriceChange)
-    setInvoiceData(updatePriceChange);
+    setPurchaseData(updatePriceChange);
   }
 
   const handleDiscountChange = (discount, index) => {
-    const updateDiscountArray = invoiceData.map((item, itemIndex) => {
+    const updateDiscountArray = purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: item.id, description: item.description, price: item.price, discount: discount, vat: item.vat } : item
     })
     props.itemChanges(updateDiscountArray)
-    setInvoiceData(updateDiscountArray);
+    setPurchaseData(updateDiscountArray);
   }
 
   const handleVatChange = (vat, index) => {
-    const updateVatArray = invoiceData.map((item, itemIndex) => {
+    const updateVatArray = purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: item.id, description: item.description, price: item.price, discount: item.discount, vat: vat } : item
     })
     props.itemChanges(updateVatArray)
-    setInvoiceData(updateVatArray);
+    setPurchaseData(updateVatArray);
   }
 
   const deleteRow = (id) => {
-    const filteredData = invoiceData.filter((item) => {
+    const filteredData = purchaseData.filter((item) => {
       return item.id !== id
     })
-    setInvoiceData(filteredData)
+    setPurchaseData(filteredData)
 
     props.itemChanges(filteredData)
   }
@@ -112,21 +112,21 @@ const InvoiceTableBody = (props) => {
     return <span>{vatIncludedPrice}</span>
   }
 
-  return <tbody> {invoiceData?.map((item, index) => {
+  return <tbody> {purchaseData?.map((item, index) => {
     console.log(item);
     return <tr key={item.id}>
       <td className="table-td">
         <Form.Select
           className="inputfocus rounded-0"
           onChange={e => { handleItemSelect(e.target.value, index) }}
-          style={{ width: 170, height: 30, fontSize: 14 }}
+          style={{ width: 170, height: 30, fontSize: 12 }}
           defaultChecked={0}
           value={item.id}
         >
           <option>Select Product</option>
           {
             props?.products?.map(product => {
-              return <option key={product.id} value={product.id}>{product.productName}</option>
+              return <option key={product.id} value={product.id} style={{fontSize: 12}}>{product.productName}</option>
             })
           }
         </Form.Select>
@@ -148,7 +148,8 @@ const InvoiceTableBody = (props) => {
           placeholder="Quantity"
           style={{ width: 170, height: 30, fontSize: 14 }}
           value={isNaN(item.qty) ? "" : item.qty}
-          onChange={(e) => handleQuantityChange(e.target.value, index)}
+          onChange={(e) => handleQuantityChange(e.target.value, index)
+          }
         />
       </td>
       <td className="table-td">
@@ -193,7 +194,7 @@ const InvoiceTableBody = (props) => {
       </td>
       <td className="table-td">
         {
-          invoiceData.length == 1 ? <FaTrashCan
+          purchaseData.length == 1 ? <FaTrashCan
             style={{ color: "#AAAAAA", cursor: "pointer" }}
           /> : <FaTrashCan
             style={{ color: "#555555", cursor: "pointer" }}
@@ -208,4 +209,4 @@ const InvoiceTableBody = (props) => {
 }
 
 
-export default InvoiceTableBody;
+export default PruchaseTableBody;
