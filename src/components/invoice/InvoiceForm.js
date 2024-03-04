@@ -65,15 +65,17 @@ const InvoiceForm = (props) => {
   //unit price handlers:
   const handleVatChecked = (e) => {
     console.log(e.target.checked)
-    setVatChecked(e.target.checked)
-
-    itemChanges(items, true)
+    setVatChecked(!vatChecked)
   };
 
   useEffect(() => {
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, [])
+
+  useEffect(() => {
+    itemChanges(items, true)
+  }, [vatChecked])
 
   // console.log(props)
   // Bottom Table Calculation:
@@ -91,11 +93,13 @@ const InvoiceForm = (props) => {
     setGlobalDiscountValue(discount);
   };
 
-  const itemChanges = (allItems, isChecked = false) => {
-    console.log(allItems)
-    if (isChecked) {
+  const itemChanges = (allItems) => {
+      
+      console.log(allItems)
+      console.log("vat checked", vatChecked)
+   
       setItems(allItems)
-    }
+    
     
     let findTotalAmount;
     let totalDiscountTemp;
