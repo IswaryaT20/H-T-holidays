@@ -15,22 +15,22 @@ import {
 } from "react-bootstrap";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
-import axios from "axios";
+import { Link } from "react-router-dom";
+import Customer from "../customer/Customer";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
+import Receipt from "./Receipt";
 
 function Customerpay(props) {
   const [customerName, setCustomerName] = useState("");
-  const [customers, setCustomers] = useState([]);
-  const [customerData, setcustomerData] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showInput, setShowInput] = useState(true);
   const [switchpayment, setswitchpayment] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleSearchChange = (e) => {
     if (e.target.name === "customernamesearch") {
@@ -44,28 +44,12 @@ function Customerpay(props) {
     if (searchname) {
       setLoading(true);
 
-      // Add a delay of 1 second (adjust as needed)
+      // Add a delay of 1 second
       setTimeout(() => {
-        dispatch({type: SEARCH_CUSTOMER_API_CALL, payload: {query: searchname}})
-        // axios
-        //   .post(
-        //     `http://68.178.161.233:8080/handt/v2/customer/searchCustomer`,
-        //     { query: searchname },
-        //     {
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //       },
-        //     }
-        //   )
-        //   .then((response) => {
-        //     setcustomerData(response.data.data);
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error fetching customers:", error);
-        //   })
-        //   .finally(() => {
-        //     setLoading(false);
-        //   });
+        dispatch({
+          type: SEARCH_CUSTOMER_API_CALL,
+          payload: { query: searchname },
+        });
       }, 1000);
     }
   };
@@ -90,10 +74,7 @@ function Customerpay(props) {
   return (
     <>
       <Container fluid className="flex">
-        <Row
-          className="w-100 ms-0 mt-2 bg-blur"
-          style={{ flex: 1, backgroundColor: "#e7e7e761" }}
-        >
+        <Row className="w-100 ms-0 mt-2 bg-blur" style={{}}>
           <Col lg={2}></Col>
           <Col
             className="border shadow p-3 w-80 "
@@ -111,7 +92,10 @@ function Customerpay(props) {
             >
               <div className="f-20 text-capitalize">Receive Payment</div>
               <button className="p-1 ms-auto f-14 btn-blue">Receive</button>
+              <Link to='/Receipt'>
               <button className="p-1 f-14 me-2 btn-blue">Cancel</button>
+              </Link>
+
             </Stack>
 
             <Row className="f-20 mt-3">
@@ -135,29 +119,32 @@ function Customerpay(props) {
                       onChange={(name) => handleSearchChange(name)}
                     />
                   )}
-                  {showInput && props.customers.searchList && props.customers.searchList.length > 0 && (
-                    <Card className="mt-3" style={{ width: "18rem" }}>
-                      <ListGroup
-                        variant="flush"
-                        style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                      >
-                        {props.customers.searchList.map((item) => (
-                          <ListGroup.Item
-                            key={item.id}
-                            onClick={() => customerdetails(item)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <strong onClick={() => setShowInput(true)}>
-                              Name:
-                            </strong>
-                            {item.name}
-                            {item.id}
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
-                      <Button variant="link">Add Customer +</Button>
-                    </Card>
-                  )}
+                  {showInput &&
+                    props.customers.searchList &&
+                    props.customers.searchList.length > 0 && (
+                      <Card className="mt-3" style={{ width: "18rem" }}>
+                        <ListGroup
+                          variant="flush"
+                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
+                        >
+                          {props.customers.searchList.map((item) => (
+                            <ListGroup.Item
+                              key={item.id}
+                              onClick={() => customerdetails(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <strong onClick={() => setShowInput(true)}>
+                                Name:
+                              </strong>
+                              {item.name}
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                        <Link to="/CustomerForm">
+                          <Button variant="link">Add Customer +</Button>
+                        </Link>
+                      </Card>
+                    )}
                   {selectedCustomer ? (
                     <div
                       xxl={2}
@@ -399,8 +386,8 @@ function Customerpay(props) {
 
 const mapsToProps = (state) => {
   return {
-    customers: state.customers
-  }
-}
+    customers: state.customers,
+  };
+};
 
 export default connect(mapsToProps)(Customerpay);
