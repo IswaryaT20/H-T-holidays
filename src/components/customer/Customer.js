@@ -15,6 +15,7 @@ import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
 import CustomerForm from "./CustomerForm";
+import { useNavigate } from "react-router-dom";
 
 function Customer(props) {
   const [card, setCards] = useState([]);
@@ -23,8 +24,7 @@ function Customer(props) {
   const [tableActive, setTableActive] = useState(false);
 
   const dispatch = useDispatch();
-
-  console.log(props)
+  const navigation = useNavigate();
 
   const handleCard = () => {
     setCardActive(true);
@@ -34,6 +34,11 @@ function Customer(props) {
     setTableActive(true);
     setCardActive(false);
   };
+
+  const navigateToNewPage = (id) => {
+      // navigate('/customer-details', {state: {id: id}})
+      navigation('/customer-details', {state: {id: id}})
+  }
 
   useEffect(() => {
     //getCardData();
@@ -139,6 +144,8 @@ function Customer(props) {
                     style={{
                       width: "100%"
                     }}
+
+                    onClick={() => {navigateToNewPage(item.id)}}
                   >
                     <div
                       className="image-container d-flex flex-column flex-1"

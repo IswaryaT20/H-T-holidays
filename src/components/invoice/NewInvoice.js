@@ -42,6 +42,7 @@ const NewInvoice = (props) => {
     setAllItems(item);
   };
 
+
   //Handlers
   const handletoggleDraft = () => {
     setIsDraft(!isDraft);
@@ -319,24 +320,22 @@ const NewInvoice = (props) => {
                   </Form.Select>
                 </Form.Group>
 
-                <Form.Group className="ms-2">
-                  <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
-                    Sales Person
-                  </Form.Label>
-                  <Form.Select
-                    className="inputfocus rounded-0"
-                    style={{ height: "30px", fontSize: 14 }}
-                  >
-                    <option disabled style={{ fontSize: 12 }}>
-                      Select Sales Person
-                    </option>
-                    <option style={{ fontSize: 12 }}>Sales Person 1</option>
-                    <option style={{ fontSize: 12 }}>Sales Person 2</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
-          </>
+              <Form.Group className="ms-2">
+                <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Sales Person</Form.Label>
+                <Form.Select
+                  className="inputfocus rounded-0"
+                  style={{ height: "30px", fontSize: 14 }}
+                >
+                  <option disabled style={{ fontSize: 12 }}>
+                    Select Sales Person
+                  </option>
+                  <option value={props.loginUsers.loginName} style={{ fontSize: 12 }}>{props.loginUsers.loginName}</option>
+                  <option style={{ fontSize: 12 }}>Sales Person 2</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+        </>
         </div>
       </Container>
       <InvoiceForm items={productList} />
@@ -347,7 +346,10 @@ const NewInvoice = (props) => {
 const mapsToProps = (state) => {
   return {
     customers: state.customers,
+    loginUsers: state.users
   };
 };
 
-export default connect(mapsToProps)(NewInvoice);
+
+
+export default connect(mapsToProps)(connect(mapToProps)(NewInvoice));

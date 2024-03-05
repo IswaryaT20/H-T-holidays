@@ -9,3 +9,11 @@ export const Register = (paramsData) => {
         params: paramsData
     })
 }
+
+export const SearchCustomersById = (id) => {
+    return AxiosConfig.get(`v2/customer/getCustomerDetails/${id}`)
+}
+
+export const GetLoggedUserDetails = (id) => {
+    return AxiosConfig.get(`v2/getUserDetails/${id}`)
+}

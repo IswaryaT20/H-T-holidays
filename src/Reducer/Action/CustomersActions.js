@@ -1,7 +1,11 @@
 import { AxiosConfig } from "../../Networking/AxiosConfig";
 
-export const GetAllCustomersCall = () => {
-    return AxiosConfig.get('/v2/customer/getAllCustomers')
+export const GetAllCustomersCall = (businessTypeId) => {
+    return AxiosConfig.get('/v2/customer/getAllCustomers', {
+        params: {
+            businessTypeId: businessTypeId
+        }
+    })
 }
 
 export const CreateCustomerApiCall = (bodyData) => {

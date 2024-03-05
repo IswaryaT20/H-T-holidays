@@ -22,6 +22,11 @@ export const CLEAR_PRODUCT_ERROR = 'Clear-Product-Error'
 export const UPDATE_USER_ID_LOCALLY = 'Update_User_id_Locally'
 export const SEARCH_CUSTOMER_API_CALL = 'Search_Customer_API_Call'
 export const SEARCH_CUSTOMER_API_RESPONSE = 'Search_Customer_API_Response'
+export const SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL = 'Search-Customer-By-Id-Call'
+export const SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE = 'Search-Customers-By-Id-Response'
+export const GET_LOGGED_USER_DETAILS_API_CALL = 'Get_Logged_User_details'
+export const GET_LOGGED_USER_DETAILS_RESPONSE = 'Get-Loggedin-User-Response'
+
 
 export const KEY_IS_LOGGED_IN = "loggedIn"
 export const KEY_USER_ID = "userId"

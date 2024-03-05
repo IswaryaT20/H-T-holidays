@@ -17,8 +17,6 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 
 function Vendors(props) {
-  const [card, setCards] = useState([]);
-  const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
   const [errorcustomer, seterrorcustomer] = useState('');
@@ -36,16 +34,16 @@ function Vendors(props) {
 
   useEffect(() => {
     //getCardData();
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL, data: 3 })
   }, []);
 
-  useEffect(() => {
-    const customerfilter = props.customers.customersList.filter(
-      (customerdata) => customerdata.businessTypeId === 3
-    );
-    setCards(customerfilter);
-    // setTablevalue(customerfilter);
-  }, [props.customers.customersList])
+  // useEffect(() => {
+  //   const customerfilter = props.customers.customersList.filter(
+  //     (customerdata) => customerdata.businessTypeId === 3
+  //   );
+  //   setCards(customerfilter);
+  //   // setTablevalue(customerfilter);
+  // }, [props.customers.customersList])
 
   return (
     <>
@@ -127,8 +125,8 @@ function Vendors(props) {
         >
           <div>
             <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap', paddingRight: 8, paddingLeft: 8, paddingTop: 8, paddingBottom: 8 }}>
-              {card.length > 0
-                ? card.map((item) => (
+              {props.customers.customersList.length > 0
+                ? props.customers.customersList.map((item) => (
                   <div style={{ flex: '0 0 25%', paddingLeft: 7, paddingRight: 7, paddingTop: 7, paddingBottom: 7, position: 'relative' }}>
                     <Card
                       key={item.id}
@@ -184,8 +182,8 @@ function Vendors(props) {
                 </tr>
               </thead>
               <tbody>
-                {card.length > 0 ? (
-                  card.map((tableItem) => {
+                {props.customers.customersList.length > 0 ? (
+                  props.customers.customersList.map((tableItem) => {
                     console.log(tableItem)
                     return <tr>
                       <td>{tableItem.title}. {tableItem.name}</td>

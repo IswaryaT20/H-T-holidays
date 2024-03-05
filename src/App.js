@@ -23,12 +23,15 @@ import {
   storeToLocalStorage,
   getFromLocalStorage,
   UPDATE_USER_ID_LOCALLY,
+  SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
+  GET_LOGGED_USER_DETAILS_API_CALL
 } from "./utils/Constant";
 
 import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
 import Employee from "./components/employee/Employee";
 import Receipt from "./components/payment/Receipt";
+import CustomerDetails from "./components/customer/CustomerDetails";
 
 
 function App() {
@@ -44,6 +47,8 @@ function App() {
         type: UPDATE_USER_ID_LOCALLY,
         payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
       });
+      dispatch({ type: GET_LOGGED_USER_DETAILS_API_CALL, data: { id: getFromLocalStorage(KEY_USER_ID) } })
+      // dispatch({type: SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, data: {id: getFromLocalStorage(KEY_USER_ID)}})
     }
     setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN));
   }, []);
@@ -51,10 +56,11 @@ function App() {
   useState(() => {
     console.log(isLoggedIn);
     if (isLoggedIn) {
-      dispatch({
-        type: UPDATE_USER_ID_LOCALLY,
-        payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
-      });
+      // dispatch({ type: GET_LOGGED_USER_DETAILS_API_CALL, data: { id: getFromLocalStorage(KEY_USER_ID) } })
+      // dispatch({
+      //   type: UPDATE_USER_ID_LOCALLY,
+      //   payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
+      // });
     }
   }, [isLoggedIn]);
 
@@ -79,11 +85,21 @@ function App() {
             }
           />
           <Route
-            path="/CustomerForm"
+            path="/customer-details"
             element={
               <>
                 <Navbar />
-                <CustomerForm type={1} />
+                <CustomerDetails />
+              </>
+            }
+          />
+
+          <Route
+            path="/Purchase"
+            element={
+              <>
+                <Navbar />
+                <Purchase />
               </>
             }
           />
@@ -212,6 +228,14 @@ function App() {
               </>
             }
           />
+          {/* <Route
+            path="/*"
+            element={
+              <>
+                <Navbar /> <Customer />
+              </>
+            }
+          /> */}
         </Routes>
       ) : (
         <Routes>
