@@ -7,22 +7,27 @@ import { FiDownload } from "react-icons/fi";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 import { Link } from 'react-router-dom';
+import { useDispatch, connect } from 'react-redux';
+import { GET_ALL_PURCHASE_ORDER_API_CALL } from '../../utils/Constant';
 
 
-const Newproduct = () => {
+const Newproduct = (props) => {
 
   //use states
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
 
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(data => setData(data))
-      .catch(error => console.error('Error fetching data:', error));
+    dispatch({type: GET_ALL_PURCHASE_ORDER_API_CALL})
+    // fetch('https://jsonplaceholder.typicode.com/users')
+    //   .then(response => response.json())
+    //   .then(data => setData(data))
+    //   .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   //Handlers
@@ -109,22 +114,23 @@ const Newproduct = () => {
         <Table striped hover>
           <thead>
             <tr>
-              {tableValue.map((tablename, index) => (
+              {props.purchaseOrder.listPurchaseOrder.map((tablename, index) => (
                 <th key={index} style={{backgroundColor:"#1d1d5e", color:"white"}}>{tablename}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {data.filter((item) => {
-              return (
-                (search.toLowerCase() === ""
-                  ? item
-                  : item.name.toLowerCase().includes(search.toLowerCase())
-                ) &&
-                (!startDate || new Date(item.date) >= new Date(startDate)) &&
-                (!endDate || new Date(item.date) <= new Date(endDate))
-              );
-            })
+            {props.purchaseOrder.listPurchaseOrder
+            // .map.filter((item) => {
+            //   return (
+            //     (search.toLowerCase() === ""
+            //       ? item
+            //       : item.name.toLowerCase().includes(search.toLowerCase())
+            //     ) &&
+            //     (!startDate || new Date(item.date) >= new Date(startDate)) &&
+            //     (!endDate || new Date(item.date) <= new Date(endDate))
+            //   );
+            // })
               .map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
@@ -138,21 +144,7 @@ const Newproduct = () => {
                   <td><FiDownload /></td>
                 </tr>
               ))}
-              {data.filter((item) => {
-              return (
-                (search.toLowerCase() === ""
-                  ? item
-                  : item.name.toLowerCase().includes(search.toLowerCase())
-                ) &&
-                (!startDate || new Date(item.date) >= new Date(startDate)) &&
-                (!endDate || new Date(item.date) <= new Date(endDate))
-              );
-            }).length === 0 && (
-              <tr>
-                <td colSpan={9} style={{ textAlign: "center", fontWeight:"600", color:"red" }} >No Data Found!</td>
-              </tr>
-
-            )}
+              
 
           </tbody>
         </Table>
@@ -162,4 +154,10 @@ const Newproduct = () => {
   );
 }
 
-export default Newproduct;
+const mapsToProps = (state) => {
+  return {
+    purchaseOrder: state.purchaseOrder
+  }
+}
+
+export default connect(mapsToProps)(Newproduct);

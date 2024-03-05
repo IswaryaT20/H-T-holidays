@@ -26,6 +26,8 @@ export const SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL = 'Search-Customer-By-Id-Call'
 export const SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE = 'Search-Customers-By-Id-Response'
 export const GET_LOGGED_USER_DETAILS_API_CALL = 'Get_Logged_User_details'
 export const GET_LOGGED_USER_DETAILS_RESPONSE = 'Get-Loggedin-User-Response'
+export const GET_ALL_PURCHASE_ORDER_API_CALL = 'Get-All-Purchase-Order-call'
+export const GET_ALL_PURCHASE_ORDER_API_RESPONSE = 'Get-All-Purchase-Order-Response'
 
 
 export const KEY_IS_LOGGED_IN = "loggedIn"

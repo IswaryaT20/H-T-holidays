@@ -352,4 +352,4 @@ const mapsToProps = (state) => {
 
 
 
-export default connect(mapsToProps)(connect(mapToProps)(NewInvoice));
+export default connect(mapsToProps)(NewInvoice);
