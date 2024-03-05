@@ -3,6 +3,7 @@ import LoginSaga from "./LoginSaga";
 import CustomersSaga from "./CustomersSaga";
 import MasterSaga from "./MasterSaga";
 import ProductSaga from "./ProductSaga";
+import PurchaseOrderSaga from "./PurchaseOrderSaga";
 
 
 function* RootSaga() {
@@ -10,7 +11,8 @@ function* RootSaga() {
         LoginSaga(),
         CustomersSaga(),
         MasterSaga(),
-        ProductSaga()
+        ProductSaga(),
+        PurchaseOrderSaga()
     ])
 }
 
