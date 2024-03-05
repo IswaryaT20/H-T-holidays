@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { MdOutlineClose } from "react-icons/md";
-import { GET_ALL_PRODUCTS_API_CALL, GET_ALL_PRODUCTS_RESPONSE, GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
-import "./Invoice.css";
+import {
+  GET_ALL_PRODUCTS_API_CALL,
+  GET_ALL_PRODUCTS_RESPONSE,
+  GET_ALL_CUSTOMERS_API_CALL,
+} from "../../utils/Constant";
 import { useDispatch, useSelector, connect } from "react-redux";
 import InvoiceTableBody from "./InvoiceTableBody";
+import "./Invoice.css";
 
 
 const InvoiceForm = (props) => {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const tableHeader = [
     "Product",
     "Description",
@@ -42,14 +45,13 @@ const InvoiceForm = (props) => {
   const [globalDiscountValue, setGlobalDiscountValue] = useState(0);
 
   // Use State for Unit Price Excluding
-  // const [unitExcluding, setUnitExcluding] = useState(false);
   const [inclusiveSubTotal, setInclusiveSubTotal] = useState(0);
   const [inclusiveTotalVAT, setInclusiveTotalVAT] = useState(0);
   const [inclusiveBeforeVAT, setInclusiveBeforeVAT] = useState(0);
   const [inclusiveTotalAmount, setInclusiveTotalAmount] = useState(0);
   const [inclusiveTotalDiscount, setInclusiveTotalDiscount] = useState(0);
-  const [rowCount, setRowCount] = useState(1)
-  const [vatChecked, setVatChecked] = useState(false)
+  const [rowCount, setRowCount] = useState(1);
+  const [vatChecked, setVatChecked] = useState(false);
 
   const [items, setItems] = useState([]);
 
@@ -71,18 +73,18 @@ const InvoiceForm = (props) => {
 
   //unit price handlers:
   const handleVatChecked = (e) => {
-    console.log(e.target.checked)
-    setVatChecked(!vatChecked)
+    console.log(e.target.checked);
+    setVatChecked(!vatChecked);
   };
 
   useEffect(() => {
-    dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
-  }, [])
+    dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
+  }, []);
 
   useEffect(() => {
-    itemChanges(items, true)
-  }, [vatChecked])
+    itemChanges(items, true);
+  }, [vatChecked]);
 
   // console.log(props)
   // Bottom Table Calculation:
@@ -101,99 +103,134 @@ const InvoiceForm = (props) => {
   };
 
   const itemChanges = (allItems) => {
-      
-      console.log(allItems)
-      console.log("vat checked", vatChecked)
-   
-      setItems(allItems)
-    
-    
+    console.log(allItems);
+    console.log("Vat Checked", vatChecked);
+
+    setItems(allItems);
+
     let findTotalAmount;
     let totalDiscountTemp;
     let findBeforeVat;
     let findVatAmount;
 
     if (vatChecked) {
-     
       findTotalAmount = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
+        let vat = !isNaN(item.vat)
+          ? findTotalAmount -
+            discount -
+            (findTotalAmount - discount) / (1 + item.vat / 100)
+          : 0;
 
-        return total + findTotalAmount - discount - vat
-      }, 0) //inclusive sub-total vat
+        return total + findTotalAmount - discount - vat;
+      }, 0); //inclusive sub-total vat
 
       totalDiscountTemp = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-        return total + discount
-      }, 0) // inclusive discount
-
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
+        return total + discount;
+      }, 0); // inclusive discount
 
       findBeforeVat = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
 
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : findTotalAmount - discount
-        let priceWithoutVat = findTotalAmount - discount - vat
-        return total + priceWithoutVat
-      }, 0) // inclusive before vat
+        let vat = !isNaN(item.vat)
+          ? findTotalAmount -
+            discount -
+            (findTotalAmount - discount) / (1 + item.vat / 100)
+          : findTotalAmount - discount;
+        let priceWithoutVat = findTotalAmount - discount - vat;
+        return total + priceWithoutVat;
+      }, 0); // inclusive before vat
 
       findVatAmount = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
 
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) - ((findTotalAmount - discount)/(1 + (item.vat/100))) : 0
-        
-        return total + vat
-      }, 0) // inclusive VAT
+        let vat = !isNaN(item.vat)
+          ? findTotalAmount -
+            discount -
+            (findTotalAmount - discount) / (1 + item.vat / 100)
+          : 0;
 
+        return total + vat;
+      }, 0); // inclusive VAT
 
-      setInclusiveSubTotal(findTotalAmount.toFixed(2))
-      setInclusiveTotalDiscount(totalDiscountTemp.toFixed(2))
-      setInclusiveBeforeVAT(findBeforeVat.toFixed(2))
-      setInclusiveTotalVAT(findVatAmount.toFixed(2))
-      setInclusiveTotalAmount((findBeforeVat+findVatAmount).toFixed(2))
-    }
-    else {
-
+      setInclusiveSubTotal(findTotalAmount.toFixed(2));
+      setInclusiveTotalDiscount(totalDiscountTemp.toFixed(2));
+      setInclusiveBeforeVAT(findBeforeVat.toFixed(2));
+      setInclusiveTotalVAT(findVatAmount.toFixed(2));
+      setInclusiveTotalAmount((findBeforeVat + findVatAmount).toFixed(2));
+    } else {
       findTotalAmount = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        return total + findTotalAmount
-      }, 0) // subtotal
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        return total + findTotalAmount;
+      }, 0); // subtotal
 
       totalDiscountTemp = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-        return total + discount
-      }, 0) // discount
-
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
+        return total + discount;
+      }, 0); // discount
 
       findBeforeVat = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
-        let priceWithoutVat = findTotalAmount - discount
-        return total + priceWithoutVat
-      }, 0) // Before VAT
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
+        let priceWithoutVat = findTotalAmount - discount;
+        return total + priceWithoutVat;
+      }, 0); // Before VAT
 
       findVatAmount = allItems.reduce(function (total, item) {
-        let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
-        let discount = !isNaN(item.discount) ? ((item.discount / 100) * findTotalAmount) : 0
+        let findTotalAmount =
+          (!isNaN(item.price) ? item.price : 0) *
+          (!isNaN(item.qty) ? item.qty : 0);
+        let discount = !isNaN(item.discount)
+          ? (item.discount / 100) * findTotalAmount
+          : 0;
 
-        let vat = !isNaN(item.vat) ? (findTotalAmount - discount) * (item.vat/100) : 0
-        return total + vat
-      }, 0)
+        let vat = !isNaN(item.vat)
+          ? (findTotalAmount - discount) * (item.vat / 100)
+          : 0;
+        return total + vat;
+      }, 0);
 
-
-      setSubTotal(findTotalAmount.toFixed(2))
-      setTotalDiscount(totalDiscountTemp.toFixed(2))
-      setBeforeVAT(findBeforeVat.toFixed(2))
-      setTotalVAT(findVatAmount.toFixed(2))
-      setTotalAmount((findBeforeVat+findVatAmount).toFixed(2))
+      setSubTotal(findTotalAmount.toFixed(2));
+      setTotalDiscount(totalDiscountTemp.toFixed(2));
+      setBeforeVAT(findBeforeVat.toFixed(2));
+      setTotalVAT(findVatAmount.toFixed(2));
+      setTotalAmount((findBeforeVat + findVatAmount).toFixed(2));
     }
+    // props.productList(allItems)
+  };
 
-    
-  }
 
   return (
     <>
@@ -218,18 +255,22 @@ const InvoiceForm = (props) => {
                 ))}
               </tr>
             </thead>
-            <InvoiceTableBody 
-              products={props.productsData.products} 
-              invoiceData={props.invoiceData} 
-              handleDeleteRow={handleDeleteRow} 
-              // unitExcluding={unitExcluding} 
-              rowCount={rowCount} 
-              vatChecked={vatChecked} 
-              itemChanges={itemChanges} />
+            <InvoiceTableBody
+              products={props.productsData.products}
+              invoiceData={props.invoiceData}
+              handleDeleteRow={handleDeleteRow}
+              // unitExcluding={unitExcluding}
+              rowCount={rowCount}
+              vatChecked={vatChecked}
+              itemChanges={itemChanges}
+            />
           </Table>
         </div>
 
-        <div className="w-100 d-flex justify-content-end align-items-center" style={{ paddingLeft: 50, paddingRight: 50 }}>
+        <div
+          className="w-100 d-flex justify-content-end align-items-center"
+          style={{ paddingLeft: 50, paddingRight: 50 }}
+        >
           <Form.Group className="d-flex">
             <Form.Check
               type="checkbox"
@@ -260,7 +301,7 @@ const InvoiceForm = (props) => {
           </Button>
         </div>
 
-        <Row className="mt-3" style={{paddingLeft: 50}}>
+        <Row className="mt-3" style={{ paddingLeft: 50 }}>
           <Col className="col-8">
             <Form.Control
               as="textarea"
@@ -288,7 +329,7 @@ const InvoiceForm = (props) => {
                       Sub-Total
                     </td>
                     <td className="text-end">
-                     {!vatChecked ? subTotal : inclusiveSubTotal}
+                      {!vatChecked ? subTotal : inclusiveSubTotal}
                     </td>
                   </tr>
                   <tr>
@@ -365,12 +406,12 @@ const InvoiceForm = (props) => {
                     <td className="text-end">
                       {!vatChecked
                         ? (
-                          parseFloat(totalAmount) - globalDiscountValue
-                        ).toFixed(2)
+                            parseFloat(totalAmount) - globalDiscountValue
+                          ).toFixed(2)
                         : (
-                          parseFloat(inclusiveTotalAmount) -
-                          globalDiscountValue
-                        ).toFixed(2)}
+                            parseFloat(inclusiveTotalAmount) -
+                            globalDiscountValue
+                          ).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
@@ -383,12 +424,11 @@ const InvoiceForm = (props) => {
   );
 };
 
-
 const mapsToProps = (state) => {
   return {
     productsData: state.productsData,
-    customers: state.customers
-  }
-}
+    customers: state.customers,
+  };
+};
 
 export default connect(mapsToProps)(InvoiceForm);
