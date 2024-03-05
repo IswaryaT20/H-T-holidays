@@ -22,6 +22,8 @@ const NewInvoice = (props) => {
   const [invoiceDate, setInvoiceDate] = useState("");
   // const [addClient, setAddClient] = useState(false);
 
+  console.log(props)
+
   //Handlers
   const handletoggleDraft = () => {
     setIsDraft(!isDraft);
@@ -188,7 +190,7 @@ const NewInvoice = (props) => {
                   <option disabled style={{ fontSize: 12 }}>
                     Select Sales Person
                   </option>
-                  <option style={{ fontSize: 12 }}>Sales Person 1</option>
+                  <option value={props.loginUsers.loginName} style={{ fontSize: 12 }}>{props.loginUsers.loginName}</option>
                   <option style={{ fontSize: 12 }}>Sales Person 2</option>
                 </Form.Select>
               </Form.Group>
@@ -202,4 +204,10 @@ const NewInvoice = (props) => {
   );
 };
 
-export default NewInvoice;
+const mapToProps = (state) => {
+  return {
+    loginUsers: state.users
+  }
+}
+
+export default connect(mapToProps)(NewInvoice);

@@ -14,9 +14,11 @@ const InvoiceTableBody = (props) => {
 
 
   const handleItemSelect = (id, index) => {
-    setInvoiceData(invoiceData.map((item, itemIndex) => {
+    const productItemId = invoiceData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: id, price: item.price, description: item.description, discount: item.discount, vat: item.vat } : item
-    }));
+    })
+    setInvoiceData(productItemId);
+    props.itemChanges(productItemId);
   }
 
   const handleQuantityChange = (quantity, index) => {

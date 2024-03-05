@@ -163,7 +163,7 @@ function CustomerForm(props) {
           state: city,
           addressTypeId: 1,
         },
-      ],
+      ]
     };
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
@@ -556,11 +556,11 @@ function CustomerForm(props) {
                       <FormLabel className=" b txt-ht_blue w-100 f-14">
                         Mobile
                         <div key={`inline-radio`} className="mb-3">
-                          <PhoneInput
+                          <FormControl
                             placeholder="Enter phone number"
                             value={mobile}
                             onChange={(value) => {
-                              setMobile(value);
+                              setMobile(value.target.value);
                               setMobileError(false);
                             }}
                             className={`inputfocus f-14 br_b-2 rounded-0 ${
