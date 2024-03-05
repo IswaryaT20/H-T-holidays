@@ -74,7 +74,7 @@ const InvoiceTableBody = (props) => {
       findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
     }
     else {
-      findTotalAmount = (!isNaN(item.price) ? item.price : 0) 
+      findTotalAmount = 0; 
     }
     // let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
     let discountAmount;
@@ -112,21 +112,21 @@ const InvoiceTableBody = (props) => {
     return <span>{vatIncludedPrice}</span>
   }
 
-  return <tbody> {invoiceData?.map((item, index) => {
+  return <tbody>{invoiceData?.map((item, index) => {
     console.log(item);
     return <tr key={item.id}>
       <td className="table-td">
         <Form.Select
           className="inputfocus rounded-0"
           onChange={e => { handleItemSelect(e.target.value, index) }}
-          style={{ width: 170, height: 30, fontSize: 14 }}
+          style={{ width: 170, height: 30, fontSize: 12 }}
           defaultChecked={0}
           value={item.id}
         >
           <option>Select Product</option>
           {
             props?.products?.map(product => {
-              return <option key={product.id} value={product.id}>{product.productName}</option>
+              return <option key={product.id} value={product.id} style={{fontSize: 12}}>{product.productName}</option>
             })
           }
         </Form.Select>

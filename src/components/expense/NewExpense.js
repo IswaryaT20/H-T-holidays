@@ -118,260 +118,262 @@ const NewExpense = () => {
   return (
     <>
       <Container fluid className="mt-1">
-        <Row className="mt-3 w-100 p-1 d-flex align-items-center">
-          <Col className="fs-6 fw-bolder c-b">Create Direct Expense</Col>
-          <Col className="d-flex justify-content-end">
-            <div>
-              <Link
-                to="/expense"
-                style={{ textDecoration: "none", color: "#1d1d5e" }}
-              >
-                <Button className="fw-bolder btn-c">Close</Button>
-              </Link>
-              <Button className="ms-3 fw-bolder btn-s">Save</Button>
-            </div>
-          </Col>
-        </Row>
-
-        <Row className="d-flex align-items-center mt-3 w-100 p-1 mb-3">
-          <Col className="d-flex align-items-center">
-            <Form>
-              <Form.Group>
-                <Form.Label className="fs-6 fw-bolder">Contact</Form.Label>
-                <Form.Select
-                  className="rounded-0 inputfocus"
-                  style={{ width: 175 }}
-                  onChange={handleAddContact}
+        <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+          <Row className="mt-3 w-100 p-1 d-flex align-items-center">
+            <Col className="fs-6 fw-bolder c-b">Create Direct Expense</Col>
+            <Col className="d-flex justify-content-end">
+              <div>
+                <Link
+                  to="/expense"
+                  style={{ textDecoration: "none", color: "#1d1d5e" }}
                 >
-                  <option></option>
-                  <option value="addContact" className="fs-6 fw-bolder c-b">
-                    + Add Contact
-                  </option>
-                </Form.Select>
-              </Form.Group>
-            </Form>
-            <div className="ms-4">
+                  <Button className="fw-bolder btn-c">Close</Button>
+                </Link>
+                <Button className="ms-3 fw-bolder btn-s">Save</Button>
+              </div>
+            </Col>
+          </Row>
+
+          <Row className="d-flex align-items-center mt-3 w-100 p-1 mb-3">
+            <Col className="d-flex align-items-center">
               <Form>
                 <Form.Group>
-                  <Form.Label className="fs-6 fw-bolder">
-                    Payment Date <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="date"
-                    className="border rounded-0 inputfocus"
-                    required
-                  />
-                </Form.Group>
-              </Form>
-            </div>
-            <div className="ms-4">
-              <Form>
-                <Form.Group>
-                  <Form.Label className="fs-6 fw-bolder">
-                    Pay From <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
+                  <Form.Label className="fs-6 fw-bolder">Contact</Form.Label>
                   <Form.Select
                     className="rounded-0 inputfocus"
                     style={{ width: 175 }}
-                    onChange={handleAddAccount}
+                    onChange={handleAddContact}
                   >
                     <option></option>
-                    <option value="addAccount" className="fs-6 fw-bolder c-b">
-                      + Add Account
+                    <option value="addContact" className="fs-6 fw-bolder c-b">
+                      + Add Contact
                     </option>
                   </Form.Select>
                 </Form.Group>
               </Form>
-            </div>
-          </Col>
-        </Row>
-
-        <div>
-          <Table hover>
-            <thead style={{ padding: "0.75rem" }}>
-              <tr>
-                {tableHeader.map((header, index) => (
-                  <th
-                    key={index}
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      backgroundColor: "#1d1d5e",
-                      color: "white",
-                    }}
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {expenseData.map((row) => (
-                <tr key={row.id}>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
+              <div className="ms-4">
+                <Form>
+                  <Form.Group>
+                    <Form.Label className="fs-6 fw-bolder">
+                      Payment Date <span style={{ color: "red" }}>*</span>
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      className="border rounded-0 inputfocus"
+                      required
+                    />
+                  </Form.Group>
+                </Form>
+              </div>
+              <div className="ms-4">
+                <Form>
+                  <Form.Group>
+                    <Form.Label className="fs-6 fw-bolder">
+                      Pay From <span style={{ color: "red" }}>*</span>
+                    </Form.Label>
                     <Form.Select
                       className="rounded-0 inputfocus"
-                      onChange={handleAddCategory}
+                      style={{ width: 175 }}
+                      onChange={handleAddAccount}
                     >
                       <option></option>
-                      <option
-                        className="fs-6 fw-bolder c-b"
-                        value="addCategory"
-                      >
-                        + Add Category
+                      <option value="addAccount" className="fs-6 fw-bolder c-b">
+                        + Add Account
                       </option>
                     </Form.Select>
-                  </td>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    <Form.Control
-                      className="border-0 rounded-0 inputfocus"
-                      as="textarea"
-                      row={1}
-                      placeholder="Description"
-                    />
-                  </td>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    <Form.Control
-                      className="border-0 rounded-0 inputfocus"
-                      type="number"
-                      placeholder="AED"
-                      value={row.amount}
-                      onChange={(e) =>
-                        handleInputChange(row.id, "amount", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    <Form.Control
-                      className="border-0 rounded-0 inputfocus"
-                      type="number"
-                      placeholder="VAT %"
-                      value={row.vat}
-                      onChange={(e) =>
-                        handleInputChange(row.id, "vat", e.target.value)
-                      }
-                    />
-                  </td>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    {row.amount ? (
-                      <span>{row.totalAmount}</span>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
-                  <td
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    <FaTrashCan
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => handleDeleteRow(row.id)}
-                    />
-                  </td>
+                  </Form.Group>
+                </Form>
+              </div>
+            </Col>
+          </Row>
+
+          <div>
+            <Table hover size="sm">
+              <thead style={{ padding: "0.75rem" }}>
+                <tr>
+                  {tableHeader.map((header, index) => (
+                    <th
+                      key={index}
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        backgroundColor: "#1d1d5e",
+                        color: "white",
+                      }}
+                    >
+                      {header}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
+              </thead>
+              <tbody>
+                {expenseData.map((row) => (
+                  <tr key={row.id}>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <Form.Select
+                        className="rounded-0 inputfocus"
+                        onChange={handleAddCategory}
+                      >
+                        <option></option>
+                        <option
+                          className="fs-6 fw-bolder c-b"
+                          value="addCategory"
+                        >
+                          + Add Category
+                        </option>
+                      </Form.Select>
+                    </td>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <Form.Control
+                        className="border-0 rounded-0 inputfocus"
+                        as="textarea"
+                        row={1}
+                        placeholder="Description"
+                      />
+                    </td>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <Form.Control
+                        className="border-0 rounded-0 inputfocus"
+                        type="number"
+                        placeholder="AED"
+                        value={row.amount}
+                        onChange={(e) =>
+                          handleInputChange(row.id, "amount", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <Form.Control
+                        className="border-0 rounded-0 inputfocus"
+                        type="number"
+                        placeholder="VAT %"
+                        value={row.vat}
+                        onChange={(e) =>
+                          handleInputChange(row.id, "vat", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      {row.amount ? (
+                        <span>{row.totalAmount}</span>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </td>
+                    <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <FaTrashCan
+                        style={{ color: "red", cursor: "pointer" }}
+                        onClick={() => handleDeleteRow(row.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
 
-        <div className="mt-3 w-100">
-          <Button
-            onClick={handleAddRow}
-            style={{
-              backgroundColor: "#1d1d5e",
-              margin: 10,
-              borderWidth: 0,
-              width: 120,
-              fontWeight: "bolder",
-            }}
-          >
-            + Add Items
-          </Button>
-        </div>
+          <div className="mt-3 w-100">
+            <Button
+              onClick={handleAddRow}
+              style={{
+                backgroundColor: "#1d1d5e",
+                margin: 10,
+                borderWidth: 0,
+                width: 120,
+                fontWeight: "bolder",
+              }}
+            >
+              + Add Items
+            </Button>
+          </div>
 
-        <Row className="mt-3 w-100">
-          <Col className="col-8">
-            <Form>
-              <Form.Group>
-                <Form.Control
-                  className="inputfocus border"
-                  as="textarea"
-                  row={4}
-                  placeholder="Description"
-                  style={{ width: "400px", height: "100px" }}
-                />
-              </Form.Group>
-            </Form>
-          </Col>
-          <Col>
-            <div>
-              <Table hover bordered>
-                <tbody>
-                  <tr>
-                    <td
-                      className="fs-6 fw-bolder text-start"
-                      style={{ color: "#1d1d5e" }}
-                    >
-                      Sub-Total
-                    </td>
-                    <td className="text-start">{subTotal}</td>
-                  </tr>
-                  <tr>
-                    <td
-                      className="fs-6 fw-bolder text-start"
-                      style={{ color: "#1d1d5e" }}
-                    >
-                      VAT (AED)
-                    </td>
-                    <td className="text-start">{totalVAT}</td>
-                  </tr>
-                  <tr>
-                    <td
-                      className="fs-6 fw-bolder text-start"
-                      style={{ color: "#1d1d5e" }}
-                    >
-                      Total Amount (AED)
-                    </td>
-                    <td className="text-start">{totalAmount}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </div>
-          </Col>
-        </Row>
+          <Row className="mt-3 w-100">
+            <Col className="col-8">
+              <Form>
+                <Form.Group>
+                  <Form.Control
+                    className="inputfocus border"
+                    as="textarea"
+                    row={4}
+                    placeholder="Description"
+                    style={{ width: "400px", height: "100px" }}
+                  />
+                </Form.Group>
+              </Form>
+            </Col>
+            <Col>
+              <div>
+                <Table hover bordered>
+                  <tbody>
+                    <tr>
+                      <td
+                        className="fs-6 fw-bolder text-start"
+                        style={{ color: "#1d1d5e" }}
+                      >
+                        Sub-Total
+                      </td>
+                      <td className="text-start">{subTotal}</td>
+                    </tr>
+                    <tr>
+                      <td
+                        className="fs-6 fw-bolder text-start"
+                        style={{ color: "#1d1d5e" }}
+                      >
+                        VAT (AED)
+                      </td>
+                      <td className="text-start">{totalVAT}</td>
+                    </tr>
+                    <tr>
+                      <td
+                        className="fs-6 fw-bolder text-start"
+                        style={{ color: "#1d1d5e" }}
+                      >
+                        Total Amount (AED)
+                      </td>
+                      <td className="text-start">{totalAmount}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+            </Col>
+          </Row>
+        </div>
       </Container>
 
       <ExpenseModal
