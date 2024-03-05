@@ -74,7 +74,7 @@ const InvoiceTableBody = (props) => {
       findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
     }
     else {
-      findTotalAmount = (!isNaN(item.price) ? item.price : 0) 
+      findTotalAmount = 0; 
     }
     // let findTotalAmount = (!isNaN(item.price) ? item.price : 0) * (!isNaN(item.qty) ? item.qty : 0)
     let discountAmount;
@@ -112,7 +112,7 @@ const InvoiceTableBody = (props) => {
     return <span>{vatIncludedPrice}</span>
   }
 
-  return <tbody> {invoiceData?.map((item, index) => {
+  return <tbody>{invoiceData?.map((item, index) => {
     console.log(item);
     return <tr key={item.id}>
       <td className="table-td">

@@ -48,6 +48,7 @@ const PurchaseForm = (props) => {
   const [inclusiveTotalDiscount, setInclusiveTotalDiscount] = useState(0);
   const [rowCount, setRowCount] = useState(1)
   const [vatChecked, setVatChecked] = useState(false)
+
   const [items, setItems] = useState([]);
 
   //Handlers
@@ -62,15 +63,17 @@ const PurchaseForm = (props) => {
   //unit price handlers:
   const handleVatChecked = (e) => {
     console.log(e.target.checked)
-    setVatChecked(e.target.checked)
-
-    itemChanges(items, true)
+    setVatChecked(!vatChecked)
   };
 
   useEffect(() => {
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL })
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, [])
+
+  useEffect(()=> {
+    itemChanges(items, true)
+  }, [vatChecked]);
 
   const handleGlobalDiscountClick = () => {
     setShowGlobalDiscount(true);
@@ -86,11 +89,11 @@ const PurchaseForm = (props) => {
     setGlobalDiscountValue(discount);
   };
 
-  const itemChanges = (allItems, isChecked = false) => {
-    console.log(allItems)
-    if (isChecked) {
-      setItems(allItems)
-    }
+  const itemChanges = (allItems) => {
+    console.log(allItems);
+    console.log("Vat Checked", vatChecked);
+
+    setItems(allItems);
     
     let findTotalAmount;
     let totalDiscountTemp;
