@@ -6,8 +6,6 @@ import { FaSearch } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import InputGroupText from 'react-bootstrap/esm/InputGroupText';
-import { FaCloudDownloadAlt } from "react-icons/fa";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import "./Invoice.css";
 import { Link } from 'react-router-dom';
 
@@ -30,9 +28,14 @@ const Newproduct = () => {
 
   //Handlers
   const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+    if (dates === NaN) {
+      setStartDate();
+      setEndDate();
+    } else {
+      const [start, end] = dates;
+      setStartDate(start);
+      setEndDate(end);
+    }
   };
 
   //Dummy table headers
@@ -95,13 +98,10 @@ const Newproduct = () => {
               }}
             />
           </InputGroup>
-          <div className='ms-3 d-flex align-items-center'>
-          <FaCloudDownloadAlt style={{fontSize:26, color:"#1d1d5e", cursor:"pointer"}}/>
-          </div>
           </div>
         </Col>
         <Col className='d-flex justify-content-end' style={{ marginLeft: '75px' }}>
-          <DatePicker selected={startDate} onChange={handleDateChange} startDate={startDate} endDate={endDate} selectsRange placeholderText="Select Date Range" className="rounded" />
+          <DatePicker selected={startDate} onChange={handleDateChange} startDate={startDate} endDate={endDate} selectsRange dateFormat={"dd/MM/yyyy"} placeholderText="Select Date Range" className="rounded" />
         </Col>
       </Row>
       <div style={{ paddingLeft: '1%', paddingRight: '1%' }} className='table-container mt-3'>
@@ -137,6 +137,20 @@ const Newproduct = () => {
                   <td><FiDownload /></td>
                 </tr>
               ))}
+              {data.filter((item) => {
+              return (
+                (search.toLowerCase() === ""
+                  ? item
+                  : item.name.toLowerCase().includes(search.toLowerCase())
+                ) &&
+                (!startDate || new Date(item.date) >= new Date(startDate)) &&
+                (!endDate || new Date(item.date) <= new Date(endDate))
+              );
+            }).length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: "center", fontWeight:"600", color:"red" }}>No data found!</td>
+              </tr>
+            )}
           </tbody>
         </Table>
       </div>

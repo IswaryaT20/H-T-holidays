@@ -15,65 +15,53 @@ import {
 } from "react-bootstrap";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
-import axios from "axios";
+import { Link } from "react-router-dom";
+import VendorForm from "../vendors/Vendorform";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
 
-function Customerpay() {
+function Customerpay(props) {
   const [customerName, setCustomerName] = useState("");
-  const [customers, setCustomers] = useState([]);
-  const [customerData, setcustomerData] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showInput, setShowInput] = useState(true);
   const [switchpayment, setswitchpayment] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const dispatch = useDispatch();
+
   const handleSearchChange = (e) => {
-    if (e.target.name === "customernamesearch") {
+    if (e.target.name === "suppliernamesearch") {
       setCustomerName(e.target.value);
     }
   };
 
   const customerSelect = () => {
     const searchname = customerName;
-    const typeid = 3;
-    const fetchname = {
-      typeId: typeid,
-      query: searchname
-    };
-  
+
+    // const fetchname ={
+    //   querry:searchname,
+    //   businessTypeId:3,
+    // }
+
     if (searchname) {
       setLoading(true);
-  
-      // Add a delay of 1 second (adjust as needed)
+
+      // Add a delay of 1 second
       setTimeout(() => {
-        axios
-          .post(
-            `http://68.178.161.233:8080/handt/v2/customer/searchCustomer`,
-            fetchname, // Use the fetchname object directly
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => {
-            setcustomerData(response.data.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching customers:", error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }, 500);
+        dispatch({
+          type: SEARCH_CUSTOMER_API_CALL,
+          payload: { query: searchname, businessTypeId: 3 },
+        });
+      }, 1000);
     }
   };
-  
+
   useEffect(() => {
     customerSelect();
   }, [customerName]);
-  
+
   const customerdetails = (item) => {
     setSelectedCustomer(item);
     setShowInput(false);
@@ -90,10 +78,7 @@ function Customerpay() {
   return (
     <>
       <Container fluid className="flex">
-        <Row
-          className="w-100 ms-0 mt-2 bg-blur"
-          style={{ flex: 1, backgroundColor: "#e7e7e761" }}
-        >
+        <Row className="w-100 ms-0 mt-2 bg-blur" style={{}}>
           <Col lg={2}></Col>
           <Col
             className="border shadow p-3 w-80 "
@@ -115,11 +100,11 @@ function Customerpay() {
             </Stack>
 
             <Row className="f-20 mt-3">
-              <Col>
+              <Col className="ms-3 me-3">
                 <p className="f-20 ms-auto d-flex align-items-center">
                   <IoMdContact style={{ fontSize: 40 }} />
                   <span className="ms-2 f-18 text-capitalize">
-                    Contact details
+                    Supplier details
                   </span>
                 </p>
                 <FormGroup>
@@ -127,37 +112,40 @@ function Customerpay() {
                     <FormControl
                       id="name"
                       type="search"
-                      name="customernamesearch"
+                      name="suppliernamesearch"
                       className="inputfocus f-14 br_b-2 rounded-0 mt-2"
                       style={{ border: "2px dotted #25316f" }}
-                      placeholder="Search Customer Name"
+                      placeholder="Search Supplier Name"
                       value={customerName}
                       onChange={(name) => handleSearchChange(name)}
                     />
                   )}
-                  {showInput && customerData && customerData.length > 0 && (
-                    <Card className="mt-3" style={{ width: "18rem" }}>
-                      <ListGroup
-                        variant="flush"
-                        style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                      >
-                        {customerData.map((item) => (
-                          <ListGroup.Item
-                            key={item.id}
-                            onClick={() => customerdetails(item)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <strong onClick={() => setShowInput(true)}>
-                              Name:
-                            </strong>
-                            {item.name}
-                            {item.id}
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
-                      <Button variant="link">Add Customer +</Button>
-                    </Card>
-                  )}
+                  {showInput &&
+                    props.customers.searchList &&
+                    props.customers.searchList.length > 0 && (
+                      <Card className="mt-3" style={{ width: "18rem" }}>
+                        <ListGroup
+                          variant="flush"
+                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
+                        >
+                          {props.customers.searchList.map((item) => (
+                            <ListGroup.Item
+                              key={item.id}
+                              onClick={() => customerdetails(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <strong onClick={() => setShowInput(true)}>
+                                Name:
+                              </strong>
+                              {item.name}
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                        <Link to="/VendorForm">
+                          <Button variant="link">Add Supplier +</Button>
+                        </Link>
+                      </Card>
+                    )}
                   {selectedCustomer ? (
                     <div
                       xxl={2}
@@ -207,7 +195,7 @@ function Customerpay() {
                         )}
                     </div>
                   ) : (
-                    <span>Select a customer</span>
+                    <span>Select a Supplier</span>
                   )}
                 </FormGroup>
               </Col>
@@ -249,10 +237,7 @@ function Customerpay() {
             </Row>
             <div
               className=""
-              style={{
-                margin: "5px 5px 5px 5px",
-                width: "98%",
-              }}
+         
             >
               <div className="p-1 pt-3">
                 <FormGroup className="">
@@ -397,4 +382,10 @@ function Customerpay() {
   );
 }
 
-export default Customerpay;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers,
+  };
+};
+
+export default connect(mapsToProps)(Customerpay);

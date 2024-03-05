@@ -3,8 +3,6 @@ import { Row, Col, Button, FormControl, Table, Container, InputGroup } from 'rea
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaSearch } from "react-icons/fa";
-import { FaCloudDownloadAlt } from "react-icons/fa";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import InputGroupText from 'react-bootstrap/esm/InputGroupText';
@@ -29,9 +27,14 @@ const Newproduct = () => {
 
   //Handlers
   const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+    if (dates === NaN) {
+      setStartDate();
+      setEndDate();
+    } else {
+      const [start, end] = dates;
+      setStartDate(start);
+      setEndDate(end);
+    }
   };
 
   //Dummy table headers
@@ -94,13 +97,10 @@ const Newproduct = () => {
               }}
             />
           </InputGroup>
-          <div className='ms-3 d-flex align-items-center'>
-          <FaCloudDownloadAlt style={{fontSize:26, color:"#1d1d5e", cursor:"pointer"}}/>
-          </div>
           </div>
         </Col>
         <Col className='d-flex justify-content-end' style={{ marginLeft: '75px' }}>
-          <DatePicker selected={startDate} onChange={handleDateChange} startDate={startDate} endDate={endDate} selectsRange placeholderText="Select Date Range" className="rounded me-8 text-start " />
+          <DatePicker selected={startDate} onChange={handleDateChange} startDate={startDate} endDate={endDate} selectsRange dateFormat={"dd/MM/yyyy"} placeholderText="Select Date Range" className="rounded me-8 text-start " />
         </Col>
       </Row>
       
@@ -138,6 +138,22 @@ const Newproduct = () => {
                   <td><FiDownload /></td>
                 </tr>
               ))}
+              {data.filter((item) => {
+              return (
+                (search.toLowerCase() === ""
+                  ? item
+                  : item.name.toLowerCase().includes(search.toLowerCase())
+                ) &&
+                (!startDate || new Date(item.date) >= new Date(startDate)) &&
+                (!endDate || new Date(item.date) <= new Date(endDate))
+              );
+            }).length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: "center", fontWeight:"600", color:"red" }} >No Data Found!</td>
+              </tr>
+
+            )}
+
           </tbody>
         </Table>
       </div>

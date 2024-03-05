@@ -16,7 +16,7 @@ import Expense from "./components/expense/Expense";
 import NewExpense from "./components/expense/NewExpense";
 import { useSelector, useDispatch } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
-import Receipt from "./components/payment/SupplierPay";
+import SupplierPay from "./components/payment/SupplierPay";
 import {
   KEY_IS_LOGGED_IN,
   KEY_USER_ID,
@@ -28,6 +28,8 @@ import {
 import "./App.css";
 import Customerpay from "./components/payment/Customerpay";
 import Employee from "./components/employee/Employee";
+import Receipt from "./components/payment/Receipt";
+
 
 function App() {
   const state = useSelector((state) => state);
@@ -181,6 +183,15 @@ function App() {
               <>
                 <Navbar />
                 <Customerpay />
+              </>
+            }
+          />
+          <Route
+            path="/SupplierPay"
+            element={
+              <>
+                <Navbar />
+                <SupplierPay />
               </>
             }
           />

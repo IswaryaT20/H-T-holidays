@@ -119,14 +119,14 @@ const InvoiceTableBody = (props) => {
         <Form.Select
           className="inputfocus rounded-0"
           onChange={e => { handleItemSelect(e.target.value, index) }}
-          style={{ width: 170, height: 30, fontSize: 14 }}
+          style={{ width: 170, height: 30, fontSize: 12 }}
           defaultChecked={0}
           value={item.id}
         >
           <option>Select Product</option>
           {
             props?.products?.map(product => {
-              return <option key={product.id} value={product.id}>{product.productName}</option>
+              return <option key={product.id} value={product.id} style={{fontSize: 12}}>{product.productName}</option>
             })
           }
         </Form.Select>

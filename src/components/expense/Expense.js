@@ -7,7 +7,6 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
-import { CiCalendar } from "react-icons/ci";
 import { FaCloudUploadAlt, FaCloudDownloadAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import DatePicker from "react-datepicker";
@@ -28,9 +27,14 @@ const Expense = () => {
   // };
 
   const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+    if (dates === NaN) {
+      setStartDate();
+      setEndDate();
+    } else {
+      const [start, end] = dates;
+      setStartDate(start);
+      setEndDate(end);
+    }
   };
 
   //Dummy Values
@@ -131,91 +135,110 @@ const Expense = () => {
   return (
     <>
       <Container fluid className="mt-1">
-        <Row className="w-100 mt-2 p-2">
-          <Col
-            className="col-2 fw-bolder"
-            style={{ color: "#1d1d5e", fontSize: 16 }}
-          >
-            My Expense
-          </Col>
-          <Col className="col-4">
-            <InputGroup style={{ width: 300 }}>
-              <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
-                <FaSearch className="text-white" />
-              </InputGroupText>
-              <FormControl
-                placeholder="Search Expense..."
-                onChange={(e) => setSearch(e.target.value)}
-                style={{
-                  background: "#80808036",
-                  boxShadow: "none",
-                  outline: "none",
-                  borderColor: "white",
-                }}
-              />
-            </InputGroup>
-          </Col>
-          <Col className="col-6 d-flex justify-content-end">
-            <div>
-              <DatePicker
-                selected={startDate}
-                onChange={handleDateChange}
-                startDate={startDate}
-                endDate={endDate}
-                dateFormat={"dd/MM/yyyy"}
-                selectsRange
-                placeholderText="Select Date Range"
-                className="form-control rounded ms-2 inputfocus"
-              />
-            </div>
-            <div className="d-flex align-items-center ms-4">
-              <FaCloudUploadAlt
-                className="fs-2"
-                style={{ color: "#1d1d5e", cursor: "pointer" }}
-              />
-              <FaCloudDownloadAlt
-                className=" fs-2 ms-3"
-                style={{ color: "#1d1d5e", cursor: "pointer" }}
-              />
-              <FaEye
-                className="cursor fs-4 ms-3"
-                style={{ color: "#1d1d5e", cursor: "pointer" }}
-              />
-            </div>
-          </Col>
-        </Row>
+        <div style={{ paddingLeft: 50, paddingRight: 50 }}>
+          <Row className="w-100 mt-2 p-2">
+            <Col
+              className="col-2 fw-bolder"
+              style={{ color: "#1d1d5e", fontSize: 16 }}
+            >
+              My Expense
+            </Col>
+            <Col className="col-4">
+              <InputGroup style={{ width: 300 }}>
+                <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
+                  <FaSearch className="text-white" />
+                </InputGroupText>
+                <FormControl
+                  placeholder="Search Expense..."
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{
+                    background: "#80808036",
+                    boxShadow: "none",
+                    outline: "none",
+                    borderColor: "white",
+                  }}
+                />
+              </InputGroup>
+            </Col>
+            <Col className="col-6 d-flex justify-content-end">
+              <div>
+                <DatePicker
+                  selected={startDate}
+                  onChange={handleDateChange}
+                  startDate={startDate}
+                  endDate={endDate}
+                  dateFormat={"dd/MM/yyyy"}
+                  selectsRange
+                  placeholderText="Select Date Range"
+                  className="rounded ms-2 inputfocus"
+                />
+              </div>
+            </Col>
+          </Row>
 
-        <div>
-          <Link to="/NewExpense">
-          <Button
-            style={{ backgroundColor: "#1d1d5e", fontWeight: "500", border: 0 }}
-          >
-            New Expense
-          </Button>
-          </Link>
-        </div>
-        {/* Table */}
-        <div className="table-container mt-2">
-          <Table striped hover>
-            <thead>
-              <tr>
-                {tableHeader.map((header, index) => (
-                  <th
-                    key={index}
-                    style={{
-                      backgroundColor: "#1d1d5e",
-                      color: "white",
-                      textAlign: "center",
-                    }}
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {fakeData
-                .filter((item) => {
+          <div>
+            <Link to="/NewExpense">
+              <Button
+                style={{
+                  backgroundColor: "#1d1d5e",
+                  fontWeight: "500",
+                  border: 0,
+                }}
+              >
+                New Expense
+              </Button>
+            </Link>
+          </div>
+          {/* Table */}
+          <div className="table-container mt-2">
+            <Table striped hover>
+              <thead>
+                <tr>
+                  {tableHeader.map((header, index) => (
+                    <th
+                      key={index}
+                      style={{
+                        backgroundColor: "#1d1d5e",
+                        color: "white",
+                        textAlign: "center",
+                      }}
+                    >
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {fakeData
+                  .filter((item) => {
+                    return (
+                      (search.toLowerCase() === ""
+                        ? item
+                        : item.Contact.toLowerCase().includes(
+                            search.toLowerCase()
+                          )) &&
+                      (!startDate ||
+                        new Date(item.Payment_date) >= new Date(startDate)) &&
+                      (!endDate ||
+                        new Date(item.Payment_date) <= new Date(endDate))
+                    );
+                  })
+                  .map((item, index) => (
+                    <tr
+                      key={index}
+                      style={{ textAlign: "center" }}
+                      className="fs-6"
+                    >
+                      <td>{item.No}</td>
+                      <td>{item.Contact}</td>
+                      <td>{item.Pay_For}</td>
+                      <td>{item.Payment_date}</td>
+                      <td>{item.VAT_amt}</td>
+                      <td>{item.amt_paid}</td>
+                      <td>{item.payment_type}</td>
+                    </tr>
+                  ))}
+                {fakeData.filter((item) => {
                   return (
                     (search.toLowerCase() === ""
                       ? item
@@ -227,24 +250,16 @@ const Expense = () => {
                     (!endDate ||
                       new Date(item.Payment_date) <= new Date(endDate))
                   );
-                })
-                .map((item, index) => (
-                  <tr
-                    key={index}
-                    style={{ textAlign: "center" }}
-                    className="fs-6"
-                  >
-                    <td>{item.No}</td>
-                    <td>{item.Contact}</td>
-                    <td>{item.Pay_For}</td>
-                    <td>{item.Payment_date}</td>
-                    <td>{item.VAT_amt}</td>
-                    <td>{item.amt_paid}</td>
-                    <td>{item.payment_type}</td>
+                }).length === 0 && (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: "center", fontWeight:"600", color:"red" }}>
+                      No data found!
+                    </td>
                   </tr>
-                ))}
-            </tbody>
-          </Table>
+                )}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </Container>
     </>

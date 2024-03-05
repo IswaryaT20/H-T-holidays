@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  ListGroup,
+  ListGroupItem,
+  Row,
+} from "react-bootstrap";
 import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
 import {
   GET_ALL_PRODUCTS_API_CALL,
-  GET_ALL_PRODUCTS_RESPONSE,
   GET_ALL_CUSTOMERS_API_CALL,
+  SEARCH_CUSTOMER_API_CALL,
 } from "../../utils/Constant";
 
 const NewInvoice = (props) => {
@@ -23,6 +32,9 @@ const NewInvoice = (props) => {
   ];
   const [isDraft, setIsDraft] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [showInput, setShowInput] = useState(true);
 
   const [allItems, setAllItems] = useState([]);
 
@@ -42,6 +54,32 @@ const NewInvoice = (props) => {
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
   }, []);
+
+  const handleSearchChange = (e) => {
+    if (e.target.name === "customerNameSearch") {
+      setCustomerName(e.target.value);
+    }
+  };
+
+  const selectCustomer = () => {
+    if (customerName) {
+      setTimeout(() => {
+        dispatch({
+          type: SEARCH_CUSTOMER_API_CALL,
+          payload: { query: customerName },
+        });
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    selectCustomer();
+  }, [customerName]);
+
+  const customerDetails = (item) => {
+    setSelectedCustomer(item);
+    setShowInput(false);
+  };
 
   return (
     <>
@@ -145,12 +183,89 @@ const NewInvoice = (props) => {
               </Col>
               <Col className="col-4 d-flex justify-content-center">
                 <Form.Group>
-                  <Form.Control
-                    className="inputfocus text-center rounded-0"
-                    type="search"
-                    placeholder="+ Add Client"
-                    style={{ backgroundColor: "#dedef8", width: "250px" }}
-                  />
+                  {showInput && (
+                    <Form.Control
+                      className="inputfocus text-center rounded-0"
+                      type="search"
+                      name="customerNameSearch"
+                      placeholder="+ Add Client"
+                      value={customerName}
+                      onChange={(e) => handleSearchChange(e)}
+                      style={{ backgroundColor: "#dedef8", width: "250px" }}
+                    />
+                  )}
+                  {showInput &&
+                    props.customers.searchList &&
+                    props.customers.searchList.length > 0 && (
+                      <Card className="" style={{ width: 150 }}>
+                        <ListGroup
+                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
+                        >
+                          {props.customers.searchList.map((item) => (
+                            <ListGroupItem
+                              key={item.id}
+                              onClick={() => customerDetails(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <strong>Name: </strong>
+                              {item.name}
+                            </ListGroupItem>
+                          ))}
+                        </ListGroup>
+                        <Link to="/CustomerForm">
+                          <Button variant="link">Add Customer +</Button>
+                        </Link>
+                      </Card>
+                    )}
+                  {selectCustomer ? (
+                    <div
+                      className="w-75 p-2"
+                      style={{ backgroundColor: "#e4e4e4" }}
+                    >
+                      <h3 className="mt-1" onClick={handleSearchChange}>
+                        {selectedCustomer.name}
+                      </h3>
+                      {selectedCustomer.addresses &&
+                        selectedCustomer.addresses.length > 0 && (
+                          <div
+                            style={{
+                              fontSize: 20,
+                              position: "relative",
+                              top: "-2px",
+                            }}
+                          >
+                            <p
+                              className=" w-70"
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "500",
+                                flex: "flex-wrap",
+                              }}
+                            >
+                              {selectedCustomer.addresses[0].addressLine1},
+                              <br />
+                              <span className="mt-1">
+                                {selectedCustomer.addresses[0].addressLine2},
+                              </span>
+                              <br />
+                              <span>{selectedCustomer.addresses[0].city},</span>
+                              <span className="ms-2">
+                                {selectedCustomer.addresses[0].state}
+                              </span>
+                              <br />
+                              <span>
+                                {selectedCustomer.addresses[0].countryName},
+                              </span>
+                              <span className="ms-2">
+                                {selectedCustomer.addresses[0].zipcode}.
+                              </span>
+                            </p>
+                          </div>
+                        )}
+                    </div>
+                  ) : (
+                    <span>Select a customer</span>
+                  )}
                 </Form.Group>
               </Col>
               <Col className="col-4 d-flex justify-content-end">
@@ -229,4 +344,10 @@ const NewInvoice = (props) => {
   );
 };
 
-export default NewInvoice;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers,
+  };
+};
+
+export default connect(mapsToProps)(NewInvoice);
