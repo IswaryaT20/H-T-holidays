@@ -14,6 +14,9 @@ function* callLoginApi(bodyData) {
             else if (response.data.code === 200) {
                 yield put({type: LOGIN_API_RESPONSE, payload: response.data})
             }
+            else {
+                yield put({type: ERROR_TYPE, payload: response.data.message})
+            }
         }
     }
     catch(error) {
@@ -28,6 +31,9 @@ function* callRegisterApi(params) {
             yield put({type: REGISTER_API_RESPONSE, payload: response.data.data})
         }
         else if (response.data.code === 201) {
+            yield put({type: ERROR_MESSAGE, payload: response.data.message})
+        }
+        else {
             yield put({type: ERROR_MESSAGE, payload: response.data.message})
         }
     }
