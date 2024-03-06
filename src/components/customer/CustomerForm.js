@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   FormGroup,
+  FormSelect,
 } from "react-bootstrap";
 import avtar1 from "../../Assets/avatars/1.jpg";
 import avtar2 from "../../Assets/avatars/2.jpg";
@@ -62,6 +63,7 @@ function CustomerForm(props) {
   const [vattreatment, setVattreatment] = useState("false");
   const [customerType, setCustomerType] = useState(); // individual
   const [attachedFileName, setAttachedFileName] = useState("");
+  const [savedbankFormData, setBankFormData] = useState("");
   const dispatch = useDispatch();
 
   const avatars = [
@@ -75,15 +77,17 @@ function CustomerForm(props) {
 
   const [businessType, setBusinessType] = useState([]);
   console.log("props message:", props);
+
   const [formData, setFormData] = useState({
     bankName: "",
     accountNumber: "",
     iban: "",
     branch: "",
+    bankcountry:"",
   });
-  const [savedbankFormData, setBankFormData] = useState("");
 
   const handleChange = (e) => {
+
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -97,12 +101,14 @@ function CustomerForm(props) {
     if (e.target.name === "mobile") {
       setMobile(e.target.value);
     }
+
     if (e.target.name === "email") {
       setEmail(e.target.value);
       setEmailError(
         isEmailValid(e.target.value) ? "" : "Invalid email format."
       );
     }
+
     if (e.target.name === "website") setWebsite(e.target.value);
     if (e.target.name === "customeraddress") setAddress(e.target.value);
     if (e.target.name === "city") setCity(e.target.value);
@@ -111,31 +117,38 @@ function CustomerForm(props) {
     if (e.target.name === "zip") setZip(e.target.value);
     if (e.target.name === "title") setTitle(e.target.value);
   };
+
   const selectBusinessType = (businessType) => {
     console.log(businessType);
     setCustomerType(businessType.id);
   };
+
   const onSelectCategory = (item) => {
     console.log(item.target.value);
     setCategory(item.target.value);
   };
+
   const handleVatreatment = (item) => {
     console.log(item.target.value);
     setVattreatment(item.target.value);
   };
+
   const handlesubmit = () => {
     if (customerType === 1 && !name.trim()) {
       setNameError(true);
       return;
     }
+
     if (!mobile.trim() || mobileError) {
       setMobileError(true);
       return;
     }
+
     if (!category || (typeof category === "string" && !category.trim())) {
       setCategoryError(true);
       return;
     }
+
     if (
       vattreatment === "true" &&
       (!trnnum || (typeof trnnum === "string" && !trnnum.trim()))
@@ -143,6 +156,7 @@ function CustomerForm(props) {
       setVatError(true);
       return;
     }
+
     const requestData = {
       name: name,
       jobPosition: jobposition,
@@ -173,13 +187,12 @@ function CustomerForm(props) {
       ],
       bankAccounts: [
         {
-          code: savedbankFormData.iban,
-          bankName: savedbankFormData.bankName,
-          accountNumber: savedbankFormData.accountNumber,
-          branchName: savedbankFormData.branch,
-          accountHolderName: savedbankFormData.bankName,
-          country: country,
-          code: country,
+          code: savedbankFormData.iban ? savedbankFormData.iban : null ,
+          bankName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
+          accountNumber: savedbankFormData.accountNumber ? savedbankFormData.accountNumber : null,
+          branchName: savedbankFormData.branch ? savedbankFormData.branch : null,
+          accountHolderName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
+          country: savedbankFormData.bankcountry ? savedbankFormData.bankcountry : null,
         },
       ],
     };
@@ -188,9 +201,9 @@ function CustomerForm(props) {
     console.log("data", props.customers);
     setBankFormData({ ...formData });
     handleModalClose();
-    console.log(requestData.bankAccounts);
-    console.log(country);
-    console.log(vattreatment);
+    console.log("the bank accounts", requestData.bankAccounts);
+    console.log("country", country);
+    console.log("vat", vattreatment);
   };
 
   const openAvatars = () => {
@@ -261,17 +274,22 @@ function CustomerForm(props) {
               >
                 Save
               </Button>
-              
-              <Button  type="submit"
+
+              <Button
+                type="submit"
                 className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
                 style={{
                   height: "28px",
                   width: "13%",
                   backgroundColor: "#bebec3",
-                  color:"black"
+                  color: "black",
                 }}
-                onClick={handlesubmit}><Link to='/' style={{textDecoration:'none',color:'black'}}>Cancel </Link></Button>
-            
+                onClick={handlesubmit}
+              >
+                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                  Cancel{" "}
+                </Link>
+              </Button>
             </Col>
             <Col className="d-flex justify-content-end me-3 ">
               <Button
@@ -560,12 +578,22 @@ function CustomerForm(props) {
 
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
                     Title
-                    <FormControl
+                    <FormSelect
                       className="f-14   br_b-2 rounded-0 inputfocus"
                       onChange={(e) => handleChange(e)}
                       name="title"
-                      style={{ border: "2px dotted #25316f", height: "2rem" }}
-                    ></FormControl>
+                      style={{ border: "2px dotted #25316f", height: "2.5rem" }}
+                    >
+                      <option className="f-16" value="Mr">
+                        Mr
+                      </option>
+                      <option className="f-16" value="Mrs">
+                        Mrs
+                      </option>
+                      <option className="f-16" value="Miss">
+                        Miss
+                      </option>
+                    </FormSelect>
                   </FormLabel>
                 </Col>
 

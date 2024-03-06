@@ -61,6 +61,19 @@ function Bankform({ banktoggle, formData, setFormData }) {
                   />
                 </FormLabel>
               </FormGroup>
+              <FormGroup className=" m-2">
+                <FormLabel className="f-14 w-100 ">
+                  Country
+                  <FormControl
+                    name="bankcountry"
+                    value={formData.bankcountry}
+                    onChange={handleChange}
+                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
+                  />
+                </FormLabel>
+              </FormGroup>
             </Col>
             <Col>
               <FormGroup className=" m-2">
@@ -96,9 +109,7 @@ function Bankform({ banktoggle, formData, setFormData }) {
           <Button type="reset" variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button type="reset" variant="primary">
-            Clear
-          </Button>
+    
         </Modal.Footer>
       </Modal>
     </>
