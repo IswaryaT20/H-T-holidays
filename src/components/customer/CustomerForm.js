@@ -193,7 +193,7 @@ function CustomerForm(props) {
   }, []);
 
   useEffect(() => {
-    if (props.type === 1 && props.master.businessTypes.length > 0) {
+    if (props.master.businessTypes.length > 0) {
       setCustomerType(props.master.businessTypes[0].id);
       setBusinessType(
         props.master.businessTypes.filter((item) => {

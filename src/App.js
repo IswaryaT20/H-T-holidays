@@ -85,6 +85,15 @@ function App() {
             }
           />
           <Route
+            path="/CustomerForm"
+            element={
+              <>
+                <Navbar />
+                <CustomerForm />
+              </>
+            }
+          />
+          <Route
             path="/customer-details"
             element={
               <>
