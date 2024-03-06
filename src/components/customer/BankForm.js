@@ -5,18 +5,22 @@ import {
   Modal,
   Row,
   Col,
-  FormCheck,
-  FormControl,
-  Input,
   FormLabel,
+  FormControl,
 } from "react-bootstrap";
 
-function Bankform({ banktoggle }) {
-  const [show, setShow] = useState(true);
+function Bankform({ banktoggle, formData, handleChange }) {
+  
 
+  const [formdata,setFormData] = useState(false)
   const handleClose = () => {
-    setShow(false);
     banktoggle();
+    formdata({
+      bankName: "",
+      accountNumber: "",
+      iban: "",
+      branch: "",
+    });
   };
 
   return (
@@ -25,17 +29,15 @@ function Bankform({ banktoggle }) {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        show={show}
+        show={true}
         onHide={handleClose}
         style={{
           width: "100%",
-          placeItems:'center',
+          placeItems: "center",
         }}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Bank Form
-          </Modal.Title>
+          <Modal.Title id="contained-modal-title-vcenter">Bank Form</Modal.Title>
         </Modal.Header>
         <Modal.Body className="">
           <Row className="">
@@ -43,8 +45,13 @@ function Bankform({ banktoggle }) {
               <FormGroup className=" m-2 d-flex flex-row">
                 <FormLabel className="f-14">
                   Bank Name
-                  <FormControl Label="Account No" className="f-14 br_b-2 rounded-0 mt-0 me-2 inputfocus" type="text" 
-                   style={{ border: "2px dotted #25316f" }}
+                  <FormControl
+                    name="bankName"
+                    value={formData.bankName}
+                    onChange={handleChange}
+                    className="f-14 br_b-2 rounded-0 mt-0 me-2 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
                   />
                 </FormLabel>
               </FormGroup>
@@ -52,7 +59,14 @@ function Bankform({ banktoggle }) {
                 <FormLabel className="f-14 ">
                   {" "}
                   Account Number
-                  <FormControl className="inputfocus" type="text" />
+                  <FormControl
+                    name="accountNumber"
+                    value={formData.accountNumber}
+                    onChange={handleChange}
+                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
+                  />
                 </FormLabel>
               </FormGroup>
             </Col>
@@ -61,13 +75,27 @@ function Bankform({ banktoggle }) {
                 <FormLabel className="f-14 ">
                   {" "}
                   IBAN No
-                  <FormControl className="inputfocus" type="text" />
+                  <FormControl
+                    name="iban"
+                    value={formData.iban}
+                    onChange={handleChange}
+                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
+                  />
                 </FormLabel>
               </FormGroup>
               <FormGroup className=" m-2">
                 <FormLabel className="f-14 ">
                   Branch
-                  <FormControl className="inputfocus" type="text" />
+                  <FormControl
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                    type="text"
+                    style={{ border: "2px dotted #25316f" }}
+                  />
                 </FormLabel>
               </FormGroup>
             </Col>

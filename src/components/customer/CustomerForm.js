@@ -34,6 +34,9 @@ const isEmailValid = (email1) => {
   return emailPattern.test(email1);
 };
 
+
+
+
 function CustomerForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
@@ -50,7 +53,6 @@ function CustomerForm(props) {
   const [mobile, setMobile] = useState("");
   const [mobileError, setMobileError] = useState(false);
   const [emailError, setEmailError] = useState("");
-
   const [website, setWebsite] = useState("");
   const [category, setCategory] = useState();
   const [customeraddress, setAddress] = useState("");
@@ -72,18 +74,28 @@ function CustomerForm(props) {
   ];
 
   const [businessType, setBusinessType] = useState([]);
-
   console.log("props message:", props);
+  const [formData, setFormData] = useState({
+    bankName: "",
+    accountNumber: "",
+    iban: "",
+    branch: "",
+  });
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
     if (e.target.name === "phone") setPhone(e.target.value);
-
     if (e.target.name === "mobile") {
       setMobile(e.target.value);
     }
-
     if (e.target.name === "email") {
       setEmail(e.target.value);
       setEmailError(
@@ -98,22 +110,18 @@ function CustomerForm(props) {
     if (e.target.name === "zip") setZip(e.target.value);
     if (e.target.name === "title") setTitle(e.target.value);
   };
-
   const selectBusinessType = (businessType) => {
     console.log(businessType);
     setCustomerType(businessType.id);
   };
-
   const onSelectCategory = (item) => {
     console.log(item.target.value);
     setCategory(item.target.value);
   };
-
   const handleVatreatment = (item) => {
     console.log(item.target.value);
     setVattreatment(item.target.value);
   };
-
   const handlesubmit = () => {
     if (customerType === 1 && !name.trim()) {
       setNameError(true);
@@ -127,7 +135,6 @@ function CustomerForm(props) {
       setCategoryError(true);
       return;
     }
-
     if (
       vattreatment === "true" &&
       (!trnnum || (typeof trnnum === "string" && !trnnum.trim()))
@@ -135,7 +142,6 @@ function CustomerForm(props) {
       setVatError(true);
       return;
     }
-
     const requestData = {
       name: name,
       jobPosition: jobposition,
@@ -163,6 +169,16 @@ function CustomerForm(props) {
           state: city,
           addressTypeId: 1,
         },
+      ],
+      bankAccounts:[
+        {
+          bankName:1245,
+          accountNumber:67890,
+          branchName:"union Bank of India",
+          accountHolderName:"Sudhar",
+          country:1,
+          code:country,
+        }
       ]
     };
 
@@ -677,7 +693,9 @@ function CustomerForm(props) {
                 addresstoggle={addressmodal}
               />
             )}
-            {bankdetails && <Bankform banktoggle={bankmodal} />}
+               {bankdetails && <Bankform  banktoggle={bankmodal}
+          formData={formData} 
+          handleChange={handleChange}  />}
           </Row>
         </Container>
       </div>

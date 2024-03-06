@@ -142,7 +142,8 @@ function Customer(props) {
                     key={item.id}
                     className="flex container d-flex flex-row align-items-center p-10"
                     style={{
-                      width: "100%"
+                      width: "100%",
+                      height:100,
                     }}
 
                     onClick={() => {navigateToNewPage(item.id)}}
