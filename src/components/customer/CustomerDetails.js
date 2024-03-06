@@ -19,7 +19,7 @@ const CustomerDetails = (props) => {
       type: SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
       data: location.state.id,
     });
-  }, [dispatch, location.state.id]);
+  }, [location.state.id]);
 
   useEffect(() => {
     setselectedCustomer(props.customers.selectedCustomerDetails);

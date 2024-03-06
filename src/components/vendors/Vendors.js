@@ -15,20 +15,30 @@ import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
 import { useDispatch, useSelector, connect } from "react-redux";
 import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
+import { useNavigate } from "react-router-dom";
 
 function Vendors(props) {
+
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
   const [errorcustomer, seterrorcustomer] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('')
+  const navigation = useNavigate();
+
   const dispatch = useDispatch();
 
   const handleCard = () => {
+    setFilteredData(props.customers.customersList)
+    setSearchQuery("")
     setCardActive(true);
     setTableActive(false);
   };
   const handleTable = () => {
+    setSearchQuery("")
     setTableActive(true);
     setCardActive(false);
+    setFilteredData(props.customers.customersList)
   };
 
 
@@ -37,13 +47,28 @@ function Vendors(props) {
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL, data: 3 })
   }, []);
 
-  // useEffect(() => {
-  //   const customerfilter = props.customers.customersList.filter(
-  //     (customerdata) => customerdata.businessTypeId === 3
-  //   );
-  //   setCards(customerfilter);
-  //   // setTablevalue(customerfilter);
-  // }, [props.customers.customersList])
+  useEffect(() => {
+    setFilteredData(props.customers.customersList)
+  }, [props.customers.customersList])
+
+
+  const handleFilter = (e) => {
+    setSearchQuery(e.target.value)
+    if (e.target.value.length > 0) {
+      const tempArray = props.customers.customersList.filter((item) => {
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+      })
+  
+      setFilteredData(tempArray)
+    }
+    else {
+      setFilteredData(props.customers.customersList)
+    }
+  }
+
+  const handleCustomerOnClick = (id) => {
+    navigation('/vendor-details', {state: {id: id}})
+  }
 
   return (
     <>
@@ -92,7 +117,11 @@ function Vendors(props) {
                 style={{
                   background: "#80808036",
                 }}
+                value={searchQuery}
                 placeholder="search Vendors "
+                onChange={(e) => [
+                  handleFilter(e)
+                ]}
               />
             </InputGroup>
           </div>
@@ -125,10 +154,11 @@ function Vendors(props) {
         >
           <div>
             <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap', paddingRight: 8, paddingLeft: 8, paddingTop: 8, paddingBottom: 8 }}>
-              {props.customers.customersList.length > 0
-                ? props.customers.customersList.map((item) => (
+              {filteredData.length > 0
+                ? filteredData.map((item) => (
                   <div style={{ flex: '0 0 25%', paddingLeft: 7, paddingRight: 7, paddingTop: 7, paddingBottom: 7, position: 'relative' }}>
                     <Card
+                    onClick={() => {handleCustomerOnClick(item.id)}}
                       key={item.id}
                       className="flex container d-flex flex-row align-items-center p-10"
                       style={{
@@ -183,8 +213,8 @@ function Vendors(props) {
                 </tr>
               </thead>
               <tbody>
-                {props.customers.customersList.length > 0 ? (
-                  props.customers.customersList.map((tableItem) => {
+                {filteredData.length > 0 ? (
+                  filteredData.map((tableItem) => {
                     console.log(tableItem)
                     return <tr>
                       <td>{tableItem.title}. {tableItem.name}</td>
