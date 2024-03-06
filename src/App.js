@@ -20,6 +20,7 @@ import SupplierPay from "./components/payment/SupplierPay";
 import Customerpay from "./components/payment/Customerpay";
 import Payment from "./components/payment/Payment";
 import Receipt from "./components/payment/Receipt";
+import VendorDetails from "./components/vendors/VendorDetails";
 
 import {
   KEY_IS_LOGGED_IN,
@@ -103,6 +104,16 @@ function App() {
               <>
                 <Navbar />
                 <CustomerDetails />
+              </>
+            }
+          />
+
+          <Route
+            path="/vendor-details"
+            element={
+              <>
+                <Navbar />
+                <VendorDetails />
               </>
             }
           />
