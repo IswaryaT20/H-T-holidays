@@ -57,8 +57,7 @@ const InvoiceForm = (props) => {
 
   //Handlers
   const handleAddRow = () => {
-    console.log(items)
-    if (!items.length -1 <= 0 && items[items.length - 1].id) {
+    if (!items.length -1 <= 0 && items[items.length - 1] != null && items[items.length - 1].id ) {
       setRowCount(rowCount + 1)
     }
     else {

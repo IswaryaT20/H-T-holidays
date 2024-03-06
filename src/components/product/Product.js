@@ -39,6 +39,7 @@ const Newproduct = (props) => {
   const [startingIndex, setStartIndex] = useState(0);
   const [endingIndex, setEndingIndex] = useState(15);
   const [success, setSuccess] = useState();
+  const [filteredData, setFilteredData] = useState([]);
   const [handtCategories, setHandtCategories] = useState([]);
   const [masterCategory, setMasterCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,11 +65,28 @@ const Newproduct = (props) => {
     }
   }, [dispatch, props.customers.customersList.length]);
 
+  useEffect(() => {
+    setFilteredData(props.productsData.products)
+  }, [props.productsData.products])
+
 
   const handleCloseModal = () => {
 
     setShowModal(false);
   };
+
+  const handleFilter = (e) => {
+    if (e.target.value.length > 0) {
+      const tempArray = props.productsData.products.filter((item) => {
+        return item.productName.toLowerCase().includes(e.target.value.toLowerCase());
+      })
+  
+      setFilteredData(tempArray)
+    }
+    else {
+      setFilteredData(props.productsData.products)
+    }
+  }
   
   const handleShowModal = () => setShowModal(true);
 
@@ -150,7 +168,7 @@ const Newproduct = (props) => {
   }, []);
 
   const renderPagination = useCallback(() => {
-    const totalNoOfProducts = props.productsData.products;
+    const totalNoOfProducts = filteredData;
     const noOfPages = Math.ceil(totalNoOfProducts.length / 15);
     let startPage = Math.min(1, currentPage);
     let endPage = Math.min(2, noOfPages);
@@ -210,7 +228,7 @@ const Newproduct = (props) => {
         </Pagination>
       </div>
     );
-  }, [props.productsData.products, currentPage]);
+  }, [filteredData, currentPage]);
 
   return (
     <div style={{ paddingRight: 50, paddingLeft: 50 }}>
@@ -255,7 +273,10 @@ const Newproduct = (props) => {
             >
               <FormControl
                 placeholder="Search Products..."
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  handleFilter(e)
+                }}
                 style={{
                   background: "#80808036",
                   boxShadow: "none",
@@ -289,16 +310,7 @@ const Newproduct = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.productsData.products
-              .filter((items) => {
-                return search.toLowerCase() === ""
-                  ? items
-                  : items.productName
-                      .toLowerCase()
-                      .includes(search.toLowerCase());
-              })
-              .sort((a, b) => b.id - a.id)
-              .slice(startingIndex, endingIndex)
+            {filteredData
               .map((items) => (
                 <tr key={items.id}>
                   <td>{items.productName}</td>

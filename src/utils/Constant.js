@@ -28,6 +28,8 @@ export const GET_LOGGED_USER_DETAILS_API_CALL = 'Get_Logged_User_details'
 export const GET_LOGGED_USER_DETAILS_RESPONSE = 'Get-Loggedin-User-Response'
 export const GET_ALL_PURCHASE_ORDER_API_CALL = 'Get-All-Purchase-Order-call'
 export const GET_ALL_PURCHASE_ORDER_API_RESPONSE = 'Get-All-Purchase-Order-Response'
+export const CREATE_PURCHASE_ORDER_API_CALL = 'Create-Purchase-Order-Api-Call'
+export const CREATE_PURCHASE_ORDER_API_RESPONSE = 'Create-Purchase-Order-Api-Response'
 
 
 export const KEY_IS_LOGGED_IN = "loggedIn"

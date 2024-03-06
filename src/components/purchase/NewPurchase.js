@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
+import { SEARCH_CUSTOMER_API_CALL, CREATE_PURCHASE_ORDER_API_CALL } from "../../utils/Constant";
 import axios from "axios";
 import PurchaseForm from "./PurchaseForm";
 
@@ -95,9 +95,11 @@ const NewPurchase = (props) => {
       ],
     };
 
-    axios.post(
-      "http://68.178.161.233:8080/handt/v2/purchaseOrder/getPurchaseOrders"
-    );
+    dispatch({type: CREATE_PURCHASE_ORDER_API_CALL, data: requestData})
+
+    // axios.post(
+    //   "http://68.178.161.233:8080/handt/v2/purchaseOrder/getPurchaseOrders"
+    // );
   };
 
   return (
