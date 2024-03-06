@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login(props) {
-  const [name, setName] = useState("");
+  const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -31,7 +31,7 @@ function Login(props) {
   const handleLogin = (e) => {
     dispatch({ type: CLEAR_ERROR_MESSAGE });
     if (e.target.name === "name") {
-      setName(e.target.value);
+      setEmailId(e.target.value);
     } else if (e.target.name === "password") {
       setPassword(e.target.value);
     }
@@ -42,7 +42,7 @@ function Login(props) {
     const usernameError = "Invalid username";
     const passwordError = "Invalid password";
     setError("");
-    if (name.length === 0) {
+    if (emailId.length === 0) {
       setError(usernameError);
       return;
     }
@@ -53,7 +53,7 @@ function Login(props) {
 
     //API Call's
     const bodyData = {
-      userName: name,
+      emailId: emailId,
       password: password,
     };
 
@@ -83,7 +83,7 @@ function Login(props) {
                 placeholder="name@example.com"
                 onChange={(e) => handleLogin(e)}
               />
-              {error && !name && (
+              {error && !emailId && (
               <p className="text-start ms-2" style={{ color: "red", fontSize:12 }}>
                 Please enter username
               </p>

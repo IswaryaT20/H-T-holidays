@@ -211,8 +211,7 @@ function Signup(props) {
       
 {props.users.error && (
   <Alert variant="danger">
-    {props.users.error.message}
-    {console.log(props.users.payload)}
+    {props.users.error}
   </Alert>
 )}
 

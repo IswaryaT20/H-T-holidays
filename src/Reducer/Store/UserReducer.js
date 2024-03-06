@@ -1,5 +1,5 @@
 import { act } from "react-dom/test-utils";
-import { LOGIN_API_RESPONSE, ERROR_TYPE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE, UPDATE_USER_ID_LOCALLY, GET_LOGGED_USER_DETAILS_RESPONSE } from "../../utils/Constant";
+import { LOGIN_API_RESPONSE, ERROR_TYPE, ERROR_MESSAGE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE, UPDATE_USER_ID_LOCALLY, GET_LOGGED_USER_DETAILS_RESPONSE } from "../../utils/Constant";
 
 
 const INITIAL_STATE = {
@@ -16,6 +16,7 @@ const INITIAL_STATE = {
 };
 
 const UserReducer = (state = INITIAL_STATE, action) => {
+  console.log(action)
   switch (action.type) {
     case LOGIN_API_RESPONSE: {
       const data = action.payload.data;
@@ -39,20 +40,25 @@ const UserReducer = (state = INITIAL_STATE, action) => {
       return { ...state, error: null };
     }
 
-        case REGISTER_API_RESPONSE: {
-            return {...state, error: action.payload.errorMessage, status: 200, isLoggedIn: true, loginId: action.payload.id}
-        }
-
-        case UPDATE_USER_ID_LOCALLY: {
-            return {...state, loginId: action.payload}
-        }
-        case GET_LOGGED_USER_DETAILS_RESPONSE: {
-          console.log(action.payload)
-          return {...state, loginName: action.payload.name, loginMobile: action.payload.mobile}
-        }
-
+    case ERROR_MESSAGE: {
+      console.log(action)
+      return {...state, error: action.payload}
     }
-    return state;
+
+    case REGISTER_API_RESPONSE: {
+      return { ...state, error: action.payload.errorMessage, status: 200, isLoggedIn: true, loginId: action.payload.id }
+    }
+
+    case UPDATE_USER_ID_LOCALLY: {
+      return { ...state, loginId: action.payload }
+    }
+    case GET_LOGGED_USER_DETAILS_RESPONSE: {
+      console.log(action.payload)
+      return { ...state, loginName: action.payload.name, loginMobile: action.payload.mobile }
+    }
+
+  }
+  return state;
 }
 
 export default UserReducer;

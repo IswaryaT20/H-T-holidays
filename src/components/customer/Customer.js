@@ -22,6 +22,7 @@ function Customer(props) {
   // const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
+  const [filteredData, setFilteredData] = useState([])
 
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -46,12 +47,23 @@ function Customer(props) {
   }, []);
 
   useEffect(() => {
-    const customerfilter = props.customers.customersList.filter(
-      (customerdata) => customerdata.businessTypeId === 1
-    );
-    setCards(customerfilter);
-    // setTablevalue(customerfilter);
+    setCards(props.customers.customersList)
+    setFilteredData(props.customers.customersList)
   }, [props.customers.customersList])
+
+
+  const handleFilter = (e) => {
+    if (e.target.value.length > 0) {
+      const tempArray = props.customers.customersList.filter((item) => {
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+      })
+  
+      setFilteredData(tempArray)
+    }
+    else {
+      setFilteredData(props.customers.customersList)
+    }
+  }
 
   return (
     <>
@@ -86,7 +98,7 @@ function Customer(props) {
         <div
           className="group-search d-flex ml-6p"
           style={{
-            width: "39%",
+            width: "50%",
           }}
         >
           <div className="p-2 filter-icon mt-1"></div>
@@ -103,6 +115,9 @@ function Customer(props) {
                   borderColor: "white",
                 }}
                 placeholder="search here"
+                onChange={(e) => {
+                  handleFilter(e)
+                }}
               />
 
             </InputGroup>
@@ -135,8 +150,8 @@ function Customer(props) {
           }}
         >
           <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap', paddingRight: 8, paddingLeft: 8, paddingTop: 8, paddingBottom: 8 }}>
-            {card.length > 0
-              ? card.map((item) => (
+            {filteredData.length > 0
+              ? filteredData.map((item) => (
                 <div style={{ flex: '0 0 25%', paddingLeft: 7, paddingRight: 7, paddingTop: 7, paddingBottom: 7, position: 'relative' }}>
                   <Card
                     key={item.id}
@@ -193,8 +208,8 @@ function Customer(props) {
               </tr>
             </thead>
             <tbody>
-              {card.length > 0 ? (
-                card.map((tableItem) => {
+              {filteredData.length > 0 ? (
+                filteredData.map((tableItem) => {
                   console.log(tableItem)
                   return <tr>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}> {tableItem.name}</td>
