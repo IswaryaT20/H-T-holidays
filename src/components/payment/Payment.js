@@ -1,150 +1,174 @@
 import React, { useEffect, useState } from "react";
-import { Container, FormSelect, Pagination, Table } from "react-bootstrap";
+import {
+  Container,
+  FormSelect,
+  Pagination,
+  Button,
+  Col,
+  InputGroup,
+  FormControl,
+} from "react-bootstrap";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaSearch } from "react-icons/fa";
+import InputGroupText from "react-bootstrap/esm/InputGroupText";
 
-function Receipt() {
-  const [getcustomer, setgetcustomer] = useState([]);
-  const [entitiesPerPage, setEntitiesPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+function Payment() {
+  const [getsupplier, setgetsupplier] = useState([]);
+  const [entitiesPerPage, setEntitiesPerPage] = useState("");
+  const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     axios
       .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
       .then((response) => {
-        console.log(response.data.data);
-        setgetcustomer(response.data.data);
-        const totalItems = response.data.data.length;
-        const calculatedTotalPages = Math.ceil(totalItems / entitiesPerPage);
-        setTotalPages(calculatedTotalPages);
+        const filteredsuppliers = response.data.data.filter(
+          (supplier) => supplier.businessTypeId !== 1
+        );
+        setgetsupplier(filteredsuppliers);
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+      .catch((error) => console.error("Error fetching data:", error));
+    console.log(entitiesPerPage);
   }, [entitiesPerPage]);
 
-  const handlePageChange = (page, sizePerPageOption) => {
-    setCurrentPage(page);
-    setEntitiesPerPage(sizePerPageOption);
-  };
-
-  const pagOptions = {
-    custom: true,
-    totalSize: getcustomer.length,
-    sizePerPage: entitiesPerPage,
-    paginationSize: 'Next',
-    pageStartIndex: 'Prev',
-    paginationTotalRenderer: (from, to, size) => (
-      <span className="react-bootstrap-table-pagination-total">
-        Showing {from} to {to} of {size} Results
-      </span>
-    ),
-  };
-
-  const startIdx = (currentPage - 1) * entitiesPerPage;
-  const endIdx = currentPage * entitiesPerPage;
-
-  const entitiesToDisplay = getcustomer.slice(startIdx, endIdx);
-
-  const paginationItems = [];
-
-  if (totalPages <= 5) {
-    for (let number = 1; number <= totalPages; number++) {
-      paginationItems.push(
-        <Pagination.Item
-          key={number}
-          active={number === currentPage}
-          onClick={() => handlePageChange(number, entitiesPerPage)}
-        >
-          {number}
-        </Pagination.Item>
-      );
-    }
-  } else {
-    let startPage = Math.max(1, currentPage - 1);
-    let endPage = Math.min(totalPages, currentPage + 1);
-
-    paginationItems.push(
-      <Pagination.Prev
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1, entitiesPerPage)}
-        disabled={currentPage === 1}
-      />
-    );
-
-    for (let number = startPage; number <= endPage; number++) {
-      paginationItems.push(
-        <Pagination.Item
-          key={number}
-          active={number === currentPage}
-          onClick={() => handlePageChange(number, entitiesPerPage)}
-        >
-          {number}
-        </Pagination.Item>
-      );
-    }
-
-    paginationItems.push(
-      <Pagination.Next
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1, entitiesPerPage)}
-        disabled={currentPage === totalPages}
-      />
-    );
-  }
+  // console.log("the data pages",entitiesPerPage);
 
   return (
     <div>
       <Container fluid>
-        <div className="text-end mt-2 d-flex">
-          Show entities
-          <FormSelect
-            className="form-select ms-2 w-10 mb-3"
-            onChange={(e) => setEntitiesPerPage(Number(e.target.value))}
-            value={entitiesPerPage}
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </FormSelect>
-        </div>
         <div
-          className="border border-3"
+          className="d-flex mt-4 pt-4 "
           style={{
-            height: 350,
-            width: "100%",
-            overflowY: "scroll",
+            border: "1px solid #80808042",
+            paddingLeft: "1%",
+            paddingRight: "1%",
+            marginBottom: "1%",
           }}
         >
-          <Table className="table" variant="dark">
+          <Col>
+            <Link to="/SupplierPay">
+              <Button
+                className="b-none"
+                style={{ backgroundColor: "#25316f", color: "white" }}
+              >
+                New Payment
+              </Button>
+            </Link>
+          </Col>
+          <Col>
+            <InputGroup style={{ height: "10px", width: "100%" }}>
+              <InputGroupText style={{ backgroundColor: "#1d1d5e " }}>
+                <FaSearch className="text-white" />
+              </InputGroupText>
+              <FormControl
+                placeholder="Search supplier..."
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  background: "#80808036",
+                  boxShadow: "none",
+                  outline: "none",
+                  borderColor: "white",
+                  height: "35px",
+                }}
+              />
+            </InputGroup>
+          </Col>
+
+          <Col className="d-flex align-items-center justify-content-end me-3">
+            <div className="d-flex align-items-start pt-1 ms-3">
+              <span className="showentity mt-1">Show entities</span>
+              <FormSelect
+                className="d-flex form-select align-item-center ms-2 w-40 mb-3 fs-6 inputfocus"
+                onChange={(e) => {
+                  setEntitiesPerPage(e.target.value);
+                  console.log("Selected entities per page:", e.target.value);
+                }}
+                value={entitiesPerPage}
+              >
+                <option className="f-10" value={10}>
+                  10
+                </option>
+                <option className="f-10" value={25}>
+                  25
+                </option>
+                <option className="f-10" value={50}>
+                  50
+                </option>
+              </FormSelect>
+            </div>
+          </Col>
+        </div>
+        <div className="table-container " style={{ width: "100%" }}>
+          <table className="table" style={{ overflowY: "scroll" }}>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Customer Name</th>
-                <th>They Owe You</th>
-                <th>You Owe Them</th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  ID
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Date
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Supplier Name
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  They Owe You
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  You Owe Them
+                </th>
               </tr>
             </thead>
             <tbody>
-              {entitiesToDisplay.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.createdAt}</td>
-                  <td>{item.name}</td>
-                  <td>{item.theyOweYou}</td>
-                  <td>{item.youOweThem}</td>
+              {getsupplier
+                .filter((item) => {
+                  return (
+                    (search.toLowerCase() === ""
+                      ? item
+                      : item.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase())) &&
+                    (!startDate ||
+                      new Date(item.date) >= new Date(startDate)) &&
+                    (!endDate || new Date(item.date) <= new Date(endDate))
+                  );
+                })
+                .map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.createdAt}</td>
+                    <td>{item.name}</td>
+                    <td>{item.theyOweYou}</td>
+                    <td>{item.youOweThem}</td>
+                  </tr>
+                ))}
+              {getsupplier.filter((item) => {
+                return (
+                  (search.toLowerCase() === ""
+                    ? item
+                    : item.name.toLowerCase().includes(search.toLowerCase())) &&
+                  (!startDate || new Date(item.date) >= new Date(startDate)) &&
+                  (!endDate || new Date(item.date) <= new Date(endDate))
+                );
+              }).length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ fontWeight: "600", color: "red" }}>
+                    No data found!
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
-          </Table>
+          </table>
         </div>
-        <div className="d-flex justify-content-center ms-auto text-center mt-3 ">
-          <Pagination size="md">{paginationItems}</Pagination>
+        <div className="d-flex justify-content-center ms-auto text-center mt-3">
+          <Pagination size="md"></Pagination>
         </div>
       </Container>
     </div>
   );
 }
 
-export default Receipt;
+export default Payment;

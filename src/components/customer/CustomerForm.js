@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
+import { RiAttachment2 } from "react-icons/ri";
 
 import {
   Col,
@@ -28,6 +28,7 @@ import {
   REGISTER_API_CALL,
   INITIAL_STATE,
 } from "../../utils/Constant";
+import { Link } from "react-router-dom";
 
 const isEmailValid = (email1) => {
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -50,7 +51,6 @@ function CustomerForm(props) {
   const [mobile, setMobile] = useState("");
   const [mobileError, setMobileError] = useState(false);
   const [emailError, setEmailError] = useState("");
-
   const [website, setWebsite] = useState("");
   const [category, setCategory] = useState();
   const [customeraddress, setAddress] = useState("");
@@ -61,7 +61,9 @@ function CustomerForm(props) {
   const [title, setTitle] = useState("");
   const [vattreatment, setVattreatment] = useState("false");
   const [customerType, setCustomerType] = useState(); // individual
+  const [attachedFileName, setAttachedFileName] = useState("");
   const dispatch = useDispatch();
+
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
     { id: "2", name: "avatar2", src: avtar2 },
@@ -72,18 +74,29 @@ function CustomerForm(props) {
   ];
 
   const [businessType, setBusinessType] = useState([]);
-
   console.log("props message:", props);
+  const [formData, setFormData] = useState({
+    bankName: "",
+    accountNumber: "",
+    iban: "",
+    branch: "",
+  });
+  const [savedbankFormData, setBankFormData] = useState("");
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+
     if (e.target.name === "customername") setName(e.target.value);
     if (e.target.name === "jobposition") setJobposition(e.target.value);
     if (e.target.name === "trnnumber") setTrnnum(e.target.value);
     if (e.target.name === "phone") setPhone(e.target.value);
-
     if (e.target.name === "mobile") {
       setMobile(e.target.value);
     }
-
     if (e.target.name === "email") {
       setEmail(e.target.value);
       setEmailError(
@@ -98,22 +111,18 @@ function CustomerForm(props) {
     if (e.target.name === "zip") setZip(e.target.value);
     if (e.target.name === "title") setTitle(e.target.value);
   };
-
   const selectBusinessType = (businessType) => {
     console.log(businessType);
     setCustomerType(businessType.id);
   };
-
   const onSelectCategory = (item) => {
     console.log(item.target.value);
     setCategory(item.target.value);
   };
-
   const handleVatreatment = (item) => {
     console.log(item.target.value);
     setVattreatment(item.target.value);
   };
-
   const handlesubmit = () => {
     if (customerType === 1 && !name.trim()) {
       setNameError(true);
@@ -127,7 +136,6 @@ function CustomerForm(props) {
       setCategoryError(true);
       return;
     }
-
     if (
       vattreatment === "true" &&
       (!trnnum || (typeof trnnum === "string" && !trnnum.trim()))
@@ -135,7 +143,6 @@ function CustomerForm(props) {
       setVatError(true);
       return;
     }
-
     const requestData = {
       name: name,
       jobPosition: jobposition,
@@ -159,15 +166,31 @@ function CustomerForm(props) {
           addressLine2: city,
           city: city,
           zipcode: zip,
-          country: 1,
+          country: country,
           state: city,
           addressTypeId: 1,
         },
-      ]
+      ],
+      bankAccounts: [
+        {
+          code: savedbankFormData.iban,
+          bankName: savedbankFormData.bankName,
+          accountNumber: savedbankFormData.accountNumber,
+          branchName: savedbankFormData.branch,
+          accountHolderName: savedbankFormData.bankName,
+          country: country,
+          code: country,
+        },
+      ],
     };
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
     console.log("data", props.customers);
+    setBankFormData({ ...formData });
+    handleModalClose();
+    console.log(requestData.bankAccounts);
+    console.log(country);
+    console.log(vattreatment);
   };
 
   const openAvatars = () => {
@@ -186,6 +209,9 @@ function CustomerForm(props) {
   const bankmodal = () => {
     setbankdetails(!bankdetails);
   };
+  const handleModalClose = () => {
+    setbankdetails(false);
+  };
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
@@ -202,6 +228,14 @@ function CustomerForm(props) {
       );
     }
   }, [props.master.businessTypes]);
+
+  const fileattach = () => {
+    document.getElementById("fileInput").click();
+  };
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setAttachedFileName(selectedFile.name);
+  };
   return (
     <>
       <div
@@ -227,6 +261,17 @@ function CustomerForm(props) {
               >
                 Save
               </Button>
+              
+              <Button  type="submit"
+                className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
+                style={{
+                  height: "28px",
+                  width: "13%",
+                  backgroundColor: "#bebec3",
+                  color:"black"
+                }}
+                onClick={handlesubmit}><Link to='/' style={{textDecoration:'none',color:'black'}}>Cancel </Link></Button>
+            
             </Col>
             <Col className="d-flex justify-content-end me-3 ">
               <Button
@@ -317,15 +362,17 @@ function CustomerForm(props) {
                       onClick={openAvatars}
                     />
                     <Modal show={isAvatarsOpen} onHide={openAvatars}>
-                      <Modal.Body>Kindly choose the profile picture</Modal.Body>
+                      <Modal.Body>
+                        <strong>Kindly choose the profile picture</strong>
+                      </Modal.Body>
 
                       {isAvatarsOpen && (
                         <div className=" h-20 p-2">
-                          <div className="d-flex w-100 flex-wrap position-relative border">
+                          <div className="d-flex w-100 flex-wrap position-relative ">
                             {avatars.map((item) => (
                               <img
-                                className="ms-2 p-2 cursor-pointer  rounded-full border p-1"
-                                style={{ zIndex: "99", width: "30%" }}
+                                className="ms-2 p-2 cursor-pointer  rounded-full  p-1"
+                                style={{ zIndex: "99", width: "20%" }}
                                 name={item.name}
                                 key={item.id}
                                 src={item.src}
@@ -356,12 +403,9 @@ function CustomerForm(props) {
                   style={{ position: "relative", top: "-40px" }}
                 >
                   <div key={`inline-radio`} className="mb-3">
-                    <div
-                      className={`mb-3 ${nameError ? "has-error" : ""}`}
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
+                    <div className={`mb-3 ${nameError ? "has-error" : ""}`}>
                       {customerType === 1 && (
-                        <FormGroup>
+                        <FormGroup className="d-flex flex-column">
                           <FormControl
                             type="text"
                             placeholder="Customer Name"
@@ -377,13 +421,13 @@ function CustomerForm(props) {
                             id={`inline-radio-1`}
                             name="customername"
                             required
-                          ></FormControl>
-                          {nameError && (
-                            <span style={{ color: "red" }}>
-                              Customer Name is Required
-                            </span>
-                          )}
+                          />
                         </FormGroup>
+                      )}
+                      {nameError && (
+                        <p style={{ color: "red" }}>
+                          Customer Name is Required
+                        </p>
                       )}
                     </div>
 
@@ -451,13 +495,16 @@ function CustomerForm(props) {
                         ></Form.Control>
                       </FormGroup>
                       <FormGroup className=" f-14 d-flex justify-space-between ">
-                        <Form.Control
+                        <Form.Select
                           className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
                           style={{ border: "2px dotted #25316f" }}
                           placeholder="Country"
                           onChange={(e) => handleChange(e)}
                           name="country"
-                        ></Form.Control>
+                        >
+                          <option value={2}>UAE</option>
+                          <option value={1}>INDIA</option>
+                        </Form.Select>
                         <Form.Control
                           className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
                           style={{ border: "2px dotted #25316f" }}
@@ -469,11 +516,14 @@ function CustomerForm(props) {
                     </FormGroup>
                   </div>
                   <div
-                    className={`mb-3 ${categoryError ? "has-error" : ""}`}
+                    className={`mb-1 ${categoryError ? "has-error" : ""}`}
                     style={{ display: "flex", alignItems: "center" }}
                   >
                     <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
-                      Customer Category
+                      Customer Category{" "}
+                      <span className="f-16" style={{ color: "red" }}>
+                        *
+                      </span>
                       <Form.Select
                         aria-label="Default select example"
                         type="text"
@@ -501,10 +551,12 @@ function CustomerForm(props) {
                         ))}
                       </Form.Select>
                     </FormLabel>
-                    {categoryError && (
-                      <span style={{ color: "red" }}>Category is Required</span>
-                    )}
                   </div>
+                  {categoryError && (
+                    <p className="f-14" style={{ color: "red" }}>
+                      Category is Required
+                    </p>
+                  )}
 
                   <FormLabel className=" b txt-ht_blue w-100 f-14">
                     Title
@@ -551,11 +603,14 @@ function CustomerForm(props) {
                     </FormLabel>
                     <div
                       className={`mb-3 ${mobileError ? "has-error" : ""}`}
-                      style={{ display: "flex", alignItems: "center" }}
+                      style={{ alignItems: "center" }}
                     >
                       <FormLabel className=" b txt-ht_blue w-100 f-14">
-                        Mobile
-                        <div key={`inline-radio`} className="mb-3">
+                        Mobile{" "}
+                        <span className="f-16" style={{ color: "red" }}>
+                          *
+                        </span>
+                        <div key={`inline-radio`} className="mb-1">
                           <FormControl
                             placeholder="Enter phone number"
                             value={mobile}
@@ -574,11 +629,14 @@ function CustomerForm(props) {
                             }}
                             name="mobile"
                             limitMaxLength
+                            type="number"
                           />
                         </div>
                       </FormLabel>
                       {mobileError && (
-                        <span style={{ color: "red" }}>Required</span>
+                        <span className="" style={{ color: "red" }}>
+                          Required
+                        </span>
                       )}
                     </div>
 
@@ -627,23 +685,25 @@ function CustomerForm(props) {
                       className={`mb-3 ${vatError ? "has-error" : ""}`}
                       style={{ display: "flex", alignItems: "center" }}
                     >
-                      <FormLabel className=" b txt-ht_blue w-100 f-14">
-                        TRN NO
-                        <FormControl
-                          className={`f-14 br_b-2 rounded-0 inputfocus ${
-                            vatError ? "has-error" : ""
-                          }`}
-                          style={{
-                            border: "2px dotted #25316f",
-                            height: "2rem",
-                          }}
-                          onChange={(e) => {
-                            handleChange(e);
-                            setVatError(false);
-                          }}
-                          name="trnnumber"
-                        ></FormControl>
-                      </FormLabel>
+                      {vattreatment === true ? (
+                        <FormLabel className=" b txt-ht_blue w-100 f-14">
+                          TRN NO
+                          <FormControl
+                            className={`f-14 br_b-2 rounded-0 inputfocus ${
+                              vatError ? "has-error" : ""
+                            }`}
+                            style={{
+                              border: "2px dotted #25316f",
+                              height: "2rem",
+                            }}
+                            onChange={(e) => {
+                              handleChange(e);
+                              setVatError(false);
+                            }}
+                            name="trnnumber"
+                          ></FormControl>
+                        </FormLabel>
+                      ) : null}
                       <div>
                         {" "}
                         {vatError && (
@@ -667,6 +727,24 @@ function CustomerForm(props) {
                   placeholder="Leave a comment here"
                   style={{ height: "100px" }}
                 />
+                <p
+                  className="fw-bold"
+                  onClick={fileattach}
+                  style={{ color: "#25316f" }}
+                >
+                  <RiAttachment2 /> Attach File
+                </p>
+                {/* Hidden file input element */}
+                <input
+                  type="file"
+                  id="fileInput"
+                  name="inputfile"
+                  style={{ display: "none" }}
+                  onChange={(e) => handleFileChange(e)}
+                />
+                {attachedFileName && (
+                  <p style={{ color: "#25316f" }}>upload: {attachedFileName}</p>
+                )}
               </FormGroup>
             </Col>
 
@@ -677,7 +755,14 @@ function CustomerForm(props) {
                 addresstoggle={addressmodal}
               />
             )}
-            {bankdetails && <Bankform banktoggle={bankmodal} />}
+            {bankdetails && (
+              <Bankform
+                banktoggle={bankmodal}
+                formData={formData}
+                handleChange={handleChange}
+                setFormData={setFormData}
+              />
+            )}
           </Row>
         </Container>
       </div>

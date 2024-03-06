@@ -37,7 +37,8 @@ function Login(props) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const usernameError = "Invalid username";
     const passwordError = "Invalid password";
     setError("");
@@ -78,13 +79,15 @@ function Login(props) {
                 id="validationCustom01"
                 type="text"
                 name="name"
-                className="w-100 mb-2 rounded h-10 plain_text"
+                className="w-100 mb-2 rounded h-10 plain_text inputfocus"
                 placeholder="name@example.com"
                 onChange={(e) => handleLogin(e)}
               />
-              {error ? (
-                <p style={{ color: "red" }}>Please enter a valid username</p>
-              ) : null}
+              {error && !name && (
+              <p className="text-start ms-2" style={{ color: "red", fontSize:12 }}>
+                Please enter username
+              </p>
+            )}
             </FloatingLabel>
             <FloatingLabel
               id="floatingPassword"
@@ -95,18 +98,23 @@ function Login(props) {
                 id="validationCustom02"
                 type="password"
                 name="password"
-                className="w-100 rounded f-14 plain_text "
+                className="w-100 rounded f-14 plain_text inputfocus "
                 placeholder="Password"
                 onChange={(e) => handleLogin(e)}
               />
+              {error && !password && (
+              <p className="text-start ms-2" style={{ color: "red", fontSize:12 }}>
+                Please enter password
+              </p>
+            )}
             </FloatingLabel>
             <Form.Check type="checkbox" className="rounded d-flex">
               <Form.Check.Input />
               <Form.Check className="ms-2 mb-2 f-14">Remember Me</Form.Check>
             </Form.Check>
 
-            <div style={{color:"red"}}>
-              {props.users.error && <p>{props.users.error}*</p>}
+            <div style={{ color: "red" }}>
+              {props.users.error && <p  style={{ color: "red", fontSize:12 }} className="text-start ms-3">{props.users.error}*</p>}
             </div>
 
             <Button

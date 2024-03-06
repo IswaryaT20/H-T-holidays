@@ -19,7 +19,7 @@ import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import Bankform from "./VendorBankForm";
+import Vendorform from "./VendorBankForm";
 import { useSelector, useDispatch, connect } from "react-redux";
 import {
   MASTER_API_CALL,
@@ -27,6 +27,7 @@ import {
   REGISTER_API_CALL,
   INITIAL_STATE,
 } from "../../utils/Constant";
+import { Link } from "react-router-dom";
 
 const isEmailValid = (email1) => {
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -51,10 +52,12 @@ function VendorForm(props) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [error, seterror] = useState("");
-  const [bankdetails, setBankDetails] = useState("");
+  const [bankdetails, setbankdetails] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [mobileError, setMobileError] = useState(false);
   const [vatError, setVatError] = useState(false);
+  const [savedbankFormData, setBankFormData] = useState("");
+
 
   const dispatch = useDispatch();
   console.log("props message : ",props);
@@ -71,22 +74,39 @@ function VendorForm(props) {
   const openAvatars = () => {
     setIsAvatarsOpen(!isAvatarsOpen);
   };
-
+  const [formData, setFormData] = useState({
+    bankName: "",
+    accountNumber: "",
+    iban: "",
+    branch: "",
+  });
   const captureImage = (e) => {
     const selectedImageSrc = e.target.src;
     setSelectedImage(selectedImageSrc);
     setIsAvatarsOpen(false);
   };
 
-  const bankModal = () => {
-    if (suppliername.trim() !== "") {
-      setBankDetails(!bankdetails);
-    } else {
-      console.error("setName");
-    }
+  // const bankModal = () => {
+  //   if (suppliername.trim() !== "") {
+  //     setBankDetails(!bankdetails);
+  //   } else {
+  //     console.error("setName");
+  //   }
+  // };
+  const bankmodal = () => {
+    setbankdetails(!bankdetails);
   };
-
+  const handleModalClose = () => {
+    setbankdetails(false);
+  };
   const handleChange = (e) => {
+
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+
     if (e.target.name === "email") {
       setEmail(e.target.value);
       setEmailError(
@@ -139,6 +159,17 @@ function VendorForm(props) {
           addressTypeId: 1,
         },
       ],
+      bankAccounts: [
+        {
+          code: savedbankFormData.iban,
+          bankName: savedbankFormData.bankName,
+          accountNumber: savedbankFormData.accountNumber,
+          branchName: savedbankFormData.branch,
+          accountHolderName: savedbankFormData.bankName,
+          country: country,
+          code: country,
+        },
+      ],
     };
     dispatch({
       type: CREATE_CUSTOMER_API_CALL,
@@ -182,12 +213,21 @@ function VendorForm(props) {
               >
                 Save
               </Button>
+              <Button  type="submit"
+                className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
+                style={{
+                  height: "28px",
+                  width: "13%",
+                  backgroundColor: "#bebec3",
+                  color:"black"
+                }}
+                onClick={handlesubmit}><Link to='/Vendor' style={{textDecoration:'none',color:'black'}}>Cancel </Link></Button>
             </Col>
             <Col className="d-flex justify-content-end me-3 ">
               <Button
                 className="m-1 bg-blue f-12 rounded-1 b-none"
                 style={{ backgroundColor: "#25316f", width: "max-content" }}
-                // onClick={bankmodal}
+                onClick={bankmodal}
               >
                 Accounting
               </Button>
@@ -555,7 +595,10 @@ function VendorForm(props) {
 
             {/*bamk modal for the bank details */}
 
-            {/* {bankdetails && <Bankform banktoggle={bankmodal} />} */}
+            {bankdetails && <Vendorform  banktoggle={bankmodal}
+                formData={formData}
+                handleChange={handleChange}
+                setFormData={setFormData}/>}
           </Row>
         </Container>
       </div>

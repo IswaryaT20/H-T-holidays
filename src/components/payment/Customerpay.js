@@ -29,6 +29,7 @@ function Customerpay(props) {
   const [showInput, setShowInput] = useState(true);
   const [switchpayment, setswitchpayment] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [chequerefnum, setChequerefnum] = useState(false); // Define chequerefnum state
 
   const dispatch = useDispatch();
 
@@ -67,9 +68,12 @@ function Customerpay(props) {
     console.log(selectedCustomer);
   }, [selectedCustomer]);
 
-  const handleswitch = () => {
+  const handleSwitchClick = (e) => {
+    e.stopPropagation();
     setswitchpayment(!switchpayment);
   };
+
+  const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <>
@@ -90,12 +94,11 @@ function Customerpay(props) {
               gap={3}
               style={{ backgroundColor: "#e4e4e4", height: "50px" }}
             >
-              <div className="f-20 text-capitalize">Receive Payment</div>
+              <div className="f-20 text-capitalize">Receipt</div>
               <button className="p-1 ms-auto f-14 btn-blue">Receive</button>
-              <Link to='/Receipt'>
-              <button className="p-1 f-14 me-2 btn-blue">Cancel</button>
+              <Link to="/Receipt">
+                <button className="p-1 f-14 me-2 btn-blue">Cancel</button>
               </Link>
-
             </Stack>
 
             <Row className="f-20 mt-3">
@@ -119,6 +122,7 @@ function Customerpay(props) {
                       onChange={(name) => handleSearchChange(name)}
                     />
                   )}
+
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
@@ -194,14 +198,15 @@ function Customerpay(props) {
                         )}
                     </div>
                   ) : (
-                    <span>Select a customer</span>
+                    <span></span>
                   )}
                 </FormGroup>
               </Col>
+
               <Col className="font-large f-20 text-end text-capitalize">
                 <p className="d-flex flex-column fs-4 mt-2">
                   Outstanding Amount
-                  <span className="f-18 mt-2">₹ 0.00</span>
+                  <span className="f-18 mt-2"> 0.00 AED</span>
                 </p>
                 <div className="mt-4">
                   <FormLabel className="d-flex justify-content-end align-items-center f-16 txt-ht_blue fw-bold font-bolder ">
@@ -212,17 +217,19 @@ function Customerpay(props) {
                         }}
                       />
                     </span>
-                    Payment Date :
+                    <span>Receipt Date :</span>
                     <FormControl
                       type="date"
                       label=""
-                      className="w-40 ms-2"
+                      className="w-40 ms-2 inputfocus"
+                      defaultValue={currentDate}
+                      min={currentDate}
                     ></FormControl>
                   </FormLabel>
                 </div>
                 <div className="mt-4 d-flex justify-content-around">
                   <FormLabel className="d-flex justify-content-end ms-auto align-items-center f-16 txt-ht_blue fw-bold font-bolder me-2">
-                    Currency :
+                    <span>Currency :</span>
                   </FormLabel>
                   <AE
                     className="w-40 mt-1"
@@ -242,31 +249,32 @@ function Customerpay(props) {
               }}
             >
               <div className="p-1 pt-3">
-                <FormGroup className="">
-                  <FormLabel className="d-flex align-items-center f-16 fw-bold txt_ht-blue">
+                <FormGroup className="d-flex align-items-center">
+                  <FormLabel className="d-flex align-items-center mt-8 f-16 fw-bold txt_ht-blue">
                     <span className="ms-2 me-2">
-                      <MdPayments
-                        style={{
-                          fontSize: 20,
-                        }}
-                      />
+                      <MdPayments style={{ fontSize: 20 }} />
                     </span>
-                    Payment details
-                    <FormCheck
-                      type="switch"
-                      className="fs-4 ms-3 mt-1"
-                      onClick={handleswitch}
-                    ></FormCheck>
+                    Receipt details
                   </FormLabel>
+                  <FormCheck
+                    type="switch"
+                    className="fs-4 ms-3 mt-1"
+                    onClick={handleSwitchClick}
+                  />
                 </FormGroup>
               </div>
-
               {switchpayment ? (
                 <div className="p-1">
                   <FormGroup className="d-flex justify-content-around">
                     <FormLabel>
                       Deposited To *
                       <FormSelect
+                        Set
+                        chequerefnum
+                        based
+                        on
+                        selected
+                        value
                         style={{
                           width: 250,
                         }}
@@ -278,13 +286,16 @@ function Customerpay(props) {
                     <FormLabel>
                       Payment Type *
                       <FormSelect
+                        onChange={(e) =>
+                          setChequerefnum(e.target.value === "Cheque")
+                        }
                         style={{
                           width: 250,
                         }}
                       >
                         <option value="">Bank</option>
                         <option value="">Cash</option>
-                        <option value="">Cheque</option>
+                        <option value="Cheque">Cheque</option>
                         <option value="">Card</option>
                         <option value="">Upi</option>
                         <option value="">Others</option>
@@ -293,6 +304,8 @@ function Customerpay(props) {
                     <FormLabel className="ms-4">
                       Amount
                       <FormControl
+                        type="number"
+                        className="inputfocus"
                         style={{
                           width: 250,
                         }}
@@ -301,25 +314,32 @@ function Customerpay(props) {
                   </FormGroup>
                   <div className="p-1">
                     <FormGroup className="d-flex ">
-                      <FormLabel className="ms-2 me-2">
-                        Reference Date
-                        <FormControl
-                          type="date"
-                          style={{
-                            width: 250,
-                          }}
-                        ></FormControl>
-                      </FormLabel>
-
-                      <FormLabel className="ms-4">
-                        Reference Number
-                        <FormControl
-                          type="text"
-                          style={{
-                            width: 250,
-                          }}
-                        ></FormControl>
-                      </FormLabel>
+                      {chequerefnum && (
+                        <FormLabel className="ms-2 me-2">
+                          Reference Date
+                          <FormControl
+                            className="inputfocus"
+                            type="date"
+                            defaultValue={currentDate}
+                            min={currentDate}
+                            style={{
+                              width: 250,
+                            }}
+                          ></FormControl>
+                        </FormLabel>
+                      )}
+                      {chequerefnum && (
+                        <FormLabel className="ms-4">
+                          Reference Number
+                          <FormControl
+                            className="inputfocus"
+                            type="text"
+                            style={{
+                              width: 250,
+                            }}
+                          ></FormControl>
+                        </FormLabel>
+                      )}
                     </FormGroup>
                   </div>
                 </div>
@@ -328,27 +348,29 @@ function Customerpay(props) {
 
             <div className="d-flex flex-column align-item-center text-end pe-3 pt-3">
               <p className="txt-ht_blue f-16 fw-bold">
-                Due Amount :
+                <span>Due Amount :</span>
                 <span
                   className="fst-normal"
                   style={{
                     color: "black",
                     marginLeft: "10px",
+                    fontSize: "12px",
                   }}
                 >
-                  ₹ 51,117.60
+                  51,117.60 AED
                 </span>
               </p>
               <p className="txt-ht_blue f-16 fw-bolder">
-                Paid Amount :
+                <span>Paid Amount :</span>
                 <span
                   className="fst-normal"
                   style={{
                     color: "black",
                     marginLeft: "10px",
+                    fontSize: "12px",
                   }}
                 >
-                  ₹ 51,117.60
+                  51,117.60 AED
                 </span>
               </p>
               {/* <p className="txt-ht_blue f-16 fw-bolder">
@@ -364,15 +386,16 @@ function Customerpay(props) {
                 </span>
               </p> */}
               <p className="txt-ht_blue f-16 fw-bolder">
-                Remaining Amount :
+                <span> Remaining Amount :</span>
                 <span
-                  className="fst-normal"
+                  className=""
                   style={{
                     color: "black",
                     marginLeft: "10px",
+                    fontSize: "12px",
                   }}
                 >
-                  ₹ 51,117.60
+                  51,117.60 AED
                 </span>
               </p>
             </div>

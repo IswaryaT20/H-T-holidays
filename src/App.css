@@ -47,13 +47,6 @@ input.PhoneInputInput {
   width: 85%;
 }
 
-.dropdown-menu.show {
-  margin-left: 0%;
-  border: none;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  border-radius: 1px;
-}
-
 .dropdown-toggle {
   border: none !important;
 }
@@ -76,7 +69,6 @@ a.ml-4p.trans.nav-link {
 }
 
 .dropdown-menu.show {
-  margin-left: 0%;
   border: none;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 1px;
@@ -111,6 +103,6 @@ button {
   background-color: #25316f !important;
   color: white;
 }
-.inputfoixa{
+.inputfoixa {
   border-top-right-radius: 150;
 }
