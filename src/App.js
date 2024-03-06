@@ -17,6 +17,10 @@ import NewExpense from "./components/expense/NewExpense";
 import { useSelector, useDispatch } from "react-redux";
 import VendorForm from "./components/vendors/Vendorform";
 import SupplierPay from "./components/payment/SupplierPay";
+import Customerpay from "./components/payment/Customerpay";
+import Payment from "./components/payment/Payment";
+import Receipt from "./components/payment/Receipt";
+
 import {
   KEY_IS_LOGGED_IN,
   KEY_USER_ID,
@@ -24,15 +28,12 @@ import {
   getFromLocalStorage,
   UPDATE_USER_ID_LOCALLY,
   SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
-  GET_LOGGED_USER_DETAILS_API_CALL
+  GET_LOGGED_USER_DETAILS_API_CALL,
 } from "./utils/Constant";
 
 import "./App.css";
-import Customerpay from "./components/payment/Customerpay";
 import Employee from "./components/employee/Employee";
-import Receipt from "./components/payment/Receipt";
 import CustomerDetails from "./components/customer/CustomerDetails";
-
 
 function App() {
   const state = useSelector((state) => state);
@@ -47,7 +48,10 @@ function App() {
         type: UPDATE_USER_ID_LOCALLY,
         payload: parseInt(getFromLocalStorage(KEY_USER_ID)),
       });
-      dispatch({ type: GET_LOGGED_USER_DETAILS_API_CALL, data: { id: getFromLocalStorage(KEY_USER_ID) } })
+      dispatch({
+        type: GET_LOGGED_USER_DETAILS_API_CALL,
+        data: { id: getFromLocalStorage(KEY_USER_ID) },
+      });
       // dispatch({type: SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, data: {id: getFromLocalStorage(KEY_USER_ID)}})
     }
     setIsLoggedIn(getFromLocalStorage(KEY_IS_LOGGED_IN));
@@ -109,6 +113,15 @@ function App() {
               <>
                 <Navbar />
                 <Purchase />
+              </>
+            }
+          />
+          <Route
+            path="/CustomerForm"
+            element={
+              <>
+                <Navbar />
+                <CustomerForm />
               </>
             }
           />
@@ -229,6 +242,16 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/Payment"
+            element={
+              <>
+                <Navbar />
+                <Payment />
+              </>
+            }
+          />
+
           <Route
             path="/Employee"
             element={

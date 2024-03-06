@@ -183,12 +183,12 @@ function Customer(props) {
               <Table>
             <thead>
               <tr style={{paddingTop: 100, paddingBottom: 100}}>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Sales Person</th>
-                <th>Activities</th>
-                <th>Place</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Name</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Phone</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Email</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Sales Person</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Activities</th>
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Place</th>
                
               </tr>
             </thead>
@@ -197,12 +197,12 @@ function Customer(props) {
                 card.map((tableItem) => {
                   console.log(tableItem)
                   return <tr>
-                  <td>{tableItem.title}. {tableItem.name}</td>
-                  <td>{tableItem.phone}</td>
-                  <td>{tableItem.email}</td>
-                  <td>{tableItem.businessTypeName}</td>
-                  <td>{tableItem.jobPosition}</td>
-                  <td>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}> {tableItem.name}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.phone}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.email}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.businessTypeName}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.jobPosition}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
                 </tr>
                 })
               ) : (

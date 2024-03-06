@@ -1,18 +1,104 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  ListGroup,
+  ListGroupItem,
+  Row,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
+import axios from "axios";
+import PurchaseForm from "./PurchaseForm";
 
-const NewPurchase = () => {
+const NewPurchase = (props) => {
   //use State
-  const [invoiceDate, setInvoiceDate] = useState("");
-  // const [addClient, setAddClient] = useState(false);
+  const [supplierName, setSupplierName] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [showInput, setShowInput] = useState(true);
+
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [refNumber, setRefNumber] = useState("");
+
+  const netOption = [
+    "Net 0",
+    "Net 5",
+    "Net 10",
+    "Net 15",
+    "Net 30",
+    "Net 60",
+    "Net 90",
+  ];
+
+  const dispatch = useDispatch();
 
   //Handlers
-
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
-    setInvoiceDate(currentDate);
+    setPurchaseDate(currentDate);
   }, []);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSupplierName(value);
+  };
+
+  const selectSupplier = () => {
+    if (supplierName) {
+      setTimeout(() => {
+        dispatch({
+          type: SEARCH_CUSTOMER_API_CALL,
+          payload: { query: supplierName, businessTypeId: 3 },
+        });
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    selectSupplier();
+  }, [supplierName]);
+
+  const supplierDetails = (item) => {
+    if (selectedSupplier === item) {
+      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
+    } else {
+      setSelectedSupplier(item);
+      setShowInput(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    const requestData = {
+      createdBy: props.loggedInUser.loginId,
+      supplierId: "",
+      invoiceDate: purchaseDate,
+      dueDate: dueDate,
+      net: "",
+      referenceNumber: refNumber,
+      memo: "",
+      globalDiscount: "",
+      products: [
+        {
+          productId: "",
+          quantity: "",
+          unitPrice: "",
+          description: "",
+          discountPercentage: "",
+          vatPercentage: "",
+          unitPriceTaxInclusive: "",
+        },
+      ],
+    };
+
+    axios.post(
+      "http://68.178.161.233:8080/handt/v2/purchaseOrder/getPurchaseOrders"
+    );
+  };
 
   return (
     <>
@@ -54,12 +140,93 @@ const NewPurchase = () => {
             <Row className="w-100">
               <Col className="col-4">
                 <Form.Group>
-                  <Form.Control
-                    className="inputfocus text-center rounded-0"
-                    type="search"
-                    placeholder="+ Add Supplier"
-                    style={{ backgroundColor: "#dedef8", width: "250px" }}
-                  />
+                  {showInput && (
+                    <Form.Control
+                      className={`inputfocus text-center rounded-0 ${
+                        selectedSupplier ? "bg-light" : ""
+                      }`}
+                      type="search"
+                      name="supplierNameSearch"
+                      placeholder="+ Add Supplier"
+                      value={supplierName}
+                      onChange={(e) => handleSearchChange(e)}
+                      style={{
+                        backgroundColor: "#dedef8",
+                        width: "250px",
+                        cursor: "text",
+                      }}
+                    />
+                  )}
+                  {showInput &&
+                    props.customers.searchList &&
+                    props.customers.searchList.length > 0 && (
+                      <Card className="" style={{ width: 250 }}>
+                        <ListGroup
+                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
+                        >
+                          {props.customers.searchList.map((item) => (
+                            <ListGroupItem
+                              key={item.id}
+                              onClick={() => supplierDetails(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <strong>Name: </strong>
+                              {item.name}
+                            </ListGroupItem>
+                          ))}
+                        </ListGroup>
+                        <Link to="/VendorForm">
+                          <Button variant="link">Add Vendor+</Button>
+                        </Link>
+                      </Card>
+                    )}
+                  {/* Selected supplier details */}
+                  {selectedSupplier && (
+                    <div
+                      className="w-75 p-2 rounded"
+                      style={{ backgroundColor: "#f0f0f0" }}
+                    >
+                      <h5
+                        className="mt-1"
+                        onClick={() => setShowInput(!showInput)}
+                      >
+                        {selectedSupplier.name}
+                      </h5>
+                      {selectedSupplier.addresses &&
+                        selectedSupplier.addresses.length > 0 && (
+                          <div>
+                            {/* Supplier address details */}
+                            <p
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "500",
+                                flex: "flex-wrap",
+                              }}
+                            >
+                              {selectedSupplier.addresses[0].addressLine1},
+                              <br />
+                              <small className="mt-1">
+                                {selectedSupplier.addresses[0].addressLine2},
+                              </small>
+                              <br />
+                              <small>
+                                {selectedSupplier.addresses[0].city},
+                              </small>
+                              <small className="ms-2">
+                                {selectedSupplier.addresses[0].state}
+                              </small>
+                              <br />
+                              <small>
+                                {selectedSupplier.addresses[0].countryName},
+                              </small>
+                              <small className="ms-2">
+                                {selectedSupplier.addresses[0].zipcode}.
+                              </small>
+                            </p>
+                          </div>
+                        )}
+                    </div>
+                  )}
                 </Form.Group>
               </Col>
 
@@ -86,13 +253,13 @@ const NewPurchase = () => {
                     <small style={{ fontSize: 12 }}>
                       Near Executive Suites, Abu Dhabi
                     </small>
-                    <br />
+                    {/* <br />
                     <small style={{ fontSize: 12 }}>
                       +971 502226710, +971 542796562
                     </small>
                     <br />
-                    <small style={{ fontSize: 12 }}>+971 25634643</small>
-                    <br />
+                    <small style={{ fontSize: 12 }}>+971 25634643</small> */}
+                    {/* <br />
                     <small style={{ fontSize: 12 }}>
                       Email : H&Tholidays@gmail.com
                     </small>
@@ -106,14 +273,14 @@ const NewPurchase = () => {
                       >
                         www.htholidays.ae
                       </a>
-                    </small>
+                    </small> */}
                   </p>
                 </div>
               </Col>
 
               <Col className="col-4 d-flex justify-content-end">
                 <p>
-                  <strong>Balance: ₹ </strong>
+                  <strong>Balance: AED </strong>
                 </p>
               </Col>
             </Row>
@@ -130,8 +297,8 @@ const NewPurchase = () => {
                     className="inputfocus rounded-0"
                     style={{ height: "30px", fontSize: 14 }}
                     type="date"
-                    value={invoiceDate}
-                    onChange={(e) => setInvoiceDate(e.target.value)}
+                    value={purchaseDate}
+                    onChange={(e) => setPurchaseDate(e.target.value)}
                   />
                 </Form.Group>
 
@@ -142,6 +309,8 @@ const NewPurchase = () => {
                   <Form.Control
                     className="inputfocus rounded-0"
                     style={{ height: "30px", fontSize: 14 }}
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
                     type="date"
                   />
                 </Form.Group>
@@ -154,17 +323,23 @@ const NewPurchase = () => {
                     className="inputfocus rounded-0"
                     style={{ width: 160, height: "30px", fontSize: 14 }}
                   >
-                    <option></option>
+                    {netOption.map((item, index) => (
+                      <option key={index} style={{ fontSize: 12, height: 20 }}>
+                        {item}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
                 <Form.Group className="ms-2">
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
-                    REF Number
+                    Ref Number
                   </Form.Label>
                   <Form.Control
                     className="inputfocus rounded-0"
                     style={{ height: "30px", fontSize: 14 }}
+                    value={refNumber}
+                    onChange={(e) => setRefNumber(e.target.value)}
                   />
                 </Form.Group>
               </Col>
@@ -172,8 +347,16 @@ const NewPurchase = () => {
           </>
         </Container>
       </div>
+      <PurchaseForm />
     </>
   );
 };
 
-export default NewPurchase;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers,
+    loggedInUser: state.users,
+  };
+};
+
+export default connect(mapsToProps)(NewPurchase);

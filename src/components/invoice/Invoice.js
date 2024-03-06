@@ -105,7 +105,7 @@ const Newproduct = () => {
         </Col>
       </Row>
       <div style={{ paddingLeft: '1%', paddingRight: '1%' }} className='table-container mt-3'>
-        <Table striped hover>
+        <Table striped hover size='sm'>
           <thead>
             <tr>
               {tableValue.map((tablename, index) => (
@@ -137,20 +137,6 @@ const Newproduct = () => {
                   <td><FiDownload /></td>
                 </tr>
               ))}
-              {data.filter((item) => {
-              return (
-                (search.toLowerCase() === ""
-                  ? item
-                  : item.name.toLowerCase().includes(search.toLowerCase())
-                ) &&
-                (!startDate || new Date(item.date) >= new Date(startDate)) &&
-                (!endDate || new Date(item.date) <= new Date(endDate))
-              );
-            }).length === 0 && (
-              <tr>
-                <td colSpan={9} style={{ textAlign: "center", fontWeight:"600", color:"red" }}>No data found!</td>
-              </tr>
-            )}
           </tbody>
         </Table>
       </div>

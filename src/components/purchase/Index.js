@@ -8,7 +8,7 @@ function Index() {
     return(
         <>
         <Newpurchase />
-        <PurchaseForm />
+        {/* <PurchaseForm /> */}
         </>
     )
 }

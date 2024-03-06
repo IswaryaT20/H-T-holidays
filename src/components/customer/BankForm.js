@@ -1,26 +1,19 @@
-import React, { useState } from "react";
-import {
-  Button,
-  FormGroup,
-  Modal,
-  Row,
-  Col,
-  FormLabel,
-  FormControl,
-} from "react-bootstrap";
+import React from "react";
+import { Button, FormGroup, Modal, Row, Col, FormLabel, FormControl } from "react-bootstrap";
 
-function Bankform({ banktoggle, formData, handleChange }) {
-  
-
-  const [formdata,setFormData] = useState(false)
+function Bankform({ banktoggle, formData, setFormData }) {
   const handleClose = () => {
     banktoggle();
-    formdata({
-      bankName: "",
-      accountNumber: "",
-      iban: "",
-      branch: "",
-    });
+    // Do not reset the form data here, let the parent handle it
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+    
   };
 
   return (
@@ -43,21 +36,20 @@ function Bankform({ banktoggle, formData, handleChange }) {
           <Row className="">
             <Col className="d-flex flex-column justify-content-end">
               <FormGroup className=" m-2 d-flex flex-row">
-                <FormLabel className="f-14">
+                <FormLabel className="f-14 w-100 w-100">
                   Bank Name
                   <FormControl
                     name="bankName"
                     value={formData.bankName}
                     onChange={handleChange}
-                    className="f-14 br_b-2 rounded-0 mt-0 me-2 inputfocus"
+                    className="f-14 w-100 br_b-2 rounded-0 mt-0 me-2 inputfocus"
                     type="text"
                     style={{ border: "2px dotted #25316f" }}
                   />
                 </FormLabel>
               </FormGroup>
               <FormGroup className=" m-2">
-                <FormLabel className="f-14 ">
-                  {" "}
+                <FormLabel className="f-14 w-100 ">
                   Account Number
                   <FormControl
                     name="accountNumber"
@@ -72,8 +64,7 @@ function Bankform({ banktoggle, formData, handleChange }) {
             </Col>
             <Col>
               <FormGroup className=" m-2">
-                <FormLabel className="f-14 ">
-                  {" "}
+                <FormLabel className="f-14 w-100 ">
                   IBAN No
                   <FormControl
                     name="iban"
@@ -86,7 +77,7 @@ function Bankform({ banktoggle, formData, handleChange }) {
                 </FormLabel>
               </FormGroup>
               <FormGroup className=" m-2">
-                <FormLabel className="f-14 ">
+                <FormLabel className="f-14 w-100 ">
                   Branch
                   <FormControl
                     name="branch"
@@ -102,8 +93,11 @@ function Bankform({ banktoggle, formData, handleChange }) {
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button type="reset" variant="secondary" onClick={handleClose}>
             Close
+          </Button>
+          <Button type="reset" variant="primary">
+            Clear
           </Button>
         </Modal.Footer>
       </Modal>

@@ -84,6 +84,8 @@ function Signup(props) {
     };
     
     dispatch({type: REGISTER_API_CALL, data: args})
+    console.log("the props error",props.users.status);
+    console.log("payload message",props.users.status);
   }
   useEffect(() => {
     if (err) {
@@ -206,9 +208,15 @@ function Signup(props) {
               Signup
             </Button>
           </div>
-          {
-          <Alert variant="danger"> {props.users.error}</Alert>
-          }
+      
+{props.users.error && (
+  <Alert variant="danger">
+    {props.users.error.message}
+    {console.log(props.users.payload)}
+  </Alert>
+)}
+
+
           <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}
             <span className="txt-trans_up">

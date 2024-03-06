@@ -123,7 +123,7 @@ const PruchaseTableBody = (props) => {
           defaultChecked={0}
           value={item.id}
         >
-          <option>Select Product</option>
+          <option defaultChecked style={{fontSize:14}}>Select Product</option>
           {
             props?.products?.map(product => {
               return <option key={product.id} value={product.id} style={{fontSize: 12}}>{product.productName}</option>

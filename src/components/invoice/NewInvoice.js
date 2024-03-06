@@ -42,7 +42,6 @@ const NewInvoice = (props) => {
     setAllItems(item);
   };
 
-
   //Handlers
   const handletoggleDraft = () => {
     setIsDraft(!isDraft);
@@ -78,8 +77,12 @@ const NewInvoice = (props) => {
   }, [customerName]);
 
   const customerDetails = (item) => {
-    setSelectedCustomer(item);
-    setShowInput(false);
+    if (selectedCustomer === item) {
+      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
+    } else {
+      setSelectedCustomer(item);
+      setShowInput(false);
+    }
   };
 
   return (
@@ -186,19 +189,25 @@ const NewInvoice = (props) => {
                 <Form.Group>
                   {showInput && (
                     <Form.Control
-                      className="inputfocus text-center rounded-0"
+                      className={`inputfocus text-center rounded-0 ${
+                        selectedCustomer ? "bg-light" : ""
+                      }`}
                       type="search"
                       name="customerNameSearch"
-                      placeholder="+ Add Client"
+                      placeholder="+ Add Customer"
                       value={customerName}
                       onChange={(e) => handleSearchChange(e)}
-                      style={{ backgroundColor: "#dedef8", width: "250px" }}
+                      style={{
+                        backgroundColor: "#dedef8",
+                        width: "250px",
+                        cursor: "text",
+                      }}
                     />
                   )}
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
-                      <Card className="" style={{ width: 150 }}>
+                      <Card className="" style={{ width: 250 }}>
                         <ListGroup
                           style={{ maxHeight: "15rem", overflowY: "scroll" }}
                         >
@@ -218,27 +227,24 @@ const NewInvoice = (props) => {
                         </Link>
                       </Card>
                     )}
-                  {selectCustomer ? (
+                  {selectedCustomer && (
                     <div
-                      className="w-75 p-2"
-                      style={{ backgroundColor: "#e4e4e4" }}
+                      className="p-2 rounded"
+                      style={{ backgroundColor: "#f0f0f0", width: 250 }}
                     >
-                      <h3 className="mt-1" onClick={handleSearchChange}>
+                      <h5
+                        className="mt-1"
+                        onClick={() => setShowInput(!showInput)}
+                      >
                         {selectedCustomer.name}
-                      </h3>
+                      </h5>
                       {selectedCustomer.addresses &&
                         selectedCustomer.addresses.length > 0 && (
-                          <div
-                            style={{
-                              fontSize: 20,
-                              position: "relative",
-                              top: "-2px",
-                            }}
-                          >
+                          <div>
+                            {/* Supplier address details */}
                             <p
-                              className=" w-70"
                               style={{
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: "500",
                                 flex: "flex-wrap",
                               }}
@@ -264,14 +270,12 @@ const NewInvoice = (props) => {
                           </div>
                         )}
                     </div>
-                  ) : (
-                    <span>Select a customer</span>
                   )}
                 </Form.Group>
               </Col>
               <Col className="col-4 d-flex justify-content-end">
                 <p>
-                  <strong>Balance: ₹ </strong>
+                  <strong>Balance: AED </strong>
                 </p>
               </Col>
             </Row>
@@ -320,22 +324,20 @@ const NewInvoice = (props) => {
                   </Form.Select>
                 </Form.Group>
 
-              <Form.Group className="ms-2">
-                <Form.Label style={{ fontSize: 14, fontWeight:"500"  }}>Sales Person</Form.Label>
-                <Form.Select
-                  className="inputfocus rounded-0"
-                  style={{ height: "30px", fontSize: 14 }}
-                >
-                  <option disabled style={{ fontSize: 12 }}>
-                    Select Sales Person
-                  </option>
-                  <option value={props.loginUsers.loginName} style={{ fontSize: 12 }}>{props.loginUsers.loginName}</option>
-                  <option style={{ fontSize: 12 }}>Sales Person 2</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-        </>
+                <Form.Group className="ms-2">
+                  <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
+                    Sales Person
+                  </Form.Label>
+                  <Form.Control
+                    value={props.loginUsers.loginName}
+                    className="inputfocus rounded-0"
+                    style={{ height: "30px", fontSize: 14 }}
+                    readOnly
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </>
         </div>
       </Container>
       <InvoiceForm items={productList} />
@@ -346,10 +348,8 @@ const NewInvoice = (props) => {
 const mapsToProps = (state) => {
   return {
     customers: state.customers,
-    loginUsers: state.users
+    loginUsers: state.users,
   };
 };
-
-
 
 export default connect(mapsToProps)(NewInvoice);

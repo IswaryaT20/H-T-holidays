@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Nav, NavLink, Navbar, Dropdown } from "react-bootstrap";
 import logo from "../Assets/images/htnav.png";
 import { Link } from "react-router-dom";
+import { RiLogoutCircleLine } from "react-icons/ri";
 
 const NavigationItems = [
   { id: 2, title: "Customers", link: "/" },
@@ -10,12 +11,17 @@ const NavigationItems = [
   { id: 4, title: "Products", link: "/Product" },
   { id: 5, title: "Accounting", link: "#" },
   { id: 6, title: "Report", link: "#" },
-  { id: 7, title: "Procurement", link: "#" },
 ];
 
 const dropdownActions = {
-  2: [{ id: 1, title: "Customers", link: "/" }, {id:2, title: "Invoice", link:"/Invoice"}],
-  3: [{ id: 1, title: "Vendors", link: "/vendor" }, {id:2, title:"Purchase", link:"/Purchase"}],
+  2: [
+    { id: 1, title: "Customers", link: "/" },
+    { id: 2, title: "Invoice", link: "/Invoice" },
+  ],
+  3: [
+    { id: 1, title: "Vendors", link: "/vendor" },
+    { id: 2, title: "Purchase", link: "/Purchase" },
+  ],
   5: [
     {
       id: 1,
@@ -25,15 +31,14 @@ const dropdownActions = {
     {
       id: 2,
       title: "Customer Receipt",
-      link: "/CustomerPay",
+      link: "/Receipt",
     },
     {
       id: 3,
       title: "Supplier Receipt",
-      link: "/SupplierPay",
+      link: "/Payment",
     },
-   
-  ]
+  ],
 };
 
 function Navigation2() {
@@ -46,8 +51,8 @@ function Navigation2() {
     >
       <Navbar.Brand className="w-10" href="/">
         <img
-          className="w-100"
-          style={{ height: "40px" }}
+          className=""
+          style={{ height: "40px",width:170 }}
           src={logo}
           alt="logo"
         ></img>
@@ -56,20 +61,20 @@ function Navigation2() {
         <span className="navbar-toggler-icon"></span>
       </Navbar.Toggle>
       <Navbar.Collapse>
-        <Nav className="ml-10p" variant="underline">
+        <Nav className="ml-10p f-16 " variant="underline">
           {NavigationItems.map((item) =>
             dropdownActions[item.id] ? (
-              <Dropdown style={{ paddingLeft: "2%" }} key={item.id}>
-                <Dropdown.Toggle
+              <Dropdown className="" style={{ paddingLeft: "2%" }} key={item.id}>
+                <Dropdown.Toggle className="f-16 "
                   style={{ border: "none" }}
                   variant=""
                   id={`dropdown-${item.title}`}
                 >
                   {item.title}
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu >
                   {dropdownActions[item.id].map((action) => (
-                    <Dropdown.Item key={action.id} as={Link} to={action.link}>
+                    <Dropdown.Item className="" key={action.id} as={Link} to={action.link}>
                       {action.title}
                     </Dropdown.Item>
                   ))}
@@ -89,6 +94,33 @@ function Navigation2() {
           )}
         </Nav>
       </Navbar.Collapse>
+      <div className="logoutalign" style={{ marginRight: "2%"}}>
+        <Nav className="me-4">
+          <Dropdown alignRight>
+            <Dropdown.Toggle
+              style={{
+                border: "none",
+                background: "transparent",
+              }}
+            >
+              <RiLogoutCircleLine
+                style={{
+                  color: "white",
+                  border: "1px solid #25316f",
+                  fontSize: "22px",
+                  background: "#25316f",
+                  height: "30px",
+                  width: "30px",
+                  cursor: "pointer",
+                }}
+              />
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{}}>
+              <Dropdown.Item>Logout</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Nav>
+      </div>
     </Navbar>
   );
 }
