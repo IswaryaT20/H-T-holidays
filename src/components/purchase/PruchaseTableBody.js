@@ -14,9 +14,12 @@ const PruchaseTableBody = (props) => {
 
 
   const handleItemSelect = (id, index) => {
-    setPurchaseData(purchaseData.map((item, itemIndex) => {
+    const selectId = purchaseData.map((item, itemIndex) => {
       return index === itemIndex ? { qty: item.qty, id: id, price: item.price, description: item.description, discount: item.discount, vat: item.vat } : item
-    }));
+    })
+    setPurchaseData(selectId);
+
+    props.itemChanges(selectId);
   }
 
   const handleQuantityChange = (quantity, index) => {
@@ -65,6 +68,7 @@ const PruchaseTableBody = (props) => {
     setPurchaseData(filteredData)
 
     props.itemChanges(filteredData)
+    props.handleDeleteRow()
   }
 
   const renderTotalAmount = (item) => {

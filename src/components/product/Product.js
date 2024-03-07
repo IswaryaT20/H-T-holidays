@@ -20,6 +20,7 @@ import {
   GET_ALL_PRODUCTS_API_CALL,
   ADD_PRODUCT_API_CALL,
   GET_ALL_CUSTOMERS_API_CALL,
+  MASTER_API_CALL
 } from "../../utils/Constant";
 
 const Newproduct = (props) => {
@@ -166,19 +167,21 @@ const Newproduct = (props) => {
     "Action",
   ];
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          "http://68.178.161.233:8080/handt/v2/common/getmaster"
-        );
-        console.log(response.data.data);
-        setHandtCategories(response.data.data.handtCategories);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    // const fetchCategories = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       "http://68.178.161.233:8080/handt/v2/common/getmaster"
+    //     );
+    //     console.log(response.data.data);
+    //     setHandtCategories(response.data.data.handtCategories);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
 
-    fetchCategories();
+    // fetchCategories();
+
+    dispatch({type: MASTER_API_CALL})
   }, []);
 
   const renderPagination = useCallback(() => {
@@ -382,48 +385,23 @@ const Newproduct = (props) => {
           <Row>
             <Col>
               <div style={{ display: "flex", flexDirection: "column" }}>
+
                 <div
-                  className="mb-3"
+                  className={`mb-3 ${masterCategory ? "has-error" : ""}`}
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <label
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px", flex: 2 }}
                   >
-                    Product Type
-                  </label>
-
-                  <FormControl
-                    type="text"
-                    placeholder=" "
-                    className="inputfocus"
-                    style={{
-                      flex: 3,
-                      padding: "4px",
-                      background: "#d9e1ee8c",
-                      marginLeft: "9px",
-                    }}
-                    value={productType}
-                    onChange={(e) => setProductType(e.target.value)}
-                    readOnly
-                  />
-                </div>
-
-
-
-
-
-
-                <div className={`mb-3 ${masterCategoryError ? "has-error" : ""}`} style={{ display: "flex", alignItems: "center" }}>
-                  <label className="control-label mr-3" style={{ fontSize: "14px", padding: "0px", flex: 2 }}>
-                    Master Category <span style={{ color: 'red' }}>*</span>
+                    Product Type <span style={{ color: 'red' }}>*</span>
                   </label>
                   <Typeahead
                     id="masterCategoryTypeahead"
                     className="inputfocus"
                     style={{ flex: 3, marginRight: '1px' }}
                     selected={masterCategory} // Initialize with current state value
-                    options={handtCategories.map((category) => ({
+                    options={props.masterData.handtCategories.map((category) => ({
                       id: category.id,
                       label: category.value
                     }))}
@@ -587,6 +565,7 @@ const mapsToProps = (state) => {
     productsData: state.productsData,
     loggedInUser: state.users,
     customers: state.customers,
+    masterData: state.masterData
   };
 };
 export default connect(mapsToProps)(Newproduct);
