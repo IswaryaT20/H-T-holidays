@@ -51,6 +51,10 @@ const CustomerDetails = (props) => {
     if (props.customers.code === 200) {
       setShowBankDetails(false)
       setShowAddressModal(false)
+      dispatch({
+        type: SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
+        data: location.state.id,
+      });
       dispatch({ type: UPDATE_CUSTOMER_STATUS_CODE, payload: 0 })
       dispatch({ type: RESET_CODE })
 
