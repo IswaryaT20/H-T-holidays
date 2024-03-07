@@ -67,6 +67,7 @@ const InvoiceTableBody = (props) => {
     setInvoiceData(filteredData)
 
     props.itemChanges(filteredData)
+    props.handleDeleteRow()
   }
 
   const renderTotalAmount = (item) => {
