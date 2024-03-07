@@ -111,7 +111,6 @@ const Newproduct = (props) => {
 
     const bodyData = {
       productName: productName,
-      supplierId: supplierId,
       productType: masterCategory[0].id,
       productDescription: description,
 
@@ -321,20 +320,11 @@ const Newproduct = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.productsData.products.filter((items) => {
-              return search.toLowerCase() === ""
-                ? items
-                : items.productName
-                  .toLowerCase()
-                  .includes(search.toLowerCase());
-            })
-              .sort((a, b) => b.id - a.id)
-              .slice(startingIndex, endingIndex)
-              .map((items) => (
+            {props.productsData.products.map((items) => (
                 <tr key={items.id}>
 
                   <td>{items.productName}</td>
-                  <td>{items.productType}</td>
+                  <td>{items.category}</td>
                   <td style={{ maxWidth: '20px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }} title={items.productDescription}>
                       {items.productDescription.split(' ').slice(0, 10).join(' ')}
