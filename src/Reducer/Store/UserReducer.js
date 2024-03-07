@@ -1,5 +1,5 @@
 import { act } from "react-dom/test-utils";
-import { LOGIN_API_RESPONSE, ERROR_TYPE, ERROR_MESSAGE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE, UPDATE_USER_ID_LOCALLY, GET_LOGGED_USER_DETAILS_RESPONSE } from "../../utils/Constant";
+import { LOGIN_API_RESPONSE, ERROR_TYPE, ERROR_MESSAGE, CLEAR_ERROR_MESSAGE, REGISTER_API_RESPONSE, UPDATE_USER_ID_LOCALLY, GET_LOGGED_USER_DETAILS_RESPONSE, USER_ACCOUNT_LOGOUT } from "../../utils/Constant";
 
 
 const INITIAL_STATE = {
@@ -16,7 +16,6 @@ const INITIAL_STATE = {
 };
 
 const UserReducer = (state = INITIAL_STATE, action) => {
-  console.log(action)
   switch (action.type) {
     case LOGIN_API_RESPONSE: {
       const data = action.payload.data;
@@ -53,8 +52,13 @@ const UserReducer = (state = INITIAL_STATE, action) => {
       return { ...state, loginId: action.payload }
     }
     case GET_LOGGED_USER_DETAILS_RESPONSE: {
-      console.log(action.payload)
+      
       return { ...state, loginName: action.payload.name, loginMobile: action.payload.mobile }
+    }
+
+    case USER_ACCOUNT_LOGOUT: {
+      console.log("user account logging out")
+      return {...state, isLoggedIn: false}
     }
 
   }

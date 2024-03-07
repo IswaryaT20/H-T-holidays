@@ -28,8 +28,9 @@ import {
   CREATE_CUSTOMER_API_CALL,
   REGISTER_API_CALL,
   INITIAL_STATE,
+  RESET_CODE
 } from "../../utils/Constant";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const isEmailValid = (email1) => {
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -64,7 +65,10 @@ function CustomerForm(props) {
   const [customerType, setCustomerType] = useState(); // individual
   const [attachedFileName, setAttachedFileName] = useState("");
   const [savedbankFormData, setBankFormData] = useState("");
+  const navigation = useNavigate();
   const dispatch = useDispatch();
+
+  console.log(props)
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -76,7 +80,6 @@ function CustomerForm(props) {
   ];
 
   const [businessType, setBusinessType] = useState([]);
-  console.log("props message:", props);
 
   const [formData, setFormData] = useState({
     bankName: "",
@@ -85,6 +88,16 @@ function CustomerForm(props) {
     branch: "",
     bankcountry:"",
   });
+
+  useEffect(() => {
+    dispatch({type: RESET_CODE})
+  }, [])
+
+  useEffect(() => {
+    if (props.customers.code === 200) {
+      navigation(-1)
+    }
+  }, [props.customers.code])
 
   const handleChange = (e) => {
 
@@ -185,7 +198,7 @@ function CustomerForm(props) {
           addressTypeId: 1,
         },
       ],
-      bankAccounts: [
+      bankAccounts: savedbankFormData.bankName ? [
         {
           code: savedbankFormData.iban ? savedbankFormData.iban : null ,
           bankName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
@@ -194,7 +207,7 @@ function CustomerForm(props) {
           accountHolderName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
           country: savedbankFormData.bankcountry ? savedbankFormData.bankcountry : null,
         },
-      ],
+      ] : []
     };
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
@@ -801,6 +814,7 @@ const mapsToProps = (state) => {
   return {
     master: state.masterData,
     loggedInUser: state.users,
+    customers: state.customers
   };
 };
 export default connect(mapsToProps)(CustomerForm);

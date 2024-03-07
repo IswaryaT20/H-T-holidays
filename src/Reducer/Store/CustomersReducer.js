@@ -6,6 +6,7 @@ import {
   ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE,
   UPDATE_CUSTOMER_STATUS_CODE,
   ADD_CUSTOMER_ADDRESS_API_RESPONSE,
+  CREATE_CUSTOMER_API_RESPONSE,
   RESET_CODE
 } from "../../utils/Constant";
 
@@ -20,7 +21,7 @@ const INITIAL_STATE = {
 const CustomersReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case GET_ALL_CUSTOMERS_API_RESPONSE: {
-      return { ...state, customersList: action.payload };
+      return { ...state, customersList: action.payload, code: 200 };
     }
     case ERROR_MESSAGE: {
       return { ...state, error: action.payload };
@@ -49,6 +50,9 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
       return {...state, code: 0}
     }
 
+    case CREATE_CUSTOMER_API_RESPONSE: {
+      return {...state, code: action.payload}
+    }
 
   }
   return state;

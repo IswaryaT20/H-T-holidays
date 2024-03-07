@@ -36,6 +36,7 @@ export const ADD_CUSTOMR_ADDRESS_API_CALL = 'Add-Customer-Address-Api-Call';
 export const ADD_CUSTOMER_ADDRESS_API_RESPONSE = 'Add-Customer-Address-Api-Response'
 export const UPDATE_CUSTOMER_STATUS_CODE = 'Update-Customer-Status-Code'
 export const RESET_PURCHASE_ORDERS_ARRAY = 'Reset-Purchase-Order-Array'
+export const USER_ACCOUNT_LOGOUT = 'User-Account-logout';
 
 
 export const RESET_CODE = 'Reset-Status-Code'

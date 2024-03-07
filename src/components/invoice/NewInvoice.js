@@ -42,6 +42,7 @@ const NewInvoice = (props) => {
   const [allItems, setAllItems] = useState([]);
 
   const productList = (item) => {
+    console.log("New Invoice Items", item)
     setAllItems(item);
   };
 

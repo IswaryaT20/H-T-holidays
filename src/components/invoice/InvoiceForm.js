@@ -100,9 +100,7 @@ const InvoiceForm = (props) => {
   };
 
   const itemChanges = (allItems) => {
-    console.log(allItems);
-    console.log("Vat Checked", vatChecked);
-
+    props.items(allItems)
     setItems(allItems);
 
     let findTotalAmount;

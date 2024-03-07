@@ -4,6 +4,8 @@ import { Nav, NavLink, Navbar, Dropdown } from "react-bootstrap";
 import logo from "../Assets/images/htnav.png";
 import { Link } from "react-router-dom";
 import { RiLogoutCircleLine } from "react-icons/ri";
+import { storeToLocalStorage, KEY_IS_LOGGED_IN, USER_ACCOUNT_LOGOUT, } from "../utils/Constant";
+import { useDispatch } from "react-redux";
 
 const NavigationItems = [
   { id: 2, title: "Customers", link: "/" },
@@ -42,6 +44,8 @@ const dropdownActions = {
 };
 
 function Navigation2() {
+
+  const dispatch = useDispatch();
   return (
     <Navbar
       className="f-14 fw-500"
@@ -94,9 +98,13 @@ function Navigation2() {
           )}
         </Nav>
       </Navbar.Collapse>
-      <div className="logoutalign" style={{ marginRight: "2%"}}>
+      <div className="logoutalign" style={{ marginRight: "2%"}} onClick={() => {
+        storeToLocalStorage(KEY_IS_LOGGED_IN, "false")
+        dispatch({type: USER_ACCOUNT_LOGOUT})
+        console.log("on click")
+      }}>
         <Nav className="me-4">
-          <Dropdown alignRight>
+          <Dropdown alignRight >
             <Dropdown.Toggle
               style={{
                 border: "none",
