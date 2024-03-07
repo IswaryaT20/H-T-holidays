@@ -19,3 +19,7 @@ export const SearchCustomerApiCall = (bodyData) => {
 export const AddCustomerBankDetailsApiCall = (bodyData) => {
     return AxiosConfig.post('/v2/customer/addBank', bodyData)
 }
+
+export const AddCustomerAddressApiCall = (bodyData) => {
+    return AxiosConfig.post('/v2/customer/addAddress', bodyData)
+}
