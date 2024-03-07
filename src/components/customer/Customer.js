@@ -16,13 +16,14 @@ import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
 import CustomerForm from "./CustomerForm";
 import { useNavigate } from "react-router-dom";
+import { Location } from "react-router-dom";
 
 function Customer(props) {
   const [card, setCards] = useState([]);
-  // const [tablevalue, setTablevalue] = useState([]);
   const [cardActive, setCardActive] = useState(true);
   const [tableActive, setTableActive] = useState(false);
-  const [filteredData, setFilteredData] = useState([])
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
 
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -30,41 +31,48 @@ function Customer(props) {
   const handleCard = () => {
     setCardActive(true);
     setTableActive(false);
+    if (searchValue.length > 0) {
+      setSearchValue('');
+      setFilteredData(props.customers.customersList);
+    }
   };
+
   const handleTable = () => {
     setTableActive(true);
     setCardActive(false);
+    if (searchValue.length > 0) {
+      setSearchValue('');
+      setFilteredData(props.customers.customersList);
+    }
+   
   };
 
   const navigateToNewPage = (id) => {
-      // navigate('/customer-details', {state: {id: id}})
-      navigation('/customer-details', {state: {id: id}})
+    navigation('/customer-details', { state: { id: id } });
   }
 
   useEffect(() => {
-    //getCardData();
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, []);
 
   useEffect(() => {
-    setCards(props.customers.customersList)
-    setFilteredData(props.customers.customersList)
-  }, [props.customers.customersList])
-
+    setCards(props.customers.customersList);
+    setFilteredData(props.customers.customersList);
+  }, [props.customers.customersList]);
 
   const handleFilter = (e) => {
-    if (e.target.value.length > 0) {
+    const searchInput = e.target.value;
+    setSearchValue(searchInput);
+
+    if (searchInput.length > 0) {
       const tempArray = props.customers.customersList.filter((item) => {
-        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
-      })
-  
-      setFilteredData(tempArray)
-    }
-    else {
-      setFilteredData(props.customers.customersList)
+        return item.name.toLowerCase().includes(searchInput.toLowerCase());
+      });
+      setFilteredData(tempArray);
+    } else {
+      setFilteredData(props.customers.customersList);
     }
   }
-
   return (
     <>
     <div style={{width:'100%', position: 'relative'}}>
@@ -72,23 +80,20 @@ function Customer(props) {
         <div className="ps-5">
           <Link to="/CustomerForm">
             <Button
-              className="rounded text-white btn-blue w-100 b-none"
+              className="rounded text-white btn-blue b-none"
               style={{
                 backgroundColor: "#25316f",
                 fontSize: "14px",
-                width: "",
-                justifyContent: "space-evenly",
-
-                ...(window.innerWidth >= 400 &&
-                  window.innerWidth < 750 && {
-                  fontSize: "12px",
-                  width: "80%",
-                  height: "max-content",
-                  padding: "1px",
-                }),
+                width: 75,
+                // justifyContent: "space-evenly",               
+                //   fontSize: "12px",
+                //   width: "100%",
+                //   height: "max-content",
+                //   padding: "1px",
+                
               }}
             >
-              New +
+              New 
             </Button>
           </Link>
         </div>
@@ -188,7 +193,7 @@ function Customer(props) {
                   </div>
                 </div>
               ))
-              : null}
+              : <p className="fs-5 f-20 text-center mt-3 ms-5" style={{color:'red'}}>No Data Found</p>}
           </div>
         </div>
       ) : null}
@@ -221,7 +226,7 @@ function Customer(props) {
                 </tr>
                 })
               ) : (
-                <tr>NO data found</tr>
+                <tr className="fs-5 f-20 text-center mt-5 ms-5 d-flex justify-content-center" style={{color:'red'}}> No Data Found</tr>
               )}
             </tbody>
           </Table>
