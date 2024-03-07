@@ -125,32 +125,7 @@ const NewPurchase = (props) => {
   return (
     <>
       <div style={{ paddingRight: 50, paddingLeft: 50 }}>
-        <Container fluid className="mt-2">
-          <Row>
-            <Col className="d-flex justify-content-end">
-              <div>
-                <Link to="/Purchase">
-                  <Button
-                    className="fw-bolder"
-                    style={{
-                      backgroundColor: "white",
-                      borderColor: "#1d1d5e",
-                      color: "#1d1d5e",
-                    }}
-                  >
-                    Close
-                  </Button>
-                </Link>
-                <Button
-                  className="ms-3 fw-bolder"
-                  style={{ backgroundColor: "#1d1d5e", borderColor: "#1d1d5e" }}
-                  // onClick={handleSubmit}
-                >
-                  Save
-                </Button>
-              </div>
-            </Col>
-          </Row>
+        <Container fluid className="mt-3">
 
           <h1
             className="d-flex justify-content-center fs-6 fw-bolder"
@@ -160,7 +135,7 @@ const NewPurchase = (props) => {
           </h1>
 
           <>
-            <Row className="w-100">
+            <Row className="w-100 mt-3">
               <Col className="col-4">
                 <Form.Group>
                   {showInput && (
