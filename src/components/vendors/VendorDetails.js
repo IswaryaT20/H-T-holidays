@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
 import { Button, FormGroup, Modal, FormLabel, FormControl, Container, Row, Col, Form } from "react-bootstrap";
-import { SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, ADD_CUSTOMER_BANK_DETAILS_API_CALL, UPDATE_CUSTOMER_STATUS_CODE } from "../../utils/Constant";
+import { SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, ADD_CUSTOMER_BANK_DETAILS_API_CALL, UPDATE_CUSTOMER_STATUS_CODE, ADD_CUSTOMR_ADDRESS_API_CALL, MASTER_API_CALL } from "../../utils/Constant";
 import Avatar from "../../Assets/avatars/1.jpg";
 import { MdAddIcCall } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
@@ -16,22 +16,19 @@ const CustomerDetails = (props) => {
   const [bankDetails, setBankDetails] = useState({customerId: location.state.id});
   const [savedFormData, setSavedFormData] = useState(null);
   const [formData, setFormData] = useState({
-    addressType: "Contact Address",
-    customeraddress: "",
+    addressTypeId: "",
+    addressLine1: "",
+    addressLine1: "",
     city: "",
     emirates: "",
     country: "",
-    zip: "",
+    zipcode: "",
+    state: "",
+    customerId: location.state.id
   });
   
   const [showAddressesModal, setShowAddressModal] = useState(false);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+  
  
   useEffect(() => {
     dispatch({
@@ -43,6 +40,12 @@ const CustomerDetails = (props) => {
   useEffect(() => {
     setselectedCustomer(props.customers.selectedCustomerDetails);
   }, [props.customers.selectedCustomerDetails]);
+
+  useEffect(() => {
+    if (props.masterData.addressTypes.length === 0) {
+      dispatch({ type: MASTER_API_CALL })
+    }
+  }, [])
 
   useEffect(() => {
     if (props.customers.code === 200) {
@@ -81,6 +84,35 @@ const CustomerDetails = (props) => {
 
   const handleAddAddress = () => {
     setShowAddressModal(!showAddressesModal)
+  }
+
+  const handleAddressTypeChange = (value) => {
+    console.log(value)
+    setFormData({ ...formData, addressTypeId: value })
+  }
+
+  const addressLine1Changes = (value) => {
+    setFormData({ ...formData, addressLine1: value })
+  }
+
+  const handleCityChange = (value) => {
+    setFormData({ ...formData, city: value })
+  }
+
+  const onZipChange = (value) => {
+    setFormData({ ...formData, zipcode: value });
+  }
+
+  const emiratesChange = (value) => {
+    setFormData({ ...formData, emirates: value })
+  }
+  const onSelectCountryForAddress = (value) => {
+    setFormData({ ...formData, country: value })
+  }
+  const saveAddress = () => {
+    const tempArray = []
+    tempArray.push(formData)
+    dispatch({ type: ADD_CUSTOMR_ADDRESS_API_CALL, payload: tempArray })
   }
 
   const saveBankDetails = () => {
@@ -342,155 +374,164 @@ const CustomerDetails = (props) => {
     </>
 
     <>
-      <Modal
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={showAddressesModal}
-        style={{
-          width: "100%",
-          placeItems: "center",
-        }}
-      >
-        <Modal.Header closeButton   onClick={handleAddAddress} >
-        <Modal.Title id="contained-modal-title-vcenter" className="h-20">
-            Address
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Form>
-            {["radio"].map((type) => (
-              <div key={`inline-${type}`} className="mb-3">
-                <Form.Check
-                  className="inputfocus"
-                  inline
-                  label="Contact Address"
-                  name="group1"
-                  type={type}
-                  id={`inline-${type}-3`}
-                />
-
-                <Form.Check
-                  className="inputfocus"
-                  inline
-                  label="Invoice Address"
-                  name="group1"
-                  type={type}
-                  id={`inline-${type}-4`}
-                />
-                <Form.Check
-                  inline
-                  label="Other Address"
-                  name="group1"
-                  type={type}
-                  id={`inline-${type}-5`}
-                />
-              </div>
-            ))}
-          </Form>
-          <div className="f-14 d-flex flex-row" style={{ flex: "1" }}>
-            <FormGroup
-              style={{
-                display: "flex",
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <FormLabel
-                className="f-20 "
+        <Modal
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          show={showAddressesModal}
+          style={{
+            width: "100%",
+            placeItems: "center",
+          }}
+        >
+          <Modal.Header closeButton onClick={handleAddAddress} >
+            <Modal.Title id="contained-modal-title-vcenter" className="h-20">
+              Add Address
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              {["radio"].map((type) => (
+                <div key={`inline-${type}`} className="mb-3">
+                  {
+                    props.masterData.addressTypes.map(item => {
+                      return <Form.Check
+                        className="inputfocus"
+                        inline
+                        label={item.value}
+                        value={item.id}
+                        name="group1"
+                        type={type}
+                        onChange={(e) => handleAddressTypeChange(e.target.value)}
+                        id={`inline-${type}-3`}
+                      />
+                    })
+                  }
+                </div>
+              ))}
+            </Form>
+            <div className="f-14 d-flex flex-row" style={{ flex: "1" }}>
+              <FormGroup
                 style={{
-                  flex: 2,
-                  fontWeight: "bolder",
-                  color: "#25316f",
+                  display: "flex",
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                Address
-              </FormLabel>
-            </FormGroup>
-            <FormGroup
-              style={{
-                display: "flex",
-                flex: 3,
-                flexDirection: "column",
-              }}
-            >
-              <Form.Control
-                className="f-14 br_b-2 rounded-0 mt-2 inputfocus"
-                style={{ border: "2px dotted #25316f" }}
-                placeholder="Address"
-                name="customeraddress"
-                value={formData.customeraddress}
-                onChange={handleChange}
-              />
-              <FormGroup className="f-14 d-flex justify-space-between">
-                <Form.Control
-                  className="f-14 br_b-2 rounded-0 mt-2 me-2 inputfocus"
-                  style={{ border: "2px dotted #25316f" }}
-                  placeholder="City"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                />
-                <Form.Control
-                  className="f-14 br_b-2 rounded-0 mt-2 ms-2 inputfocus"
-                  style={{ border: "2px dotted #25316f" }}
-                  placeholder="Emirates"
-                  name="emirates"
-                  value={formData.emirates}
-                  onChange={handleChange}
-                />
+                <FormLabel
+                  className="f-20 "
+                  style={{
+                    flex: 2,
+                    fontWeight: "bolder",
+                    color: "#25316f",
+                  }}
+                >
+                  Address
+                </FormLabel>
               </FormGroup>
-              <FormGroup className="f-14 d-flex justify-space-between">
+              <FormGroup
+                style={{
+                  display: "flex",
+                  flex: 3,
+                  flexDirection: "column",
+                }}
+              >
                 <Form.Control
-                  className="f-14 br_b-2 rounded-0 mt-2 me-2 inputfocus"
-                  name="country"
+                  className="f-14 br_b-2 rounded-0 mt-2 inputfocus"
                   style={{ border: "2px dotted #25316f" }}
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleChange}
+                  placeholder="Address"
+                  name="customeraddress"
+                  value={formData.customeraddress}
+                  onChange={(e) => addressLine1Changes(e.target.value)}
+
                 />
-                <Form.Control
-                  className="f-14 br_b-2 rounded-0 mt-2 ms-2 inputfocus"
-                  style={{ border: "2px dotted #25316f" }}
-                  placeholder="Zip"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleChange}
-                />
+                <FormGroup className="f-14 d-flex justify-space-between">
+                  <Form.Control
+                    className="f-14 br_b-2 rounded-0 mt-2 me-2 inputfocus"
+                    style={{ border: "2px dotted #25316f" }}
+                    placeholder="City"
+                    name="city"
+                    value={formData.city}
+                    onChange={(e) => handleCityChange(e.target.value)}
+                  />
+                  <Form.Control
+                    className="f-14 br_b-2 rounded-0 mt-2 ms-2 inputfocus"
+                    style={{ border: "2px dotted #25316f" }}
+                    placeholder="Emirates"
+                    name="emirates"
+                    onChange={(e) => emiratesChange(e.target.value)}
+                  />
+                </FormGroup>
+                <FormGroup className="f-14 d-flex justify-space-between">
+                  <FormLabel className="f-14 w-100 ">
+                    Country
+                    <Form.Select
+                      className=" f-14 rounded-0 me-2 inputfocus"
+                      style={{ border: "2px dotted #25316f" }}
+                      placeholder="Country"
+                      onChange={(e) => onSelectCountryForAddress(e.target.value)}
+                      name="country"
+                    >
+                      <option value={0}>Select Country</option>
+                      <option value={2}>UAE</option>
+                      <option value={1}>INDIA</option>
+                    </Form.Select>
+                  </FormLabel>
+                  <Form.Control
+                    className="f-14 br_b-2 rounded-0 mt-2 ms-2 inputfocus"
+                    style={{ border: "2px dotted #25316f" }}
+                    placeholder="Zip"
+                    name="zip"
+                    onChange={(e) => onZipChange(e.target.value)}
+                    value={formData.zipcode}
+                  />
+                </FormGroup>
               </FormGroup>
-            </FormGroup>
-          </div>
-          {/* Display form data values */}
-          {savedFormData && (
-            <div className="mt-3">
-              <h5>Saved Form Data:</h5>
-              <p>Address Type: {savedFormData.addressType}</p>
-              <p>Customer Address: {savedFormData.customeraddress}</p>
-              <p>City: {savedFormData.city}</p>
-              <p>Emirates: {savedFormData.emirates}</p>
-              <p>Country: {savedFormData.country}</p>
-              <p>Zip: {savedFormData.zip}</p>
             </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          
-          <Button
-            className="b-none"
-            style={{
-              height: "max-content",
-              width: "max-content",
-              backgroundColor: "#25316f",
-            }}
-            variant="secondary"
-            onClick={handleAddAddress}
-          >
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+            {/* Display form data values */}
+            {savedFormData && (
+              <div className="mt-3">
+                <h5>Saved Form Data:</h5>
+                <p>Address Type: {savedFormData.addressType}</p>
+                <p>Customer Address: {savedFormData.customeraddress}</p>
+                <p>City: {savedFormData.city}</p>
+                <p>Emirates: {savedFormData.emirates}</p>
+                <p>Country: {savedFormData.country}</p>
+                <p>Zip: {savedFormData.zip}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+
+            <Button
+              className="b-none"
+              style={{
+                height: "max-content",
+                width: "max-content",
+                backgroundColor: "#888888",
+              }}
+              variant="secondary"
+              onClick={handleAddAddress}
+            >
+              Close
+            </Button>
+
+            <Button
+              className="b-none"
+              style={{
+                height: "max-content",
+                width: "max-content",
+                backgroundColor: "#25316f",
+              }}
+              variant="primary"
+              onClick={saveAddress}
+            >
+              Save Address
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     </Container>
   );
 };
@@ -498,6 +539,7 @@ const CustomerDetails = (props) => {
 const mapsToProps = (state) => {
   return {
     customers: state.customers,
+    masterData: state.masterData,
   };
 };
 
