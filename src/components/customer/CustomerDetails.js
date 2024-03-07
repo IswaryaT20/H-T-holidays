@@ -98,7 +98,7 @@ const CustomerDetails = (props) => {
                   src={Avatar}
                   alt="profile picture"
                 ></img>
-                <h4 className="mt-4">{selectedCustomer.name}</h4>
+                <h4 className="mt-4">{selectedCustomer.title}.{selectedCustomer.name}</h4>
                 <p> {selectedCustomer.jobPosition}</p>
                 <p className="callsection" style={{ marginTop: "20%" }}>
                   <span
@@ -421,7 +421,7 @@ const CustomerDetails = (props) => {
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button type="reset" variant="secondary" onClick={showBankDetails}>
+          <Button type="reset" variant="secondary" onClick={handleAddAddress}>
             Close
           </Button>
 

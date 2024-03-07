@@ -16,7 +16,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
-import { GET_ALL_PURCHASE_ORDER_API_CALL } from "../../utils/Constant";
+import { GET_ALL_PURCHASE_ORDER_API_CALL, RESET_PURCHASE_ORDERS_ARRAY } from "../../utils/Constant";
 
 const Newproduct = (props) => {
   //use states
@@ -26,7 +26,10 @@ const Newproduct = (props) => {
 
   const dispatch = useDispatch();
 
+  console.log(props)
+
   useEffect(() => {
+    dispatch({type: RESET_PURCHASE_ORDERS_ARRAY})
     dispatch({ type: GET_ALL_PURCHASE_ORDER_API_CALL });
   }, []);
 
@@ -80,7 +83,7 @@ const Newproduct = (props) => {
                 >
                   Total Amount
                   <br />
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>AED {props.purchaseOrder.totalAmount}</span>
                 </p>
                 <p
                   style={{
@@ -93,7 +96,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>AED {props.purchaseOrder.unpaidAmount}</span>
                 </p>
                 <p
                   style={{
@@ -106,7 +109,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>AED {props.purchaseOrder.paidAmount}</span>
                 </p>
               </div>
             </div>
@@ -134,7 +137,7 @@ const Newproduct = (props) => {
                   }}
                 >
                   Total Amount :{" "}
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>AED {props.purchaseOrder.totalAmount}</span>
                 </p>
                 <p
                   style={{
@@ -144,12 +147,12 @@ const Newproduct = (props) => {
                     fontWeight: "500",
                   }}
                 >
-                  Unpaid : <span style={{ color: "black" }}>AED 0.00</span>
+                  Unpaid : <span style={{ color: "black" }}>AED {props.purchaseOrder.unpaidAmount}</span>
                 </p>
               </div>
               <ProgressBar
                 className="progress"
-                now={60}
+                now={parseInt((props.purchaseOrder.paidAmount/props.purchaseOrder.totalAmount) * 100)}
                 style={{ width: "93%", marginLeft: "21px" }}
               />
               <div className="d-flex">
@@ -164,7 +167,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  0.00
+                  {props.purchaseOrder.paidAmount}
                 </p>
                 <div
                   class="square"
@@ -179,7 +182,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  0.00
+                  {props.purchaseOrder.unpaidAmount}
                 </p>
               </div>
             </div>
