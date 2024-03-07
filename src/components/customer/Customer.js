@@ -31,8 +31,8 @@ function Customer(props) {
   const handleCard = () => {
     setCardActive(true);
     setTableActive(false);
+    setSearchValue('');
     if (searchValue.length > 0) {
-      setSearchValue('');
       setFilteredData(props.customers.customersList);
     }
   };
@@ -40,8 +40,8 @@ function Customer(props) {
   const handleTable = () => {
     setTableActive(true);
     setCardActive(false);
+    setSearchValue('');
     if (searchValue.length > 0) {
-      setSearchValue('');
       setFilteredData(props.customers.customersList);
     }
    
@@ -120,6 +120,7 @@ function Customer(props) {
                   borderColor: "white",
                 }}
                 placeholder="search here"
+                value={searchValue}
                 onChange={(e) => {
                   handleFilter(e)
                 }}
