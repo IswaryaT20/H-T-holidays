@@ -15,14 +15,18 @@ import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaSearch } from "react-icons/fa";
+import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import { useDispatch, connect } from "react-redux";
 
-function Receipt() {
+function Receipt(props) {
   const [getcustomer, setgetcustomer] = useState([]);
   const [entitiesPerPage, setEntitiesPerPage] = useState("");
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const dispatch = useDispatch()
 
   const handleDateChange = (dates) => {
     if (dates === NaN) {
@@ -36,13 +40,14 @@ function Receipt() {
   };
 
   useEffect(() => {
-    axios
-      .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-      .then((response) => {
-        setgetcustomer(response.data.data);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-    console.log(entitiesPerPage);
+    dispatch({type: GET_ALL_CUSTOMERS_API_CALL, data: 3})
+    // axios
+    //   .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
+    //   .then((response) => {
+    //     setgetcustomer(response.data.data);
+    //   })
+    //   .catch((error) => console.error("Error fetching data:", error));
+    // console.log(entitiesPerPage);
   }, [entitiesPerPage]);
 
   // console.log("the data pages",entitiesPerPage);
@@ -134,7 +139,7 @@ function Receipt() {
               </tr>
             </thead>
             <tbody>
-              {getcustomer
+              {props.customers.customersList
                 .filter((item) => {
                   return (
                     (search.toLowerCase() === ""
@@ -156,7 +161,7 @@ function Receipt() {
                     <td>{item.youOweThem}</td>
                   </tr>
                 ))}
-              {getcustomer.filter((item) => {
+              {props.customers.customersList.filter((item) => {
                 return (
                   (search.toLowerCase() === ""
                     ? item
@@ -182,4 +187,10 @@ function Receipt() {
   );
 }
 
-export default Receipt;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(Receipt);

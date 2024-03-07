@@ -56,6 +56,10 @@ function Customer(props) {
   }, []);
 
   useEffect(() => {
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
+  }, [props.customers.code]);
+
+  useEffect(() => {
     setCards(props.customers.customersList);
     setFilteredData(props.customers.customersList);
   }, [props.customers.customersList]);

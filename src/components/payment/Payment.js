@@ -13,25 +13,19 @@ import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaSearch } from "react-icons/fa";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
+import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
+import { useDispatch, connect } from "react-redux";
 
-function Payment() {
-  const [getsupplier, setgetsupplier] = useState([]);
+function Payment(props) {
   const [entitiesPerPage, setEntitiesPerPage] = useState("");
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    axios
-      .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-      .then((response) => {
-        const filteredsuppliers = response.data.data.filter(
-          (supplier) => supplier.businessTypeId !== 1
-        );
-        setgetsupplier(filteredsuppliers);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-    console.log(entitiesPerPage);
+    dispatch({type: GET_ALL_CUSTOMERS_API_CALL, data: 3})
   }, [entitiesPerPage]);
 
   // console.log("the data pages",entitiesPerPage);
@@ -123,7 +117,7 @@ function Payment() {
               </tr>
             </thead>
             <tbody>
-              {getsupplier
+              {props.customers.customersList
                 .filter((item) => {
                   return (
                     (search.toLowerCase() === ""
@@ -145,7 +139,7 @@ function Payment() {
                     <td>{item.youOweThem}</td>
                   </tr>
                 ))}
-              {getsupplier.filter((item) => {
+              {props.customers.customersList.filter((item) => {
                 return (
                   (search.toLowerCase() === ""
                     ? item
@@ -171,4 +165,10 @@ function Payment() {
   );
 }
 
-export default Payment;
+const mapsToProps = (state) => {
+  return {
+    customers: state.customers
+  }
+}
+
+export default connect(mapsToProps)(Payment);

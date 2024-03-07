@@ -57,7 +57,7 @@ function* createCustomerAPICall(bodyData) {
       if (response.data.code === 200) {
         yield put({
           type: CREATE_CUSTOMER_API_RESPONSE,
-          payload: response.data.data,
+          payload: response.data.code,
         });
       } else {
         yield put({
