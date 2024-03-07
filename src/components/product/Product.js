@@ -26,7 +26,7 @@ const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [search, setSearch] = useState("");  
+  const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [supplierNameError, setSupplierNameError] = useState(false);
   const [productNameError, setProductNameError] = useState(false);
@@ -80,14 +80,14 @@ const Newproduct = (props) => {
       const tempArray = props.productsData.products.filter((item) => {
         return item.productName.toLowerCase().includes(e.target.value.toLowerCase());
       })
-  
+
       setFilteredData(tempArray)
     }
     else {
       setFilteredData(props.productsData.products)
     }
   }
-  
+
   const handleShowModal = () => setShowModal(true);
 
   const handleCloseAlertModal = () => setShowAlertModal(false);
@@ -97,15 +97,12 @@ const Newproduct = (props) => {
       setProductNameError(true);
       return;
     }
-
     if (!masterCategory) {
-      setMasterCategoryError(true);
+      setMasterCategoryError(true); // Set master category error to true if it's empty
       return;
     }
 
-    const isProductNameExists = props.productsData.products.some(
-      (item) => item.productName === productName
-    );
+    const isProductNameExists = props.productsData.products.some(item => item.productName === productName);
     if (isProductNameExists) {
       alert("Product name already exists!");
       return;
@@ -127,7 +124,6 @@ const Newproduct = (props) => {
 
     setShowModal(false);
 
-    // Reset the input fields
     setProductType("SERVICES");
     setProductName("");
     setProductUrl("");
@@ -136,11 +132,24 @@ const Newproduct = (props) => {
     setSupplierNameError(false);
     setProductNameError(false);
     setShowAlertModal(true);
+    setShowAlertModal(true);
     setSuccess("Success");
+
   };
+  const resetInputFields = () => {
+    setProductType("SERVICES");
+    setProductName("");
+    setProductUrl("");
+    setDescription("");
+    setMasterCategory("");
+    setSupplierNameError(false);
+    setProductNameError(false);
+  };
+
 
   const handleOptionClick1 = (index) => {
     setSelectedIndex(index);
+
   };
 
   const paginationEvent = (index) => {
@@ -149,8 +158,13 @@ const Newproduct = (props) => {
     setEndingIndex(index * 15);
   };
 
-  const tableValue = ["Product Name", "Product Type", "Description", "Action"];
+  const tableValue = [
 
+    "Product Name",
+    "Product Type",
+    "Description",
+    "Action",
+  ];
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -168,25 +182,21 @@ const Newproduct = (props) => {
   }, []);
 
   const renderPagination = useCallback(() => {
-    const totalNoOfProducts = filteredData;
+    const totalNoOfProducts = props.productsData.products;
     const noOfPages = Math.ceil(totalNoOfProducts.length / 15);
     let startPage = Math.min(1, currentPage);
-    let endPage = Math.min(2, noOfPages);
+    let endPage = Math.min(startPage + 2, noOfPages); // Display at most 3 pages initially
 
     if (currentPage >= noOfPages - 1) {
-      startPage = Math.max(1, noOfPages - 1);
+      startPage = Math.max(1, noOfPages - 2); // Start displaying the last 3 pages
       endPage = noOfPages;
+    } else if (currentPage > 1) {
+      startPage = currentPage - 1; // Adjust startPage to show the next set of pages
+      endPage = Math.min(currentPage + 1, noOfPages); // Adjust endPage accordingly
     }
 
     return (
-      <div
-        className="pagenation"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
+      <div className="pagenation" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <Pagination>
           <Pagination.First onClick={() => paginationEvent(1)} />
           <Pagination.Prev
@@ -194,18 +204,18 @@ const Newproduct = (props) => {
             disabled={currentPage === 1}
           />
 
-          {Array.from({ length: endPage }, (_, index) => (
+          {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
             <Pagination.Item
-              key={index + 1}
-              active={currentPage === index + 1}
-              onClick={() => paginationEvent(index + 1)}
+              key={startPage + index}
+              active={currentPage === startPage + index}
+              onClick={() => paginationEvent(startPage + index)}
             >
-              {index + 1}
+              {startPage + index}
             </Pagination.Item>
           ))}
-          {noOfPages > 2 && (
+          {noOfPages > 3 && currentPage < noOfPages - 2 && (
             <>
-              {currentPage < noOfPages - 1 && <Pagination.Ellipsis disabled />}
+              <Pagination.Ellipsis disabled />
               <Pagination.Item
                 key={noOfPages}
                 active={currentPage === noOfPages}
@@ -228,7 +238,7 @@ const Newproduct = (props) => {
         </Pagination>
       </div>
     );
-  }, [filteredData, currentPage]);
+  }, [props.productsData.products, currentPage]);
 
   return (
     <div style={{ paddingRight: 50, paddingLeft: 50 }}>
@@ -352,7 +362,7 @@ const Newproduct = (props) => {
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
+      <Modal.Header closeButton onClick={resetInputFields}>
           <Modal.Title style={{ fontSize: "18px", color: "#1d1d5e" }}>
             New Product
           </Modal.Title>
@@ -403,46 +413,40 @@ const Newproduct = (props) => {
                   />
                 </div>
 
-                <div
-                  className={`mb-3 ${masterCategory ? "has-error" : ""}`}
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <label
-                    className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px", flex: 2 }}
-                  >
-                    Master Category <span style={{ color: "red" }}>*</span>
-                  </label>
-                  <Typeahead
-                    id="masterCategoryTypeahead"
-                    className="inputfocus"
-                    style={{ flex: 3, marginRight: "1px" }}
-                    selected={masterCategory} // Initialize with current state value
-                    options={handtCategories.map((category) => ({
-                      id: category.id,
-                      label: category.value,
-                    }))}
-                    labelKey="label"
-                    onChange={(selected) => {
-                      setMasterCategory(selected);
-                      setSupplierNameError(false);
-                    }}
-                    placeholder="Search..."
-                  />
 
-                  {masterCategoryError && (
-                    <span
-                      style={{
-                        color: "red",
-                        marginTop: "51px",
-                        marginLeft: "-32%",
-                        fontSize: "12px",
-                      }}
-                    >
-                      Master Category Required
-                    </span>
-                  )}
-                </div>
+
+
+               
+
+                <div className={`mb-3 ${masterCategoryError ? "has-error" : ""}`} style={{ display: "flex", alignItems: "center" }}>
+  <label className="control-label mr-3" style={{ fontSize: "14px", padding: "0px", flex: 2 }}>
+    Master Category <span style={{ color: 'red' }}>*</span>
+  </label>
+  <Typeahead
+    id="masterCategoryTypeahead"
+    className="inputfocus"
+    style={{ flex: 3, marginRight: '1px' }}
+    selected={masterCategory} // Initialize with current state value
+    options={masterCategories.map((category) => ({
+      id: category.id,
+      label: category.value
+    }))}
+    labelKey="label"
+    onChange={(selected) => {
+      setMasterCategory(selected);
+      setMasterCategoryError(false); // Reset the error when a selection is made
+    }}
+    placeholder="Search..."
+  />
+
+  {masterCategoryError && !masterCategory && (
+    <span style={{ color: "red", marginTop: '48px', marginLeft: '-32%', fontSize: '12px' }}>Master Category Required</span>
+  )}
+</div>
+
+
+
+
 
                 <div
                   className={`mb-3 ${productNameError ? "has-error" : ""}`}
@@ -560,23 +564,25 @@ const Newproduct = (props) => {
         </Modal.Body>
       </Modal>
 
-      {props.productsData.error ? (
-        <Alert clas>[No Customer Data Fount]</Alert>
-      ) : null}
+      {
+    props.productsData.error ? (
+      <Alert clas>[No Customer Data Fount]</Alert>
+    ) : null
+  }
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          marginTop: 20,
-          paddingBottom: 100,
-        }}
-      >
-        {props.productsData.products?.length > 0 ? renderPagination() : null}
-      </div>
-    </div>
+  <div
+    style={{
+      width: "100%",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 20,
+      paddingBottom: 100,
+    }}
+  >
+    {props.productsData.products?.length > 0 ? renderPagination() : null}
+  </div>
+    </div >
   );
 };
 
