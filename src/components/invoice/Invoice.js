@@ -18,14 +18,6 @@ const Newproduct = () => {
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(data => setData(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
   //Handlers
   const handleDateChange = (dates) => {
     if (dates === NaN) {

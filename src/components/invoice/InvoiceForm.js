@@ -60,14 +60,12 @@ const InvoiceForm = (props) => {
     if (!items.length -1 <= 0 && items[items.length - 1] != null && items[items.length - 1].id ) {
       setRowCount(rowCount + 1)
     }
-    else {
-      //show error message
-    }
     
   }
 
   const handleDeleteRow = (id) => {
     setInvoiceData(invoiceData.filter((item) => item.id !== id));
+    setRowCount(rowCount - 1)
   };
 
   //unit price handlers:

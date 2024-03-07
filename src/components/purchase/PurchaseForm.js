@@ -53,11 +53,14 @@ const PurchaseForm = (props) => {
 
   //Handlers
   const handleAddRow = () => {
-    setRowCount(rowCount + 1)
+    if (!items.length <=0 && items.length === rowCount && items[items.length - 1] && items[items.length - 1].id != null) {
+      setRowCount(rowCount + 1)
+    }
   }
 
   const handleDeleteRow = (id) => {
     setPurchaseData(purchaseData.filter((item) => item.id !== id));
+    setRowCount(rowCount - 1)
   };
 
   //unit price handlers:
@@ -89,10 +92,7 @@ const PurchaseForm = (props) => {
     setGlobalDiscountValue(discount);
   };
 
-  const itemChanges = (allItems) => {
-    console.log(allItems);
-    console.log("Vat Checked", vatChecked);
-
+  const itemChanges = (allItems, isDeleted = false) => {
     setItems(allItems);
     
     let findTotalAmount;
