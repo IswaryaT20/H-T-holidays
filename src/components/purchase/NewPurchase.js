@@ -12,10 +12,11 @@ import {
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { SEARCH_CUSTOMER_API_CALL, CREATE_PURCHASE_ORDER_API_CALL } from "../../utils/Constant";
-import axios from "axios";
 import PurchaseForm from "./PurchaseForm";
 
 const NewPurchase = (props) => {
+  const dispatch = useDispatch();
+
   //use State
   const [supplierName, setSupplierName] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -25,24 +26,39 @@ const NewPurchase = (props) => {
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");
 
-  const netOption = [
-    "Net 0",
-    "Net 5",
-    "Net 10",
-    "Net 15",
-    "Net 30",
-    "Net 60",
-    "Net 90",
-  ];
-
-  const dispatch = useDispatch();
+  const netOptions = [
+    { label: "Net 0", value: 0 },
+    { label: "Net 5", value: 5 },
+    { label: "Net 10", value: 10 },
+    { label: "Net 15", value: 15 },
+    { label: "Net 30", value: 30 },
+    { label: "Net 60", value: 60 },
+    { label: "Net 90", value: 90 },
+  ]; 
+  const [selectedNet, setSelectedNet] = useState(0);
 
   //Handlers
+
+  //getting current date and due date
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
+    calculateDueDate(currentDate, selectedNet);
     setPurchaseDate(currentDate);
   }, []);
 
+  const calculateDueDate = (date, net) => {
+    const dueDate = new Date(date);
+    dueDate.setDate(dueDate.getDate() + net);
+    setDueDate(dueDate.toISOString().split("T")[0]);
+  };
+
+  const handleNetChange = (e) => {
+    const selectedNetValue = parseInt(e.target.value);
+    setSelectedNet(selectedNetValue);
+    calculateDueDate(purchaseDate, selectedNetValue);
+  };
+
+  // getting supplier name
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSupplierName(value);
@@ -73,12 +89,20 @@ const NewPurchase = (props) => {
   };
 
   const handleSubmit = () => {
+
+    // console.log("Purchase Date: ", purchaseDate);
+    // console.log("Due Date: ", dueDate);
+    // console.log("Reference Number: ", refNumber);
+    // console.log("Supplier ID: ", selectedSupplier.id);
+    // console.log("Net:", selectedNet);
+    // console.log("Created By", props.loggedInUser.loginId);
+
     const requestData = {
       createdBy: props.loggedInUser.loginId,
-      supplierId: "",
+      supplierId: selectedSupplier.id,
       invoiceDate: purchaseDate,
       dueDate: dueDate,
-      net: "",
+      net: selectedNet,
       referenceNumber: refNumber,
       memo: "",
       globalDiscount: "",
@@ -96,10 +120,6 @@ const NewPurchase = (props) => {
     };
 
     dispatch({type: CREATE_PURCHASE_ORDER_API_CALL, data: requestData})
-
-    // axios.post(
-    //   "http://68.178.161.233:8080/handt/v2/purchaseOrder/getPurchaseOrders"
-    // );
   };
 
   return (
@@ -124,6 +144,7 @@ const NewPurchase = (props) => {
                 <Button
                   className="ms-3 fw-bolder"
                   style={{ backgroundColor: "#1d1d5e", borderColor: "#1d1d5e" }}
+                  // onClick={handleSubmit}
                 >
                   Save
                 </Button>
@@ -255,27 +276,6 @@ const NewPurchase = (props) => {
                     <small style={{ fontSize: 12 }}>
                       Near Executive Suites, Abu Dhabi
                     </small>
-                    {/* <br />
-                    <small style={{ fontSize: 12 }}>
-                      +971 502226710, +971 542796562
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>+971 25634643</small> */}
-                    {/* <br />
-                    <small style={{ fontSize: 12 }}>
-                      Email : H&Tholidays@gmail.com
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      Website :{" "}
-                      <a
-                        target="blank"
-                        href="http://www.handtholidays.ae/"
-                        style={{ textDecoration: "none", color: "#1d1d5e" }}
-                      >
-                        www.htholidays.ae
-                      </a>
-                    </small> */}
                   </p>
                 </div>
               </Col>
@@ -301,6 +301,7 @@ const NewPurchase = (props) => {
                     type="date"
                     value={purchaseDate}
                     onChange={(e) => setPurchaseDate(e.target.value)}
+                    readOnly
                   />
                 </Form.Group>
 
@@ -314,6 +315,7 @@ const NewPurchase = (props) => {
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     type="date"
+                    readOnly
                   />
                 </Form.Group>
 
@@ -324,10 +326,11 @@ const NewPurchase = (props) => {
                   <Form.Select
                     className="inputfocus rounded-0"
                     style={{ width: 160, height: "30px", fontSize: 14 }}
+                    onChange={handleNetChange}
                   >
-                    {netOption.map((item, index) => (
-                      <option key={index} style={{ fontSize: 12, height: 20 }}>
-                        {item}
+                    {netOptions.map((item, index) => (
+                      <option key={index} style={{ fontSize: 12, height: 20 }} value={item.value}>
+                        {item.label}
                       </option>
                     ))}
                   </Form.Select>

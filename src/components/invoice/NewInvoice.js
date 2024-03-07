@@ -21,15 +21,18 @@ import {
 const NewInvoice = (props) => {
   const dispatch = useDispatch();
   //use State
-  const netOption = [
-    "Net 0",
-    "Net 5",
-    "Net 10",
-    "Net 15",
-    "Net 30",
-    "Net 60",
-    "Net 90",
+  const netOptions = [
+    { label: "Net 0", value: 0 },
+    { label: "Net 5", value: 5 },
+    { label: "Net 10", value: 10 },
+    { label: "Net 15", value: 15 },
+    { label: "Net 30", value: 30 },
+    { label: "Net 60", value: 60 },
+    { label: "Net 90", value: 90 },
   ];
+  const [selectedNet, setSelectedNet] = useState(0);
+  const [dueDate, setDueDate] = useState("");
+
   const [isDraft, setIsDraft] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -50,10 +53,23 @@ const NewInvoice = (props) => {
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
     setInvoiceDate(currentDate);
+    calculateDueDate(currentDate, selectedNet);
 
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
   }, []);
+
+  const calculateDueDate = (date, net) => {
+    const dueDate = new Date(date);
+    dueDate.setDate(dueDate.getDate() + net);
+    setDueDate(dueDate.toISOString().split("T")[0]);
+  };
+
+  const handleNetChange = (e) => {
+    const selectedNetValue = parseInt(e.target.value);
+    setSelectedNet(selectedNetValue);
+    calculateDueDate(invoiceDate, selectedNetValue);
+  };
 
   const handleSearchChange = (e) => {
     if (e.target.name === "customerNameSearch") {
@@ -305,6 +321,9 @@ const NewInvoice = (props) => {
                     className="inputfocus rounded-0"
                     style={{ height: "30px", fontSize: 14 }}
                     type="date"
+                    value={dueDate}
+                    onChange={(e)=>setDueDate(e.target.value)}
+                    readOnly
                   />
                 </Form.Group>
 
@@ -315,10 +334,11 @@ const NewInvoice = (props) => {
                   <Form.Select
                     className="inputfocus rounded-0"
                     style={{ width: 175, height: "30px", fontSize: 14 }}
+                    onChange={handleNetChange}
                   >
-                    {netOption.map((net, index) => (
-                      <option key={index} style={{ fontSize: 12, height: 20 }}>
-                        {net}
+                    {netOptions.map((net, index) => (
+                      <option key={index} value={net.value} style={{ fontSize: 12, height: 20 }}>
+                        {net.label}
                       </option>
                     ))}
                   </Form.Select>

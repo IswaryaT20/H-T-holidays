@@ -52,15 +52,15 @@ const InvoiceForm = (props) => {
   const [inclusiveTotalDiscount, setInclusiveTotalDiscount] = useState(0);
   const [rowCount, setRowCount] = useState(1);
   const [vatChecked, setVatChecked] = useState(false);
+  const [description, setDescription] = useState("");
 
   const [items, setItems] = useState([]);
 
   //Handlers
   const handleAddRow = () => {
-    if (!items.length -1 <= 0 && items[items.length - 1] != null && items[items.length - 1].id ) {
+    if (!items.length <= 0 && items.length === rowCount && items[items.length - 1] != null && items[items.length - 1].id ) {
       setRowCount(rowCount + 1)
     }
-    
   }
 
   const handleDeleteRow = (id) => {
@@ -256,7 +256,6 @@ const InvoiceForm = (props) => {
               products={props.productsData.products}
               invoiceData={props.invoiceData}
               handleDeleteRow={handleDeleteRow}
-              // unitExcluding={unitExcluding}
               rowCount={rowCount}
               vatChecked={vatChecked}
               itemChanges={itemChanges}
@@ -304,6 +303,8 @@ const InvoiceForm = (props) => {
               as="textarea"
               row={4}
               placeholder="Description"
+              value={description}
+              onChange={(e)=> setDescription(e.target.value)}
               style={{ width: "400px", height: "100px" }}
             />
           </Col>
