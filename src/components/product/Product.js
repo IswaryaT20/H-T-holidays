@@ -115,12 +115,11 @@ const Newproduct = (props) => {
     const bodyData = {
       productName: productName,
       supplierId: supplierId,
-      productType: productType,
+      productType: masterCategory[0].id,
       productDescription: description,
       supplierName: supplierName,
       createdBy: props.loggedInUser.loginId,
       productUrl: productUrl,
-      masterCategory: masterCategory,
     };
 
     console.log("Body Data:", bodyData);
@@ -405,7 +404,7 @@ const Newproduct = (props) => {
                       setMasterCategory(selected);
                       setSupplierNameError(false);
                     }}
-                    placeholder="Search..."
+                    placeholder="Select Product type"
                   />
 
                   {masterCategoryError && (
