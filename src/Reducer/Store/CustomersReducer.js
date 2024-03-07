@@ -4,7 +4,9 @@ import {
   SEARCH_CUSTOMER_API_RESPONSE,
   SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE,
   ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE,
-  UPDATE_CUSTOMER_STATUS_CODE
+  UPDATE_CUSTOMER_STATUS_CODE,
+  ADD_CUSTOMER_ADDRESS_API_RESPONSE,
+  RESET_CODE
 } from "../../utils/Constant";
 
 const INITIAL_STATE = {
@@ -25,20 +27,29 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
     }
 
     case SEARCH_CUSTOMER_API_RESPONSE: {
-      return {...state, searchList: action.payload}
+      return { ...state, searchList: action.payload }
     }
 
     case SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE: {
-      return {...state, selectedCustomerDetails: action.payload}
+      return { ...state, selectedCustomerDetails: action.payload }
     }
 
     case ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE: {
-      return {...state, code: action.payload}
+      return { ...state, code: action.payload }
     }
 
     case UPDATE_CUSTOMER_STATUS_CODE: {
-      return {...state, code: action.payload}
+      return { ...state, code: action.payload }
     }
+    case ADD_CUSTOMER_ADDRESS_API_RESPONSE: {
+      return { ...state, code: action.payload }
+    }
+
+    case RESET_CODE: {
+      return {...state, code: 0}
+    }
+
+
   }
   return state;
 };

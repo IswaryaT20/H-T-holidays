@@ -32,8 +32,13 @@ export const CREATE_PURCHASE_ORDER_API_CALL = 'Create-Purchase-Order-Api-Call'
 export const CREATE_PURCHASE_ORDER_API_RESPONSE = 'Create-Purchase-Order-Api-Response'
 export const ADD_CUSTOMER_BANK_DETAILS_API_CALL = 'Add-Customer-Bank-details-api-call'
 export const ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE = 'Add-Customer-Bank-Details-Api-Response'
+export const ADD_CUSTOMR_ADDRESS_API_CALL = 'Add-Customer-Address-Api-Call';
+export const ADD_CUSTOMER_ADDRESS_API_RESPONSE = 'Add-Customer-Address-Api-Response'
 export const UPDATE_CUSTOMER_STATUS_CODE = 'Update-Customer-Status-Code'
 export const RESET_PURCHASE_ORDERS_ARRAY = 'Reset-Purchase-Order-Array'
+
+
+export const RESET_CODE = 'Reset-Status-Code'
 
 
 export const KEY_IS_LOGGED_IN = "loggedIn"
