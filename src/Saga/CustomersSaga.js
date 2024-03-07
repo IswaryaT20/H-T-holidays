@@ -1,4 +1,4 @@
-import { takeEvery, call, put } from "redux-saga/effects";
+import { takeEvery, call, put, take } from "redux-saga/effects";
 import {
   GET_ALL_CUSTOMERS_API_CALL,
   GET_ALL_CUSTOMERS_API_RESPONSE,
@@ -8,12 +8,15 @@ import {
   SEARCH_CUSTOMER_API_CALL,
   SEARCH_CUSTOMER_API_RESPONSE,
   SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
-  SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE
+  SEARCH_CUSTOMER_BY_CUSTOMERS_ID_RESPONSE,
+  ADD_CUSTOMER_BANK_DETAILS_API_CALL,
+  ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE
 } from "../utils/Constant";
 import {
   GetAllCustomersCall,
   CreateCustomerApiCall,
   SearchCustomerApiCall, 
+  AddCustomerBankDetailsApiCall
 } from "../Reducer/Action/CustomersActions";
 import { SearchCustomersById } from "../Reducer/Action/UserAction";
 
@@ -100,11 +103,27 @@ function* searchCustomerByID(data) {
   }
 }
 
+function* addCustomerBankDetailsCall(data) {
+  const response = yield call(AddCustomerBankDetailsApiCall, data.payload)
+
+  try {
+    if (response.status === 200) {
+      if (response.data.code === 200) {
+        yield put({type: ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE, payload: response.data.code})
+      }
+    }
+  }
+  catch(error) {
+
+  }
+}
+
 function* CustomersSaga() {
   yield takeEvery(GET_ALL_CUSTOMERS_API_CALL, getAllCustomersApiCall);
   yield takeEvery(CREATE_CUSTOMER_API_CALL, createCustomerAPICall);
   yield takeEvery(SEARCH_CUSTOMER_API_CALL, searchCustomerApiCall);
   yield takeEvery(SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, searchCustomerByID);
+  yield takeEvery(ADD_CUSTOMER_BANK_DETAILS_API_CALL, addCustomerBankDetailsCall)
 }
 
 export default CustomersSaga;
