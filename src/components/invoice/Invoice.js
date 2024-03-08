@@ -17,7 +17,7 @@ import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import "./Invoice.css";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
-import { GET_ALL_INVOICE_API_CALL } from "../../utils/Constant";
+import { GET_ALL_INVOICE_API_CALL, GENERATE_INVOICE_PDF_API_CALL } from "../../utils/Constant";
 
 const Newproduct = (props) => {
   //use states
@@ -30,8 +30,6 @@ const Newproduct = (props) => {
   useEffect(() => {
     dispatch({ type: GET_ALL_INVOICE_API_CALL });
   }, []);
-
-  console.log(props);
 
   //Handlers
   const handleDateChange = (dates) => {
@@ -285,7 +283,14 @@ const Newproduct = (props) => {
                     <td>{item.net}</td>
                     <td>{item.totalAmount}</td>
                     <td>
-                      <FiDownload />
+                      <FiDownload onClick={() => {
+                        if (item.supplierPOUrl) {
+                            window.open(item.supplierPOUrl, "_new")
+                        }
+                        else {
+                          dispatch({type: GENERATE_INVOICE_PDF_API_CALL, invoiceId: item.invoiceOrderId})
+                        }
+                      }} />
                     </td>
                   </tr>
                 ))}
