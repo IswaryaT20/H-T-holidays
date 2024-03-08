@@ -144,16 +144,6 @@ const NewPurchase = (props) => {
         unitPriceTaxInclusive: vatChecked,
       };
     });
-    // console.log("Purchase Date: ", purchaseDate);
-    // console.log("Due Date: ", dueDate);
-    // console.log("Reference Number: ", refNumber);
-    // console.log("Supplier ID: ", selectedSupplier.id);
-    // console.log("Net:", selectedNet);
-    // console.log("Created By", props.loggedInUser.loginId);
-    // const requestData= {
-    //   products: tempArray,
-
-    // }
 
     const requestData = {
       createdBy: props.loggedInUser.loginId,
@@ -177,7 +167,7 @@ const NewPurchase = (props) => {
       setShowAlertModal(false);
       setSuccess("");
       navigate("/Invoice");
-    }, 1500);
+    }, 500);
   };
 
   return (
@@ -241,7 +231,7 @@ const NewPurchase = (props) => {
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
-                      <Card className="" style={{ width: 250 }}>
+                      <Card style={{ width: 250 }}>
                         <ListGroup
                           style={{ maxHeight: "15rem", overflowY: "scroll" }}
                         >
@@ -308,11 +298,11 @@ const NewPurchase = (props) => {
                         )}
                     </div>
                   )}
-                  {/* {error && !supplierName && (
+                  {error && !supplierName && (
                     <p style={{ color: "red", fontSize: 12 }}>
                       Please enter the Supplier name.
                     </p>
-                  )} */}
+                  )}
                 </Form.Group>
               </Col>
 
@@ -352,7 +342,7 @@ const NewPurchase = (props) => {
           </>
 
           <>
-            <Row className="mt-2 mb-3">
+            <Row className="mt-3 mb-3">
               <Col className="col-8 d-flex justify-content-start">
                 <Form.Group>
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>

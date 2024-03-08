@@ -18,14 +18,15 @@ import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
 import {
-  GET_ALL_PRODUCTS_API_CALL,
-  GET_ALL_CUSTOMERS_API_CALL,
+  // GET_ALL_PRODUCTS_API_CALL,
+  // GET_ALL_CUSTOMERS_API_CALL,
   SEARCH_CUSTOMER_API_CALL,
   CREATE_INVOICE_API_CALL,
 } from "../../utils/Constant";
 
 const NewInvoice = (props) => {
   const dispatch = useDispatch();
+
   //use State
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -63,8 +64,8 @@ const NewInvoice = (props) => {
     setInvoiceDate(currentDate);
     calculateDueDate(currentDate, selectedNet);
 
-    dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
+    // dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
+    // dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
   }, []);
 
   const calculateDueDate = (date, net) => {
@@ -147,7 +148,7 @@ const NewInvoice = (props) => {
     });
 
     const requestData = {
-      createdBy: props.loggedInUser.loginId,
+      createdBy: props.loginUsers.loginId,
       customerId: selectedCustomer.id,
       invoiceDate: invoiceDate,
       dueDate: dueDate,
@@ -164,7 +165,7 @@ const NewInvoice = (props) => {
 
     setTimeout(() => {
       window.location.reload(true)
-    }, 1000);
+    }, 500);
   };
 
   return (
@@ -268,7 +269,7 @@ const NewInvoice = (props) => {
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
-                      <Card className="" style={{ width: 250 }}>
+                      <Card>
                         <ListGroup
                           style={{ maxHeight: "15rem", overflowY: "scroll" }}
                         >
@@ -291,7 +292,7 @@ const NewInvoice = (props) => {
                   {selectedCustomer && (
                     <div
                       className="p-2 rounded"
-                      style={{ backgroundColor: "#f0f0f0", width: 250 }}
+                      style={{ backgroundColor: "#f0f0f0", width:300 }}
                     >
                       <h5
                         className="mt-1"
@@ -312,21 +313,21 @@ const NewInvoice = (props) => {
                             >
                               {selectedCustomer.addresses[0].addressLine1},
                               <br />
-                              <span className="mt-1">
+                              <small className="mt-1">
                                 {selectedCustomer.addresses[0].addressLine2},
-                              </span>
+                              </small>
                               <br />
-                              <span>{selectedCustomer.addresses[0].city},</span>
-                              <span className="ms-2">
+                              <small>{selectedCustomer.addresses[0].city},</small>
+                              <small className="ms-2">
                                 {selectedCustomer.addresses[0].state}
-                              </span>
+                              </small>
                               <br />
-                              <span>
+                              <small>
                                 {selectedCustomer.addresses[0].countryName},
-                              </span>
-                              <span className="ms-2">
+                              </small>
+                              <small className="ms-2">
                                 {selectedCustomer.addresses[0].zipcode}.
-                              </span>
+                              </small>
                             </p>
                           </div>
                         )}
@@ -346,7 +347,7 @@ const NewInvoice = (props) => {
           </>
 
           <>
-            <Row className="mt-2 mb-3">
+            <Row className="mt-3 mb-3">
               <Col className="col-7 d-flex justify-content-start">
                 <Form.Group>
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>

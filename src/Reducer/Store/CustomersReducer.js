@@ -15,7 +15,8 @@ const INITIAL_STATE = {
   error: null,
   searchList: [],
   selectedCustomerDetails: null,
-  code: 0
+  code: 0,
+  goback: false
 };
 
 const CustomersReducer = (state = INITIAL_STATE, action) => {
@@ -36,7 +37,7 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
     }
 
     case ADD_CUSTOMER_BANK_DETAILS_API_RESPONSE: {
-      return { ...state, code: action.payload }
+      return { ...state, code: action.payload, goback: true }
     }
 
     case UPDATE_CUSTOMER_STATUS_CODE: {
@@ -47,7 +48,7 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
     }
 
     case RESET_CODE: {
-      return {...state, code: 0}
+      return {...state, code: 0, goback: false}
     }
 
     case CREATE_CUSTOMER_API_RESPONSE: {

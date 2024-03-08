@@ -17,18 +17,21 @@ import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import "./Invoice.css";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
-import {
-  GET_ALL_INVOICE_API_CALL,
-  RESET_INVOICE_ARRAY,
-} from "../../utils/Constant";
+import { GET_ALL_INVOICE_API_CALL } from "../../utils/Constant";
 
 const Newproduct = (props) => {
-  const dispatch = useDispatch();
-
   //use states
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({ type: GET_ALL_INVOICE_API_CALL });
+  }, []);
+
+  console.log(props);
 
   //Handlers
   const handleDateChange = (dates) => {
@@ -42,24 +45,16 @@ const Newproduct = (props) => {
     }
   };
 
-  console.log(props);
-
-  useEffect(() => {
-    dispatch({ type: RESET_INVOICE_ARRAY });
-    dispatch({ type: GET_ALL_INVOICE_API_CALL });
-  }, []);
-
   //Dummy table headers
   const tableValue = [
     "Invoice No",
     "Customer Name",
     "Invoice Date",
     "Due Date",
-    "Net Date",
-    "Total Amount (AED)",
+    "Net",
+    "Total Amount",
     "Action",
   ];
-  console.log(props.invoice.listInvoice)
 
   return (
     <Container fluid className="mt-2">
@@ -88,7 +83,7 @@ const Newproduct = (props) => {
                 >
                   Total Amount
                   <br />
-                  <span style={{ color: "black" }}>AED</span>
+                  <span style={{ color: "black" }}>{(props.invoice.totalAmount).toFixed(2)} AED</span>
                 </p>
                 <p
                   style={{
@@ -101,7 +96,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>{(props.invoice.unpaidAmount).toFixed(2)} AED</span>
                 </p>
                 <p
                   style={{
@@ -114,7 +109,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>{(props.invoice.paidAmount).toFixed(2)} AED</span>
                 </p>
               </div>
             </div>
@@ -142,7 +137,7 @@ const Newproduct = (props) => {
                   }}
                 >
                   Total Amount :{" "}
-                  <span style={{ color: "black" }}>AED 0.00</span>
+                  <span style={{ color: "black" }}>{(props.invoice.totalAmount).toFixed(2)} AED</span>
                 </p>
                 <p
                   style={{
@@ -152,12 +147,16 @@ const Newproduct = (props) => {
                     fontWeight: "500",
                   }}
                 >
-                  Unpaid : <span style={{ color: "black" }}>AED 0.00</span>
+                  Unpaid : <span style={{ color: "black" }}>{(props.invoice.unpaidAmount).toFixed(2)} AED</span>
                 </p>
               </div>
               <ProgressBar
                 className="progress"
-                now={60}
+                now={parseInt(
+                  ((props.invoice.paidAmount).toFixed(2) /
+                    (props.invoice.totalAmount.toFixed(2))) *
+                    100
+                )}
                 style={{ width: "93%", marginLeft: "21px" }}
               />
               <div className="d-flex">
@@ -172,7 +171,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  0.00
+                  {(props.invoice.paidAmount).toFixed(2)} AED
                 </p>
                 <div
                   class="square"
@@ -187,7 +186,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  0.00
+                  {(props.invoice.unpaidAmount).toFixed(2)} AED
                 </p>
               </div>
             </div>
@@ -239,8 +238,7 @@ const Newproduct = (props) => {
               onChange={handleDateChange}
               startDate={startDate}
               endDate={endDate}
-              selectsRange
-              dateFormat={"dd/MM/yyyy"}
+              dateFormat={"yyyy/MM/dd"}
               placeholderText="Select Date Range"
               className="rounded"
             />
@@ -264,19 +262,57 @@ const Newproduct = (props) => {
               </tr>
             </thead>
             <tbody>
-              {/* {props.invoice.listInvoice.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.invoiceOrderId}</td>
-                  <td>{item.customerName}</td>
-                  <td>{item.invoiceDate}</td>
-                  <td>{item.dueDate}</td>
-                  <td>{item.net}</td>
-                  <td>{item.totalAmount}</td>
-                  <td>
-                    <FiDownload />
+              {props.invoice.invoiceList
+                .filter((item) => {
+                  const invoiceDate = new Date(item.invoiceDate);
+                  return (
+                    (search.toLowerCase() === ""
+                      ? item
+                      : item.customerName
+                          .toLowerCase()
+                          .includes(search.toLowerCase())) &&
+                    (!startDate ||
+                      !endDate ||
+                      (invoiceDate >= startDate && invoiceDate <= endDate))
+                  );
+                })
+                .map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.invoiceOrderId}</td>
+                    <td>{item.customerName}</td>
+                    <td>{item.invoiceDate}</td>
+                    <td>{item.dueDate}</td>
+                    <td>{item.net}</td>
+                    <td>{item.totalAmount}</td>
+                    <td>
+                      <FiDownload />
+                    </td>
+                  </tr>
+                ))}
+                {props.invoice.invoiceList
+                .filter((item) => {
+                  const invoiceDate = new Date(item.invoiceDate);
+                  return (
+                    (search.toLowerCase() === ""
+                      ? item
+                      : item.customerName
+                          .toLowerCase()
+                          .includes(search.toLowerCase())) &&
+                    (!startDate ||
+                      !endDate ||
+                      (invoiceDate >= startDate && invoiceDate <= endDate))
+                  );
+                }).length === 0 && (
+                  <tr>
+                  <td
+                    colSpan={7}
+                    className="fst-italic"
+                    style={{ color: "red" }}
+                  >
+                    No data found!
                   </td>
                 </tr>
-              ))} */}
+                )}
             </tbody>
           </Table>
         </div>

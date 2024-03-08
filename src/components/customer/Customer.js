@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
+import { GET_ALL_CUSTOMERS_API_CALL, RESET_CODE } from "../../utils/Constant";
 import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
 import CustomerForm from "./CustomerForm";
@@ -56,12 +56,16 @@ function Customer(props) {
   }, []);
 
   useEffect(() => {
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
+    if (props.customers.code == 200) {
+      dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
+    } 
+    
   }, [props.customers.code]);
 
   useEffect(() => {
     setCards(props.customers.customersList);
     setFilteredData(props.customers.customersList);
+    
   }, [props.customers.customersList]);
 
   const handleFilter = (e) => {

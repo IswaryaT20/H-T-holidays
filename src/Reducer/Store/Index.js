@@ -12,7 +12,7 @@ const RootReducer = combineReducers({
     masterData: MasterReducer,
     productsData: ProductReducer,
     purchaseOrder: PurchaseOrderReducer,
-    invoice: InvoiceReducer,
+    invoice: InvoiceReducer
 })
 
 export default RootReducer;
