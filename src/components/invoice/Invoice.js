@@ -8,15 +8,25 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 import "./Invoice.css";
 import { Link } from 'react-router-dom';
+import { useDispatch, connect } from 'react-redux';
+import { GET_ALL_INVOICE_API_CALL } from '../../utils/Constant';
 
 
-const Newproduct = () => {
+const Newproduct = (props) => {
 
   //use states
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({type: GET_ALL_INVOICE_API_CALL})
+  }, [])
+
+  console.log(props)
 
   //Handlers
   const handleDateChange = (dates) => {
@@ -106,7 +116,7 @@ const Newproduct = () => {
             </tr>
           </thead>
           <tbody>
-            {data.filter((item) => {
+            {props.invoice.invoiceList.filter((item) => {
               return (
                 (search.toLowerCase() === ""
                   ? item
@@ -118,14 +128,14 @@ const Newproduct = () => {
             })
               .map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.date}</td>
-                  <td>{item.due_date}</td>
-                  <td>{item.net_date}</td>
-                  <td>{item.customer_name}</td>
-                  <td>{item.total_amount}</td>
-                  <td>{item.due_amount}</td>
-                  <td>{item.payment}</td>
+                  <td>{item.invoiceOrderId}</td>
+                  <td>{item.customerName}</td>
+                  <td>{item.invoiceDate}</td>
+                  <td>{item.dueDate}</td>
+                  <td>{item.net}</td>
+                  <td>{item.memo}</td>
+                  <td>{item.globalDiscount}</td>
+                  <td>{item.totalAmount}</td>
                   <td><FiDownload /></td>
                 </tr>
               ))}
@@ -137,4 +147,10 @@ const Newproduct = () => {
   );
 }
 
-export default Newproduct;
+const mapsToProps = (state) => {
+  return {
+    invoice: state.invoice
+  }
+}
+
+export default connect(mapsToProps)(Newproduct);
