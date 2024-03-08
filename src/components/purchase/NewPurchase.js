@@ -23,6 +23,7 @@ import {
 import PurchaseForm from "./PurchaseForm";
 
 const NewPurchase = (props) => {
+  console.log(props)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,6 +39,7 @@ const NewPurchase = (props) => {
   const [description, setDescription] = useState("");
   const [vatChecked, setVatChecked] = useState(false);
   const [error, setError] = useState("");
+  const [showList, setShowList] = useState(false);
 
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -77,22 +79,25 @@ const NewPurchase = (props) => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSupplierName(value);
+
+    selectSupplier(e.target.value);
+
   };
 
-  const selectSupplier = () => {
+  const selectSupplier = (value) => {
     if (supplierName) {
       setTimeout(() => {
         dispatch({
           type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: supplierName, businessTypeId: 3 },
+          payload: { query: value, businessTypeId: 3 },
         });
       }, 1000);
     }
   };
 
-  useEffect(() => {
-    selectSupplier();
-  }, [supplierName]);
+  // useEffect(() => {
+  //   selectSupplier();
+  // }, [supplierName]);
 
   const supplierDetails = (item) => {
     if (selectedSupplier === item) {
@@ -220,7 +225,9 @@ const NewPurchase = (props) => {
                       name="supplierNameSearch"
                       placeholder="+ Add Supplier"
                       value={supplierName}
-                      onChange={(e) => handleSearchChange(e)}
+                      onChange={(e) => {
+                        setShowList(true)
+                        handleSearchChange(e)}}
                       style={{
                         backgroundColor: "#dedef8",
                         width: "250px",
@@ -228,7 +235,7 @@ const NewPurchase = (props) => {
                       }}
                     />
                   )}
-                  {showInput &&
+                  {showInput && showList &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
                       <Card style={{ width: 250 }}>
@@ -238,7 +245,9 @@ const NewPurchase = (props) => {
                           {props.customers.searchList.map((item) => (
                             <ListGroupItem
                               key={item.id}
-                              onClick={() => supplierDetails(item)}
+                              onClick={() => {
+                                setShowList(false)
+                                supplierDetails(item)}}
                               style={{ cursor: "pointer" }}
                             >
                               <strong>Name: </strong>
@@ -259,12 +268,15 @@ const NewPurchase = (props) => {
                     >
                       <h5
                         className="mt-1"
-                        onClick={() => setShowInput(!showInput)}
+                        onClick={() => {
+                          setSupplierName(null);
+                          setSelectedSupplier(null)
+                          setShowInput(!showInput)}
+                        }
                       >
                         {selectedSupplier.name}
                       </h5>
-                      {selectedSupplier.addresses &&
-                        selectedSupplier.addresses.length > 0 && (
+                      {selectedSupplier.addresses && (
                           <div>
                             {/* Supplier address details */}
                             <p
