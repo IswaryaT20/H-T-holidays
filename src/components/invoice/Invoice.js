@@ -56,7 +56,7 @@ const Newproduct = (props) => {
 
   return (
     <Container fluid className="mt-2">
-      <div style={{ paddingLeft: 50, paddingRight: 50 }}>
+      <div style={{ paddingLeft: 50, paddingRight: 50,marginTop:75 }}>
         <Row className="ms-1">
           <Col lg={6} xxl={6} className="col-6 p-1">
             <div

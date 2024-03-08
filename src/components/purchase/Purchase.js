@@ -60,7 +60,7 @@ const Newproduct = (props) => {
   ];
 
   return (
-    <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+    <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:75}}>
       <Container fluid className="mt-2">
         <Row className="ms-1">
           <Col lg={6} xxl={6} className="p-1 ">

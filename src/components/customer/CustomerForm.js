@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormGroup,
   FormSelect,
+  Alert,
 } from "react-bootstrap";
 import avtar1 from "../../Assets/avatars/1.jpg";
 import avtar2 from "../../Assets/avatars/2.jpg";
@@ -65,9 +66,20 @@ function CustomerForm(props) {
   const [customerType, setCustomerType] = useState(); // individual
   const [attachedFileName, setAttachedFileName] = useState("");
   const [savedbankFormData, setBankFormData] = useState("");
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState();
   const navigation = useNavigate();
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    if (showAlertModal) {
+      const timeoutId = setTimeout(() => {
+        setShowAlertModal(false);
+        // window.location.reload();
+      }, 500);
+  
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showAlertModal]);
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
     { id: "2", name: "avatar2", src: avtar2 },
@@ -210,6 +222,8 @@ function CustomerForm(props) {
 
     dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
     console.log("data", props.customers);
+    setSuccess('Success');
+    setShowAlertModal(true);
     setBankFormData({ ...formData });
     handleModalClose();
     console.log("the bank accounts", requestData.bankAccounts);
@@ -265,13 +279,14 @@ function CustomerForm(props) {
       <div
         style={{
           backgroundColor: "#F5F5F5",
-          paddingBottom: 30,
-          paddingTop: 30,
+          paddingBottom:30,
+          paddingTop:35,
           paddingLeft: 30,
           paddingRight: 30,
+        
         }}
       >
-        <Container fluid className=" f-14 ">
+        <Container fluid className=" f-14 " >
           <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
             
             {/* <Col className="d-flex justify-content-end me-3 " hidden>
@@ -698,7 +713,7 @@ function CustomerForm(props) {
                       className={`mb-3 ${vatError ? "has-error" : ""}`}
                       style={{ display: "flex", alignItems: "center" }}
                     >
-                      {vattreatment === true ? (
+                   
                         <FormLabel className=" b txt-ht_blue w-100 f-14">
                           TRN NO
                           <FormControl
@@ -716,7 +731,7 @@ function CustomerForm(props) {
                             name="trnnumber"
                           ></FormControl>
                         </FormLabel>
-                      ) : null}
+                 
                       <div>
                         {" "}
                         {vatError && (
@@ -811,6 +826,39 @@ function CustomerForm(props) {
 
           
         </Container>
+        <Modal show={showAlertModal} onHide={() => setShowAlertModal(false) }>
+        <Modal.Header>
+          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {success === "Success" ? (
+            <>
+              <div className="d-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
+            </>
+          ) : (
+            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+          )}
+        </Modal.Body>
+      </Modal>
       </div>
     </>
   );

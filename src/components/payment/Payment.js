@@ -7,8 +7,8 @@ import {
   Col,
   InputGroup,
   FormControl,
-  Table,
 } from "react-bootstrap";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaSearch } from "react-icons/fa";
@@ -19,21 +19,32 @@ import { useDispatch, connect } from "react-redux";
 function Payment(props) {
   const [entitiesPerPage, setEntitiesPerPage] = useState("");
   const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [getSupplier, setGetsupplier] = useState([]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL, data: 3 });
+    // dispatch({type: GET_ALL_CUSTOMERS_API_CALL, data: 3})
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/payment/getAllPayments")
+      .then((response) => {
+        setGetsupplier(response.data.data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+    console.log(entitiesPerPage);
   }, [entitiesPerPage]);
 
   // console.log("the data pages",entitiesPerPage);
 
   return (
-    <div style={{paddingLeft:50, paddingRight:50}}>
-      <Container fluid>
+    <div className="mt-5">
+      <Container fluid style={{ marginTop: 70 }}>
         <div
           className="d-flex mt-4 pt-4 "
           style={{
+            // border: "1px solid #80808042",
             paddingLeft: "1%",
             paddingRight: "1%",
             marginBottom: "1%",
@@ -43,7 +54,7 @@ function Payment(props) {
             <Link to="/SupplierPay">
               <Button
                 className="b-none"
-                style={{ backgroundColor: "#1d1d5e", color: "white" }}
+                style={{ backgroundColor: "#25316f", color: "white" }}
               >
                 New Payment
               </Button>
@@ -55,7 +66,7 @@ function Payment(props) {
                 <FaSearch className="text-white" />
               </InputGroupText>
               <FormControl
-                placeholder="Search Supplier..."
+                placeholder="Search supplier..."
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
                   background: "#80808036",
@@ -70,23 +81,22 @@ function Payment(props) {
 
           <Col className="d-flex align-items-center justify-content-end me-3">
             <div className="d-flex align-items-start pt-1 ms-3">
-              <span className="showentity mt-1" style={{color:"#1d1d5e"}}>Show entities</span>
+              <span className="showentity mt-1">Show entities</span>
               <FormSelect
-                className="d-flex form-select align-item-center ms-2 w-40 mb-3 fs-6 inputfocus rounded-0"
+                className="d-flex form-select align-item-center ms-2 w-40 mb-3 fs-6 inputfocus"
                 onChange={(e) => {
                   setEntitiesPerPage(e.target.value);
                   console.log("Selected entities per page:", e.target.value);
                 }}
                 value={entitiesPerPage}
-                style={{height:"35px", fontSize:10}}
               >
-                <option className="f-12" value={10}>
+                <option className="f-10" value={10}>
                   10
                 </option>
-                <option className="f-12" value={25}>
+                <option className="f-10" value={25}>
                   25
                 </option>
-                <option className="f-12" value={50}>
+                <option className="f-10" value={50}>
                   50
                 </option>
               </FormSelect>
@@ -94,55 +104,58 @@ function Payment(props) {
           </Col>
         </div>
         <div className="table-container " style={{ width: "100%" }}>
-          <Table className="table" style={{ overflowY: "scroll" }} bordered size="sm">
+          <table className="table" style={{ overflowY: "scroll" }}>
             <thead>
               <tr>
-                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
                   ID
                 </th>
-                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
-                  Payment Date
-                </th>
-                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
                   Supplier Name
                 </th>
-                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
-                  Amount Payable
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Mode of Pay
                 </th>
-                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
-                  Amount Receivable
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Amount
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Reference Number
                 </th>
               </tr>
             </thead>
             <tbody>
-              {props.customers.customersList
+              {getSupplier
                 .filter((item) => {
                   return search.toLowerCase() === ""
                     ? item
-                    : item.name.toLowerCase().includes(search.toLowerCase());
+                    : item.supplierName.toLowerCase().includes(search.toLowerCase());
                 })
                 .map((item) => (
                   <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.createdAt}</td>
-                    <td>{item.name}</td>
-                    <td>{item.theyOweYou}</td>
-                    <td>{item.youOweThem}</td>
+                    <td>{item.supplierId}</td>
+                    <td>{item.supplierName}</td>
+                    <td>{item.paymentTypeName}</td>
+                    <td>{item.amount}</td>
+                    <td>{item.referenceNumber}</td>
                   </tr>
                 ))}
-              {props.customers.customersList.filter((item) => {
+              {getSupplier.filter((item) => {
                 return search.toLowerCase() === ""
                   ? item
-                  : item.name.toLowerCase().includes(search.toLowerCase());
+                  : item.supplierName
+                      .toLowerCase()
+                      .includes(search.toLowerCase());
               }).length === 0 && (
                 <tr>
-                  <td colSpan={5} className="fst-italic" style={{ color: "red" }}>
-                    No data found!
-                  </td>
+                  <td
+                    colSpan={5}
+                    style={{ fontWeight: "600", color: "red" }}
+                  >No data found!</td>
                 </tr>
               )}
             </tbody>
-          </Table>
+          </table>
         </div>
         <div className="d-flex justify-content-center ms-auto text-center mt-3">
           <Pagination size="md"></Pagination>

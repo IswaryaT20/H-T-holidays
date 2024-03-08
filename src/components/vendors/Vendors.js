@@ -71,9 +71,10 @@ function Vendors(props) {
   }
 
   return (
-    <>
-      <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
-        <div className="ps-5">
+    <div style={{marginTop:'70px',marginTop: '70px'}}>
+      <Stack className="mt-4 d-flex" direction="horizontal" gap={5} style={{        
+      }}>
+        <div className="ps-5 ms-3" >
           <Link to="/VendorForm">
             <Button
               className="rounded text-white btn-blue w-100 b-none"
@@ -81,18 +82,10 @@ function Vendors(props) {
                 backgroundColor: "#25316f",
                 fontSize: "14px",
                 width: "",
-                justifyContent: "space-evenly",
-
-                ...(window.innerWidth >= 400 &&
-                  window.innerWidth < 750 && {
-                  fontSize: "12px",
-                  width: "80%",
-                  height: "max-content",
-                  padding: "1px",
-                }),
+                justifyContent: "space-evenly",               
               }}
             >
-              New +
+              New 
             </Button>
           </Link>
         </div>
@@ -142,6 +135,7 @@ function Vendors(props) {
           />
         </div>
       </Stack>
+      
       {cardActive ? (
         <div
           className="card-container"
@@ -191,7 +185,7 @@ function Vendors(props) {
                     </div>
                   </div>
                 ))
-                : null}
+                : <p className="fs-5 f-20 text-center mt-3 ms-5" style={{color:'red'}}>No Data Found</p>}
             </div>
           </div>
         </div>
@@ -201,14 +195,15 @@ function Vendors(props) {
         {tableActive ? (
           <div style={{ marginLeft: 48, marginRight: 48, paddingBottom: 50 }}>
             <Table>
-              <thead>
+              
+              <thead class="overflow-hidden">
                 <tr style={{ paddingTop: 100, paddingBottom: 100 }}>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Email</th>
-                  <th>Sales Person</th>
-                  <th>Activities</th>
-                  <th>Place</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Name</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Phone</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Email</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Sales Person</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Activities</th>
+                  <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}}  >Place</th>
 
                 </tr>
               </thead>
@@ -217,23 +212,23 @@ function Vendors(props) {
                   filteredData.map((tableItem) => {
                     console.log(tableItem)
                     return <tr>
-                      <td>{tableItem.title}. {tableItem.name}</td>
-                      <td>{tableItem.phone}</td>
-                      <td>{tableItem.email}</td>
-                      <td>{tableItem.businessTypeName}</td>
-                      <td>{tableItem.jobPosition}</td>
-                      <td>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }}   onClick={() => {handleCustomerOnClick(tableItem.id)}} >{tableItem.title}. {tableItem.name}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }} >{tableItem.phone}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }} >{tableItem.email}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }} >{tableItem.businessTypeName}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }} >{tableItem.jobPosition}</td>
+                      <td scope="col" className="text-start" style={{textAlign :'text-start' }} >{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
                     </tr>
                   })
                 ) : (
-                  <tr>NO data found</tr>
+                  <tr><p className="fs-5 f-20 text-center mt-3 ms-5" style={{color:'red'}}>No Data Found</p></tr>
                 )}
               </tbody>
             </Table>
           </div>
         ) : null}
       </div>
-    </>
+    </div>
   );
 }
 

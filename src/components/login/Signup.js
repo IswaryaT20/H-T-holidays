@@ -18,27 +18,39 @@ function Signup(props) {
   const [error, seterror] = useState("");
   const [err, seterr] = useState("");
   const [passwordMatch, setPasswordMatch] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(props)
+  console.log(props);
 
   /**
-   * 
-   * show an error message while registering 
+   *
+   * show an error message while registering
    * @param {
-   * 
-   * } e 
+   *
+   * } e
    */
+
+  const isEmailValid = (email1) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailPattern.test(email1);
+  };
+
   const handleChanges = (e) => {
-    dispatch({type: CLEAR_ERROR_MESSAGE})
+    dispatch({ type: CLEAR_ERROR_MESSAGE });
     const { name, value } = e.target;
     if (name === "username") {
       setUsername(value);
     }
     if (name === "email") {
-      setEmail(value);
+      setEmail(e.target.value);
+      setEmailError(
+        isEmailValid(e.target.value) ? "" : "Invalid email format."
+      );
+      
+    
     }
     if (name === "password") {
       setPassword(value);
@@ -56,7 +68,7 @@ function Signup(props) {
   function handlesubmit(e) {
     e.preventDefault();
     const nameerror = "Invalid username";
-    const emailerror = "Invalid email";
+    // const emailerror = "Invalid email";
     const passworderror = "Invalid password";
     const cpassworderror = "Invalid confirm";
     seterror("");
@@ -65,7 +77,7 @@ function Signup(props) {
       return;
     }
     if (email.length === 0) {
-      seterror(emailerror);
+      seterror('Invalid email');
       return;
     }
     if (password.length === 0) {
@@ -82,26 +94,24 @@ function Signup(props) {
       email: email,
       password: password,
     };
-    
-    dispatch({type: REGISTER_API_CALL, data: args})
-    console.log("the props error",props.users.status);
-    console.log("payload message",props.users.status);
+
+    dispatch({ type: REGISTER_API_CALL, data: args });
+    console.log("the props error", props.users.status);
+    console.log("payload message", props.users.status);
   }
   useEffect(() => {
     if (err) {
       const timeoutId = setTimeout(() => {
         seterr(null);
-      }, 3000); 
+      }, 3000);
 
       return () => clearTimeout(timeoutId);
     }
   }, [err]);
 
-
-
   // useEffect(() => {
   //     if (props.users.status === 200) {
-        
+
   //     }
   // }, [props.users.status])
 
@@ -119,7 +129,7 @@ function Signup(props) {
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput1">
             <Form.Label>Email address</Form.Label>
             <Form.Control
-              className="f-14 border border-secondary border-2"
+              className="f-14 border inputfocus border-secondary border-1"
               type="email"
               name="email"
               placeholder="name@example.com"
@@ -130,11 +140,12 @@ function Signup(props) {
                 Please enter your email
               </p>
             )}
+             {emailError && <p style={{ color: "red" }}>{emailError}</p>}
           </Form.Group>
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput2">
             <Form.Label>Username</Form.Label>
             <Form.Control
-              className="f-14 border border-secondary border-2"
+              className="f-14 border inputfocus border-secondary border-1"
               type="text"
               name="username"
               placeholder="Username"
@@ -149,7 +160,7 @@ function Signup(props) {
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput3">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              className="f-14 border border-secondary border-2"
+              className="f-14 border inputfocus border-secondary border-1"
               type="password"
               name="password"
               placeholder="Password"
@@ -164,24 +175,30 @@ function Signup(props) {
           <Form.Group className="mb-1" controlId="exampleForm.ControlInput4">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
-              className="f-14 border border-secondary border-2"
+              className="f-14 border inputfocus border-secondary border-1"
               type="password"
               name="cpassword"
               placeholder="Confirm Password"
               onChange={(e) => handleChanges(e)}
             />
-            {error && (!cpassword || !passwordMatch) && (
+            {error && !cpassword ? (
+              <p className="error f-14" style={{ color: "red" }}>
+                Enter the confirm password
+              </p>
+            ) : error && !passwordMatch ? (
               <p className="error f-14" style={{ color: "red" }}>
                 Passwords do not match
               </p>
-            )}
+            ) : null}
+
+        
           </Form.Group>
-          <Form.Check type="checkbox" className="rounded d-flex mt-2">
+          {/* <Form.Check type="checkbox" className="rounded d-flex mt-2">
             <Form.Check.Input className="border border-secondary border-1" />
             <Form.Check className="f-14 ms-2 mb-2">
               I agreed to the terms and conditions
             </Form.Check>
-          </Form.Check>
+          </Form.Check> */}
           <div id="error" className="">
             {err && (
               <div className="error f-14 w-100 text-center">
@@ -208,13 +225,10 @@ function Signup(props) {
               Signup
             </Button>
           </div>
-      
-{props.users.error && (
-  <Alert variant="danger">
-    {props.users.error}
-  </Alert>
-)}
 
+          {props.users.error && (
+            <Alert variant="danger">{props.users.error}</Alert>
+          )}
 
           <p className="f-14 text-center mt-3 mb-1 f-14">
             Don't Have an account?{" "}
@@ -224,14 +238,12 @@ function Signup(props) {
           </p>
         </div>
       </Container>
-
-
     </div>
   );
 }
 const mapsToProps = (state) => {
   return {
-    users: state.users
-  }
-}
+    users: state.users,
+  };
+};
 export default connect(mapsToProps)(Signup);

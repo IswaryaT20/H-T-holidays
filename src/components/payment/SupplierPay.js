@@ -12,6 +12,8 @@ import {
   FormCheck,
   FormSelect,
   Button,
+  Alert,
+  Modal,
 } from "react-bootstrap";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
@@ -19,8 +21,11 @@ import { Link } from "react-router-dom";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
 import { useDispatch, connect } from "react-redux";
-import { SEARCH_CUSTOMER_API_CALL, MASTER_API_CALL } from "../../utils/Constant";
-
+import {
+  SEARCH_CUSTOMER_API_CALL,
+  MASTER_API_CALL,
+} from "../../utils/Constant";
+import axios from "axios";
 
 function Customerpay(props) {
   const [customerName, setCustomerName] = useState("");
@@ -30,14 +35,27 @@ function Customerpay(props) {
   const [chequerefnum, setChequerefnum] = useState(false); // Define chequerefnum state
 
   const [amount, setAmount] = useState("");
-  const [paymentType, setPaymenttype] = useState("");
   const [Referenceno, setReferenceno] = useState("");
-  const [Chequedate, setChequedate] = useState("");
+  const [chequeNumber, setChequeNumber] = useState("");
   const [Collectiondate, setCollectiondate] = useState("");
   const [errormessage, setErrormessage] = useState("");
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState();
+  const [masterPaytype, setMasterpaytype] = useState([]);
+  
+
 
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    if (showAlertModal) {
+      const timeoutId = setTimeout(() => {
+        setShowAlertModal(false);
+        // window.location.reload();
+      }, 500);
+  
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showAlertModal]);
   const handleSearchChange = (e) => {
     if (e.target.name === "suppliernamesearch") {
       setCustomerName(e.target.value);
@@ -65,12 +83,8 @@ function Customerpay(props) {
   }, [customerName]);
 
   const customerdetails = (item) => {
-    if (selectedCustomer === item) {
-      setShowInput(!showInput);
-    } else {
-      setSelectedCustomer(item);
-      setShowInput(false);
-    }
+    setSelectedCustomer(item);
+    setShowInput(false);
   };
 
   useEffect(() => {
@@ -84,29 +98,58 @@ function Customerpay(props) {
     console.log(props.message);
   }, []);
 
-  const handleSubmit = () => {
-    // setErrormessage("");
-    // if (customerName.length === 0) {
-    //   setErrormessage("Please enter the supplier name.");
-    //   return;
-    // }
-    // if (amount.length === 0) {
-    //   setErrormessage("Please enter Amount.");
-    //   return;
-    // }
+  useEffect(()=> {
+    setMasterpaytype(props.masters.paymentTypes)
+  }, [props.masters.paymentTypes])
 
-    console.log("Created By:", props.loginUsers.loginId)
-    console.log("Supplier Id", selectedCustomer.id)
+
+  const handleSubmit = () => {
+  
+    setErrormessage("");
+    if (customerName.length === 0) {
+      setErrormessage("Please enter the supplier name.");
+      return;
+    }
+    if (amount.length === 0) {
+      setErrormessage("Please enter Amount.");
+      return;
+    }
+
+      const requestData = {
+        customerId: selectedCustomer.id,
+        createdBy: props.loginUsers.loginId,
+        paymentType: 1,
+        amount: amount,
+        referenceNumber: Referenceno,
+        chequeNumber: chequeNumber,
+        chequeDate: currentDate,
+        description: "null",
+        collectionDate: Collectiondate,
+      };
+      console.log(requestData)
     
-    
-    // setTimeout(() => {
-    //   window.location.reload(true)
-    // }, 500);
+
+    axios
+      .post(
+        "http://68.178.161.233:8080/handt/v2/payment/addPayment",
+        requestData
+      )
+      .then((response) => response.data.data)
+      .catch((error) => console.log(error));
+
+      setSuccess('Success');
+      setShowAlertModal(true);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   return (
     <>
-      <Container fluid className="flex">
+      <Container fluid className="flex" style={{
+        marginTop:75,
+      }}>
         <Row className="w-100 ms-0 mt-2 bg-blur" style={{}}>
           <Col lg={2}></Col>
           <Col
@@ -241,11 +284,11 @@ function Customerpay(props) {
                   ) : (
                     <span></span>
                   )}
-                  {/* {errormessage && !customerName && (
+                  {errormessage && !customerName && (
                     <p style={{ color: "red", fontSize: 12 }}>
                       Please enter the supplier name.
                     </p>
-                  )} */}
+                  )}
                 </FormGroup>
               </Col>
 
@@ -320,15 +363,15 @@ function Customerpay(props) {
                       }}
                     >
                       <option defaultChecked>Select the Category</option>
-                      {props.masters.paymentTypes.map((payment)=>{
+                      {props.masters.paymentTypes.map((payment) => {
                         return (
                           <option key={payment.id}>{payment.value}</option>
-                        )
+                        );
                       })}
                     </FormSelect>
                   </FormLabel>
                   <FormLabel>
-                    Amount <span style={{color:"red"}}>*</span>
+                    Amount <span style={{ color: "red" }}>*</span>
                     <FormControl
                       className="mt-1 me-2 inputfocus"
                       type="number"
@@ -340,23 +383,31 @@ function Customerpay(props) {
                         width: 250,
                       }}
                     />
-                    {/* {errormessage && !amount && (
+                    {errormessage && !amount && (
                       <p style={{ color: "red", fontSize: 12 }}>
-                        Please Enter the Amount.
+                        Please enter the Amount.
                       </p>
-                    )} */}
+                    )}
                   </FormLabel>
                   <FormLabel>
                     Reference No
                     <FormControl
                       className="mt-1 inputfocus"
                       name="referenceno"
+                      value={Referenceno}
+                      onChange={(e)=> setReferenceno(e.target.value)}
                       style={{
                         width: 250,
                       }}
                     ></FormControl>
+                    {errormessage && !Referenceno && (
+                    <p style={{ color: "red", fontSize: 12 }}>
+                    Please enter the Ref number.
+                  </p>
+                  )}
                   </FormLabel>
                 </FormGroup>
+                
                 <div className="p-1">
                   <FormGroup className="d-flex justify-content-evenly">
                     {chequerefnum && (
@@ -366,7 +417,7 @@ function Customerpay(props) {
                           className="mt-1 inputfocus"
                           type="date"
                           name="chequedate"
-                          defaultValue={currentDate}
+                          value={currentDate}
                           min={currentDate}
                           style={{
                             width: 250,
@@ -381,8 +432,8 @@ function Customerpay(props) {
                           className="mt-1 inputfocus"
                           type="date"
                           name="collectiondate"
-                          defaultValue={currentDate}
-                          min={currentDate}
+                          value={Collectiondate}
+                          onChange={(e)=> setCollectiondate(e.target.value)}
                           style={{
                             width: 250,
                           }}
@@ -395,6 +446,8 @@ function Customerpay(props) {
                         <FormControl
                           className="mt-1 inputfocus"
                           type="text"
+                          value={chequeNumber}
+                          onChange={(e)=> setChequeNumber(e.target.value)}
                           style={{
                             width: 250,
                           }}
@@ -451,6 +504,43 @@ function Customerpay(props) {
           <Col lg={2}></Col>
         </Row>
       </Container>
+
+      <>
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false) }>
+        <Modal.Header>
+          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {success === "Success" ? (
+            <>
+              <div className="d-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+                
+              </div>
+            </>
+          ) : (
+            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+          )}
+        </Modal.Body>
+      </Modal>
+      </>
     </>
   );
 }

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "react-phone-number-input/style.css";
-import { RiAttachment2 } from "react-icons/ri";
-
+import axios from "axios";
 import {
   Col,
   Row,
@@ -13,6 +11,7 @@ import {
   FormLabel,
   FormGroup,
   FormSelect,
+  Alert,
 } from "react-bootstrap";
 import avtar1 from "../../Assets/avatars/1.jpg";
 import avtar2 from "../../Assets/avatars/2.jpg";
@@ -20,14 +19,16 @@ import avtar3 from "../../Assets/avatars/3.jpg";
 import avtar4 from "../../Assets/avatars/4.png";
 import avtar5 from "../../Assets/avatars/5.png";
 import profile from "../../Assets/images/profile.jpg";
-import AddressForm from "./VendorAddressform";
-import Bankform from "./VendorBankForm";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import Vendorform from "./VendorBankForm";
 import { useSelector, useDispatch, connect } from "react-redux";
 import {
   MASTER_API_CALL,
   CREATE_CUSTOMER_API_CALL,
   REGISTER_API_CALL,
   INITIAL_STATE,
+  RESET_CODE,
 } from "../../utils/Constant";
 import { Link } from "react-router-dom";
 
@@ -36,35 +37,48 @@ const isEmailValid = (email1) => {
   return emailPattern.test(email1);
 };
 
-function CustomerForm(props) {
+function VendorForm(props) {
   const [selectedImage, setSelectedImage] = useState(profile);
   const [isAvatarsOpen, setIsAvatarsOpen] = useState(false);
-  const [address, setaddress] = useState(false);
-  const [bankdetails, setbankdetails] = useState(false);
-  const [nameError, setNameError] = useState(false);
-  const [categoryError, setCategoryError] = useState(false);
-  const [vatError, setVatError] = useState(false);
-  const [name, setName] = useState("");
-  const [jobposition, setJobposition] = useState("");
-  const [trnnum, setTrnnum] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [mobileError, setMobileError] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [website, setWebsite] = useState("");
-  const [category, setCategory] = useState();
-  const [customeraddress, setAddress] = useState("");
+  const [suppliername, setSupplierName] = useState("");
+  const [supllieraddress, setSupplierAddress] = useState("");
   const [city, setCity] = useState("");
   const [emirates, setEmirates] = useState("");
   const [country, setCountry] = useState("");
   const [zip, setZip] = useState("");
+  const [vattreatment, setVatTreatment] = useState("");
+  const [trnnum, setTrnNum] = useState("");
   const [title, setTitle] = useState("");
-  const [vattreatment, setVattreatment] = useState("false");
-  const [customerType, setCustomerType] = useState(); // individual
-  const [attachedFileName, setAttachedFileName] = useState("");
+  const [jobposition, setJobPosition] = useState("");
+  const [phone, setPhone] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [mobileError, setMobileError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
+  const [bankdetails, setbankdetails] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [vatError, setVatError] = useState(false);
   const [savedbankFormData, setBankFormData] = useState("");
+  const [MobileValue, setMobileValue] = useState("");
+  const [Errormessage, setErrorMessage] = useState(false);
+  const [Errormessagess, setErrorMessagess] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState();
+
   const dispatch = useDispatch();
+
+  
+
+  useEffect(() => {
+    if (showAlertModal) {
+      const timeoutId = setTimeout(() => {
+        setShowAlertModal(false);
+        // window.location.reload();
+      }, 500);
+  
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showAlertModal]);
 
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
@@ -75,93 +89,82 @@ function CustomerForm(props) {
     { id: "6", name: "avatar6", src: profile },
   ];
 
-  const [businessType, setBusinessType] = useState([]);
-  console.log("props message:", props);
-
+  const openAvatars = () => {
+    setIsAvatarsOpen(!isAvatarsOpen);
+  };
   const [formData, setFormData] = useState({
     bankName: "",
     accountNumber: "",
     iban: "",
     branch: "",
-    bankcountry:"",
   });
+  const captureImage = (e) => {
+    const selectedImageSrc = e.target.src;
+    setSelectedImage(selectedImageSrc);
+    setIsAvatarsOpen(false);
+  };
 
+  // const bankModal = () => {
+  //   if (suppliername.trim() !== "") {
+  //     setBankDetails(!bankdetails);
+  //   } else {
+  //     console.error("setName");
+  //   }
+  // };
+  const bankmodal = () => {
+    setbankdetails(!bankdetails);
+  };
+  const handleModalClose = () => {
+    setbankdetails(false);
+  };
   const handleChange = (e) => {
-
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
-
-    if (e.target.name === "suppliername") setName(e.target.value);
-    if (e.target.name === "jobposition") setJobposition(e.target.value);
-    if (e.target.name === "trnnumber") setTrnnum(e.target.value);
-    if (e.target.name === "phone") setPhone(e.target.value);
     if (e.target.name === "mobile") {
       setMobile(e.target.value);
+    }
+    if (mobile.length === 0) {
+      setMobileError("The Mobile Number is Required");
     }
 
     if (e.target.name === "email") {
       setEmail(e.target.value);
-      setEmailError(
-        isEmailValid(e.target.value) ? "" : "Invalid email format."
-      );
+      setEmailError(isEmailValid(e.target.value) ? "" : "Invalid email format");
     }
 
-    if (e.target.name === "website") setWebsite(e.target.value);
-    if (e.target.name === "customeraddress") setAddress(e.target.value);
+    if (e.target.name === "suppliername") setSupplierName(e.target.value);
+    if (e.target.name === "supllieraddress") setSupplierAddress(e.target.value);
     if (e.target.name === "city") setCity(e.target.value);
     if (e.target.name === "emirates") setEmirates(e.target.value);
     if (e.target.name === "country") setCountry(e.target.value);
     if (e.target.name === "zip") setZip(e.target.value);
+    if (e.target.name === "vattreatment") setVatTreatment(e.target.value);
+    if (e.target.name === "trnnumber") setTrnNum(e.target.value);
     if (e.target.name === "title") setTitle(e.target.value);
+    if (e.target.name === "jobposition") setJobPosition(e.target.value);
+    if (e.target.name === "phone") setPhone(e.target.value);
+    if (e.target.name === "email") setEmail(e.target.value);
+    if (e.target.name === "website") setWebsite(e.target.value);
   };
 
-  const selectBusinessType = (businessType) => {
-    console.log(businessType);
-    setCustomerType(businessType.id);
-  };
-
-  const onSelectCategory = (item) => {
-    console.log(item.target.value);
-    setCategory(item.target.value);
-  };
-
-  const handleVatreatment = (item) => {
-    console.log(item.target.value);
-    setVattreatment(item.target.value);
-  };
-
-
-
-  
   const handlesubmit = () => {
-    if (customerType === 1 && !name.trim()) {
-      setNameError(true);
+
+    if (suppliername.length === 0) {
+      setErrorMessage(true);
       return;
     }
-
     if (!mobile.trim() || mobileError) {
-      setMobileError(true);
+      setErrorMessage(true);
       return;
     }
 
-    if (!category || (typeof category === "string" && !category.trim())) {
-      setCategoryError(true);
-      return;
-    }
 
-    if (
-      vattreatment === "true" &&
-      (!trnnum || (typeof trnnum === "string" && !trnnum.trim()))
-    ) {
-      setVatError(true);
-      return;
-    }
 
-    const requestData = {
-      name: name,
+    const sendsupplierdata = {
+      name: suppliername,
       jobPosition: jobposition,
       trnNo: trnnum,
       phone: phone,
@@ -169,100 +172,84 @@ function CustomerForm(props) {
       email: email,
       website: website,
       isRegistered: vattreatment,
-      category: category,
       title: title,
-      country: country,
-      emirates: emirates,
-      zip: zip,
-      createdBy: props.loggedInUser.loginId,
-      customerCategoryId: category,
-      businessTypeId: customerType,
+      createdBy: 1,
+      businessTypeId: 3,
       addresses: [
         {
-          addressLine1: customeraddress,
+          addressLine1: supllieraddress,
           addressLine2: city,
           city: city,
+          state: emirates,
+          country: 1,
           zipcode: zip,
-          country: country,
-          state: city,
           addressTypeId: 1,
         },
       ],
       bankAccounts: [
         {
-          code: savedbankFormData.iban ? savedbankFormData.iban : null ,
-          bankName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
-          accountNumber: savedbankFormData.accountNumber ? savedbankFormData.accountNumber : null,
-          branchName: savedbankFormData.branch ? savedbankFormData.branch : null,
-          accountHolderName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
-          country: savedbankFormData.bankcountry ? savedbankFormData.bankcountry : null,
+          code: formData.iban ? formData.iban : "",
+          bankName: formData.bankName ? formData.bankName : "",
+          accountNumber: formData.accountNumber ? formData.accountNumber : "",
+          branchName: formData.branch ? formData.branch : "",
+          accountHolderName: formData.bankName ? formData.bankName : "",
+          country: formData.bankcountry ? formData.bankcountry : "",
         },
       ],
     };
+    dispatch({
+      type: CREATE_CUSTOMER_API_CALL,
+      payload: sendsupplierdata,
+    });
+   
+    console.log("props message : ", props.customers.error);
+    setSuccess('Success');
+    setShowAlertModal(true);
+    const seterror = props.customers.error;
+    if (seterror) {
+      setErrorMessagess(seterror.message);
 
-    dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
-    console.log("data", props.customers);
-    setBankFormData({ ...formData });
-    handleModalClose();
-    console.log("the bank accounts", requestData.bankAccounts);
-    console.log("country", country);
-    console.log("vat", vattreatment);
-  };
 
-  const openAvatars = () => {
-    setIsAvatarsOpen(!isAvatarsOpen);
-  };
+      const timer = setTimeout(() => {
+        setErrorMessagess(""); // Clear the error message after 1 second
+        // window.location.reload()
+      }, 1500);
+    }
 
-  const captureImage = (e) => {
-    const selectedImageSrc = e.target.src;
-    setSelectedImage(selectedImageSrc);
-    setIsAvatarsOpen(false);
-  };
+    console.log("theserver",Errormessagess.message);
 
-  const addressmodal = () => {
-    setaddress(!address);
-  };
-  const bankmodal = () => {
-    setbankdetails(!bankdetails);
-  };
-  const handleModalClose = () => {
-    setbankdetails(false);
+    
+    console.log("supplier data", props.customers);
+    console.log(sendsupplierdata);
+    console.log(formData);
   };
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
-    console.log(props.message);
+    console.log("message :", props.message); 
+    console.log("customers :", props.customers); 
   }, []);
 
-  useEffect(() => {
-    if (props.master.businessTypes.length > 0) {
-      setCustomerType(props.master.businessTypes[0].id);
-      setBusinessType(
-        props.master.businessTypes.filter((item) => {
-          return item.id === 1 || item.id === 2;
-        })
-      );
-    }
-  }, [props.master.businessTypes]);
+  const handleVatreatment = (item) => {
+    console.log(item.target.value);
+    setVatTreatment(item.target.value);
+  };
 
-  const fileattach = () => {
-    document.getElementById("fileInput").click();
-  };
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setAttachedFileName(selectedFile.name);
-  };
+  // console.log("the errormessage",Errormessage.message)
+
   return (
     <>
       <div
         style={{
           backgroundColor: "#F5F5F5",
-
+          marginTop: 65,
           paddingLeft: 30,
           paddingRight: 30,
+          maxHeight: "100vh",
+          minHeight: 600,
         }}
       >
-        <Container fluid className=" f-14 ">
+        <Container fluid className=" f-14 pt-1 ">
           <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
             <Col className=" f-14 d-flex justify-content-start  ">
               <Button
@@ -277,7 +264,6 @@ function CustomerForm(props) {
               >
                 Save
               </Button>
-
               <Button
                 type="submit"
                 className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
@@ -289,20 +275,15 @@ function CustomerForm(props) {
                 }}
                 onClick={handlesubmit}
               >
-                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                <Link
+                  to="/Vendor"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
                   Cancel{" "}
                 </Link>
               </Button>
             </Col>
             <Col className="d-flex justify-content-end me-3 ">
-              <Button
-                className="m-1 bg-blue f-12 rounded-1 b-none"
-                style={{ backgroundColor: "#25316f", width: "max-content" }}
-                onClick={addressmodal}
-                id="address"
-              >
-                Contact & Address
-              </Button>
               <Button
                 className="m-1 bg-blue f-12 rounded-1 b-none"
                 style={{ backgroundColor: "#25316f", width: "max-content" }}
@@ -343,24 +324,7 @@ function CustomerForm(props) {
                   md={10}
                   xxl={10}
                   className=" f-14 d-flex p-4"
-                >
-                  <div key={`inline-radio`} className="mb-1 mt-2">
-                    {businessType.map((item) => {
-                      return (
-                        <Form.Check
-                          inline
-                          label={item.value}
-                          name="customerType"
-                          type="radio"
-                          checked={item.id == customerType}
-                          value={item.value}
-                          onChange={(e) => selectBusinessType(item)}
-                          id={item.id}
-                        />
-                      );
-                    })}
-                  </div>
-                </Col>
+                ></Col>
                 <Col
                   xs={3}
                   sm={3}
@@ -380,8 +344,9 @@ function CustomerForm(props) {
                         height: "70px",
                         objectFit: "cover",
                       }}
-                      onClick={openAvatars}
+                      onClickCapture={openAvatars}
                     />
+
                     <Modal show={isAvatarsOpen} onHide={openAvatars}>
                       <Modal.Body>
                         <strong>Kindly choose the profile picture</strong>
@@ -423,46 +388,23 @@ function CustomerForm(props) {
                   className=" f-14 "
                   style={{ position: "relative", top: "-40px" }}
                 >
-                  <div key={`inline-radio`} className="mb-3">
-                    <div className={`mb-3 ${nameError ? "has-error" : ""}`}>
-                      {customerType === 1 && (
-                        <FormGroup className="d-flex flex-column">
-                          <FormControl
-                            type="text"
-                            placeholder="Customer Name"
-                            className={`f-14 w-100 h-10 br_b-2 pt-3 ps-3 mb-2 rounded-0 inputfocus ${
-                              nameError ? "has-error" : ""
-                            }`}
-                            checked={customerType === "individual"}
-                            onChange={(e) => {
-                              handleChange(e);
-                              setNameError(false);
-                            }}
-                            style={{ border: "2px dotted #25316f" }}
-                            id={`inline-radio-1`}
-                            name="customername"
-                            required
-                          />
-                        </FormGroup>
-                      )}
-                      {nameError && (
-                        <p style={{ color: "red" }}>
-                          Customer Name is Required
-                        </p>
-                      )}
-                    </div>
-
+                  <div>
                     <FormGroup>
                       <FormControl
                         type="text"
-                        placeholder="Company Name"
-                        checked={customerType === "company"}
+                        placeholder="supplier Name"
                         onChange={(e) => handleChange(e)}
                         className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
-                        id={`inline-radio-1`}
-                        name="companyname"
+                        name="suppliername"
                       ></FormControl>
+                    
+                        
+                    {Errormessage && !suppliername && (
+                        <p className="error f-14" style={{ color: "red" }}>
+                          Cusotmer Name is required
+                        </p>
+                      )}
                     </FormGroup>
                   </div>
                   <div className=" f-14 d-flex flex-row" style={{ flex: "1" }}>
@@ -496,7 +438,7 @@ function CustomerForm(props) {
                         className=" f-14  br_b-2 rounded-0 mt-2 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
                         placeholder="Address"
-                        name="customeraddress"
+                        name="supllieraddress"
                         onChange={(e) => handleChange(e)}
                       ></Form.Control>
                       <FormGroup className=" f-14 d-flex justify-space-between ">
@@ -523,8 +465,8 @@ function CustomerForm(props) {
                           onChange={(e) => handleChange(e)}
                           name="country"
                         >
-                          <option value={2}>UAE</option>
-                          <option value={1}>INDIA</option>
+                          <option value="1">India</option>
+                          <option value="2">UAE</option>
                         </Form.Select>
                         <Form.Control
                           className=" f-14  br_b-2 rounded-0 mt-2 ms-2 inputfocus"
@@ -536,71 +478,74 @@ function CustomerForm(props) {
                       </FormGroup>
                     </FormGroup>
                   </div>
-                  <div
-                    className={`mb-1 ${categoryError ? "has-error" : ""}`}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <FormLabel className=" txt-ht_blue  w-100 mt-2 f-16">
-                      Customer Category{" "}
-                      <span className="f-16" style={{ color: "red" }}>
-                        *
-                      </span>
+                  <FormGroup>
+                    <FormLabel className=" txt-ht_blue w-100 mt-2 f-16">
+                      Vat Treatment
                       <Form.Select
                         aria-label="Default select example"
                         type="text"
-                        placeholder="Customer Name"
-                        className={`f-14 w-100 h-10 br_b-2 pt-1 ps-3  rounded-0 inputfocus ${
-                          categoryError ? "has-error" : ""
-                        }`}
+                        placeholder=""
+                        className="f-14 w-100 h-10 br_b-2 pt-1 ps-3 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f" }}
-                        onChange={(e) => {
-                          onSelectCategory(e);
-                          setCategoryError(false);
-                        }}
-                        value={category}
-                        name="category"
+                        defaultValue="Unregistered"
+                        onChange={(item) => handleVatreatment(item)}
+                        name="vattreatment"
                       >
-                        <option>Select the Category</option>
-                        {props.master.customerCategories.map((categoryitem) => (
-                          <option
-                            key={categoryitem.id}
-                            id={categoryitem.id}
-                            value={categoryitem.id}
-                          >
-                            {categoryitem.value}
-                          </option>
-                        ))}
+                        <option value="true">Registered</option>
+                        <option value="false">Unregistered</option>
                       </Form.Select>
                     </FormLabel>
-                  </div>
-                  {categoryError && (
-                    <p className="f-14" style={{ color: "red" }}>
-                      Category is Required
-                    </p>
-                  )}
 
-                  <FormLabel className=" b txt-ht_blue w-100 f-14">
-                    Title
-                    <FormSelect
-                      className="f-14   br_b-2 rounded-0 inputfocus"
-                      onChange={(e) => handleChange(e)}
-                      name="title"
-                      style={{ border: "2px dotted #25316f", height: "2.5rem" }}
+                    <div
+                      className={`mb-3 ${vatError ? "has-error" : ""}`}
+                      style={{ display: "flex", alignItems: "center" }}
                     >
-                      <option className="f-16" value="Mr">
-                        Mr
-                      </option>
-                      <option className="f-16" value="Mrs">
-                        Mrs
-                      </option>
-                      <option className="f-16" value="Miss">
-                        Miss
-                      </option>
-                    </FormSelect>
-                  </FormLabel>
+                      <FormLabel className=" b txt-ht_blue h-30 w-100 f-14">
+                        TRN NO
+                        <FormControl
+                          className={`f-14 br_b-2 rounded-0 inputfocus ${
+                            vatError ? "has-error" : ""
+                          }`}
+                          style={{
+                            border: "2px dotted #25316f",
+                            height: "2rem",
+                          }}
+                          onChange={(e) => {
+                            handleChange(e);
+                            setVatError(false);
+                          }}
+                          name="trnnumber"
+                        ></FormControl>
+                      </FormLabel>
+                      <div>
+                        {" "}
+                        {vatError && (
+                          <span style={{ color: "red" }}>Required</span>
+                        )}
+                      </div>
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <FormLabel className=" b txt-ht_blue w-100 f-14">
+                      Title
+                      <FormSelect
+                        className="f-14   br_b-2 rounded-0 inputfocus"
+                        onChange={(e) => handleChange(e)}
+                        name="title"
+                        value={title}
+                        style={{
+                          border: "2px dotted #25316f",
+                          height: "2.5rem",
+                        }}
+                      >
+                        <option value="Mr">Mr.</option>
+                        <option value="Mrs">Mrs.</option>
+                        <option value="Miss">Miss.</option>
+                      </FormSelect>
+                    </FormLabel>
+                  </FormGroup>
                 </Col>
 
-                {/* Second column for job details like that  */}
                 <Col
                   xs={5}
                   sm={5}
@@ -625,28 +570,33 @@ function CustomerForm(props) {
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Phone
                       <FormControl
-                        type="number"
                         className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f", height: "2rem" }}
                         name="phone"
                         onChange={(e) => handleChange(e)}
                       ></FormControl>
                     </FormLabel>
+
                     <div
                       className={`mb-3 ${mobileError ? "has-error" : ""}`}
                       style={{ alignItems: "center" }}
                     >
-                      <FormLabel className=" b txt-ht_blue w-100 f-14">
-                        Mobile{" "}
-                        <span className="f-16" style={{ color: "red" }}>
+                      <FormLabel className="b txt-ht_blue w-100 f-14">
+                        Mobile
+                        <span className="f-16 ms-2" style={{ color: "red" }}>
                           *
                         </span>
                         <div key={`inline-radio`} className="mb-1">
                           <FormControl
                             placeholder="Enter phone number"
                             value={mobile}
-                            onChange={(value) => {
-                              setMobile(value.target.value);
+                            onChange={(event) => {
+                              const inputValue = event.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+
+                              setMobile(inputValue);
                               setMobileError(false);
                             }}
                             className={`inputfocus f-14 br_b-2 rounded-0 ${
@@ -659,22 +609,23 @@ function CustomerForm(props) {
                               height: "2rem",
                             }}
                             name="mobile"
-                            limitMaxLength
-                            type="number"
+                            type="tel"
+                            maxLength={13}
                           />
                         </div>
                       </FormLabel>
-                      {mobileError && (
-                        <span className="" style={{ color: "red" }}>
-                          Required
-                        </span>
+                      {Errormessage && !mobile && (
+                        <p className="error f-14" style={{ color: "red" }}>
+                          Mobile Number is required
+                        </p>
                       )}
                     </div>
+
+                 
 
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Email
                       <FormControl
-                        type="email"
                         className="inputfocus f-14   br_b-2 rounded-0 inputfocus"
                         style={{ border: "2px dotted #25316f", height: "2rem" }}
                         name="email"
@@ -692,57 +643,6 @@ function CustomerForm(props) {
                       ></FormControl>
                     </FormLabel>
                   </FormGroup>
-
-                  <FormGroup>
-                    <FormLabel className=" txt-ht_blue w-100 mt-2 f-16">
-                      Vat Treatment
-                      <Form.Select
-                        aria-label="Default select example"
-                        type="text"
-                        placeholder=""
-                        className="f-14 w-100 h-10 br_b-2 pt-1 ps-3 rounded-0 inputfocus"
-                        style={{ border: "2px dotted #25316f" }}
-                        defaultValue="Unregistered"
-                        value={vattreatment}
-                        onChange={(e) => handleVatreatment(e)} // Include this line to handle the change
-                        name="vattreatment"
-                      >
-                        <option value="true">Registered</option>
-                        <option value="false">Unregistered</option>
-                      </Form.Select>
-                    </FormLabel>
-
-                    <div
-                      className={`mb-3 ${vatError ? "has-error" : ""}`}
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      {vattreatment === true ? (
-                        <FormLabel className=" b txt-ht_blue w-100 f-14">
-                          TRN NO
-                          <FormControl
-                            className={`f-14 br_b-2 rounded-0 inputfocus ${
-                              vatError ? "has-error" : ""
-                            }`}
-                            style={{
-                              border: "2px dotted #25316f",
-                              height: "2rem",
-                            }}
-                            onChange={(e) => {
-                              handleChange(e);
-                              setVatError(false);
-                            }}
-                            name="trnnumber"
-                          ></FormControl>
-                        </FormLabel>
-                      ) : null}
-                      <div>
-                        {" "}
-                        {vatError && (
-                          <span style={{ color: "red" }}>Required</span>
-                        )}
-                      </div>
-                    </div>
-                  </FormGroup>
                 </Col>
               </Row>
             </Col>
@@ -757,37 +657,37 @@ function CustomerForm(props) {
                   as="textarea"
                   placeholder="Leave a comment here"
                   style={{ height: "100px" }}
+                  disabled
                 />
-                <p
-                  className="fw-bold"
-                  onClick={fileattach}
-                  style={{ color: "#25316f" }}
+                      {Errormessagess &&  (
+            <Alert className="mt-5" variant="danger">{Errormessagess.message}</Alert>
+           
+          )}
+        
+
+                {/* <Button
+                  className=" f-14 bg-blue b-none f-14 text-uppercase rounded-1"
+                  style={{
+                    height: "30px",
+                    width: "max-content",
+                    backgroundColor: "#25316f",
+                    marginTop: 25,
+                  }}
+                  type="button"
                 >
-                  <RiAttachment2 /> Attach File
-                </p>
-                {/* Hidden file input element */}
-                <input
-                  type="file"
-                  id="fileInput"
-                  name="inputfile"
-                  style={{ display: "none" }}
-                  onChange={(e) => handleFileChange(e)}
-                />
-                {attachedFileName && (
-                  <p style={{ color: "#25316f" }}>upload: {attachedFileName}</p>
-                )}
-              </FormGroup>
+                  Save
+                </Button> */}
+
+       
+          
+                </FormGroup>
+           
             </Col>
 
-            {/*addreess modal for the extra address */}
-            {address && (
-              <AddressForm
-                className="inputfocus"
-                addresstoggle={addressmodal}
-              />
-            )}
+            {/*bamk modal for the bank details */}
+
             {bankdetails && (
-              <Bankform
+              <Vendorform
                 banktoggle={bankmodal}
                 formData={formData}
                 handleChange={handleChange}
@@ -796,6 +696,39 @@ function CustomerForm(props) {
             )}
           </Row>
         </Container>
+        <Modal show={showAlertModal} onHide={() => setShowAlertModal(false) }>
+        <Modal.Header>
+          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {success === "Success" ? (
+            <>
+              <div className="d-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
+            </>
+          ) : (
+            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+          )}
+        </Modal.Body>
+      </Modal>
       </div>
     </>
   );
@@ -804,6 +737,8 @@ const mapsToProps = (state) => {
   return {
     master: state.masterData,
     loggedInUser: state.users,
+    customers: state.customers,
   };
 };
-export default connect(mapsToProps)(CustomerForm);
+
+export default connect(mapsToProps)(VendorForm);
