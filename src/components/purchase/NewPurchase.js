@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -7,24 +8,36 @@ import {
   Form,
   ListGroup,
   ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalTitle,
   Row,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector, connect } from "react-redux";
-import { SEARCH_CUSTOMER_API_CALL, CREATE_PURCHASE_ORDER_API_CALL } from "../../utils/Constant";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, connect } from "react-redux";
+import {
+  SEARCH_CUSTOMER_API_CALL,
+  CREATE_PURCHASE_ORDER_API_CALL,
+} from "../../utils/Constant";
 import PurchaseForm from "./PurchaseForm";
 
 const NewPurchase = (props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //use State
   const [supplierName, setSupplierName] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
   const [showInput, setShowInput] = useState(true);
-
   const [purchaseDate, setPurchaseDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");
+  const [allItems, setAllItems] = useState([]);
+  const [globalDiscountState, setGlobalDiscount] = useState(0);
+  const [description, setDescription] = useState("");
+  const [vatChecked, setVatChecked] = useState(false);
+  const [error, setError] = useState("");
 
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -34,8 +47,10 @@ const NewPurchase = (props) => {
     { label: "Net 30", value: 30 },
     { label: "Net 60", value: 60 },
     { label: "Net 90", value: 90 },
-  ]; 
+  ];
   const [selectedNet, setSelectedNet] = useState(0);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState("");
 
   //Handlers
 
@@ -88,14 +103,47 @@ const NewPurchase = (props) => {
     }
   };
 
-  const handleSubmit = () => {
+  const productList = (item) => {
+    console.log("Item", item);
+    setAllItems(item);
+  };
 
-    // console.log("Purchase Date: ", purchaseDate);
-    // console.log("Due Date: ", dueDate);
-    // console.log("Reference Number: ", refNumber);
-    // console.log("Supplier ID: ", selectedSupplier.id);
-    // console.log("Net:", selectedNet);
-    // console.log("Created By", props.loggedInUser.loginId);
+  const globalDiscount = (value) => {
+    setGlobalDiscount(value);
+  };
+
+  const overallDescription = (value) => {
+    setDescription(value);
+  };
+
+  const globalVatChecked = (value) => {
+    setVatChecked(value);
+  };
+
+  const handleSubmit = () => {
+    const refNumError = "Please enter the REF Number";
+    const supplierError = "Please select or add supplier";
+    setError("");
+    if (refNumber.length === 0) {
+      setError(refNumError);
+      return;
+    }
+    if (supplierName.length === 0) {
+      setError(supplierError);
+      return;
+    }
+
+    const tempArray = allItems.map((item) => {
+      return {
+        productId: item.id,
+        description: item.description,
+        quantity: item.qty,
+        unitPrice: item.price,
+        discountPercentage: item.discount,
+        vatPercentage: item.vat,
+        unitPriceTaxInclusive: vatChecked,
+      };
+    });
 
     const requestData = {
       createdBy: props.loggedInUser.loginId,
@@ -104,28 +152,53 @@ const NewPurchase = (props) => {
       dueDate: dueDate,
       net: selectedNet,
       referenceNumber: refNumber,
-      memo: "",
-      globalDiscount: "",
-      products: [
-        {
-          productId: "",
-          quantity: "",
-          unitPrice: "",
-          description: "",
-          discountPercentage: "",
-          vatPercentage: "",
-          unitPriceTaxInclusive: "",
-        },
-      ],
+      memo: description,
+      globalDiscount: globalDiscountState,
+      products: tempArray,
     };
 
-    dispatch({type: CREATE_PURCHASE_ORDER_API_CALL, data: requestData})
+    dispatch({ type: CREATE_PURCHASE_ORDER_API_CALL, data: requestData });
+
+    setShowAlertModal(true);
+    setSuccess("Success");
+
+    setTimeout(() => {
+      window.location.reload(true);
+      setShowAlertModal(false);
+      setSuccess("");
+      navigate("/Invoice");
+    }, 500);
   };
 
   return (
     <>
       <div style={{ paddingRight: 50, paddingLeft: 50 }}>
-        <Container fluid className="mt-3">
+        <Container fluid className="mt-2">
+          <Row className="mt-3">
+            <Col className="d-flex justify-content-end">
+              <div>
+                <Link to="/Purchase">
+                  <Button
+                    className="fw-bolder"
+                    style={{
+                      backgroundColor: "white",
+                      borderColor: "#1d1d5e",
+                      color: "#1d1d5e",
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Link>
+                <Button
+                  className="ms-3 fw-bolder"
+                  style={{ backgroundColor: "#1d1d5e", borderColor: "#1d1d5e" }}
+                  onClick={handleSubmit}
+                >
+                  Save
+                </Button>
+              </div>
+            </Col>
+          </Row>
 
           <h1
             className="d-flex justify-content-center fs-6 fw-bolder"
@@ -158,7 +231,7 @@ const NewPurchase = (props) => {
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
-                      <Card className="" style={{ width: 250 }}>
+                      <Card style={{ width: 250 }}>
                         <ListGroup
                           style={{ maxHeight: "15rem", overflowY: "scroll" }}
                         >
@@ -225,6 +298,11 @@ const NewPurchase = (props) => {
                         )}
                     </div>
                   )}
+                  {error && !supplierName && (
+                    <p style={{ color: "red", fontSize: 12 }}>
+                      Please enter the Supplier name.
+                    </p>
+                  )}
                 </Form.Group>
               </Col>
 
@@ -264,11 +342,11 @@ const NewPurchase = (props) => {
           </>
 
           <>
-            <Row className="mt-2 mb-3">
+            <Row className="mt-3 mb-3">
               <Col className="col-8 d-flex justify-content-start">
                 <Form.Group>
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
-                    Invoice Date
+                    Purchase Date
                   </Form.Label>
                   <Form.Control
                     className="inputfocus rounded-0"
@@ -276,7 +354,7 @@ const NewPurchase = (props) => {
                     type="date"
                     value={purchaseDate}
                     onChange={(e) => setPurchaseDate(e.target.value)}
-                    readOnly
+                    // readOnly
                   />
                 </Form.Group>
 
@@ -296,7 +374,7 @@ const NewPurchase = (props) => {
 
                 <Form.Group className="ms-2">
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
-                    Net *
+                    Net
                   </Form.Label>
                   <Form.Select
                     className="inputfocus rounded-0"
@@ -304,7 +382,11 @@ const NewPurchase = (props) => {
                     onChange={handleNetChange}
                   >
                     {netOptions.map((item, index) => (
-                      <option key={index} style={{ fontSize: 12, height: 20 }} value={item.value}>
+                      <option
+                        key={index}
+                        style={{ fontSize: 12, height: 20 }}
+                        value={item.value}
+                      >
                         {item.label}
                       </option>
                     ))}
@@ -313,7 +395,7 @@ const NewPurchase = (props) => {
 
                 <Form.Group className="ms-2">
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
-                    Ref Number
+                    Ref Number <span style={{ color: "red" }}>*</span>
                   </Form.Label>
                   <Form.Control
                     className="inputfocus rounded-0"
@@ -321,13 +403,57 @@ const NewPurchase = (props) => {
                     value={refNumber}
                     onChange={(e) => setRefNumber(e.target.value)}
                   />
+                  {error && !refNumber && (
+                    <p style={{ color: "red", fontSize: 12 }}>
+                      Please enter REF Number
+                    </p>
+                  )}
                 </Form.Group>
               </Col>
             </Row>
           </>
         </Container>
       </div>
-      <PurchaseForm />
+      <PurchaseForm
+        allItems={productList}
+        globalDiscountValue={globalDiscount}
+        description={overallDescription}
+        vatChecked={globalVatChecked}
+      />
+
+      <>
+        <Modal show={showAlertModal}>
+          <ModalHeader>
+            <ModalTitle>Purchase Data</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            {success === "Success" ? (
+              <div className="d-flex align-items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon icon-tabler icon-tabler-circle-check"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="#3bb54a"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginLeft: "31%" }}
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9 12l2 2l4 -4" />
+              </svg>
+              <p className="mb-0 ml-2">Data Saved Successfully</p>
+            </div>
+            ) : (
+              <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+            )}
+          </ModalBody>
+        </Modal>
+      </>
     </>
   );
 };

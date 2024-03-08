@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -7,19 +8,25 @@ import {
   Form,
   ListGroup,
   ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalTitle,
   Row,
 } from "react-bootstrap";
 import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector, connect } from "react-redux";
+import { useDispatch, connect } from "react-redux";
 import {
-  GET_ALL_PRODUCTS_API_CALL,
-  GET_ALL_CUSTOMERS_API_CALL,
+  // GET_ALL_PRODUCTS_API_CALL,
+  // GET_ALL_CUSTOMERS_API_CALL,
   SEARCH_CUSTOMER_API_CALL,
+  CREATE_INVOICE_API_CALL,
 } from "../../utils/Constant";
 
 const NewInvoice = (props) => {
   const dispatch = useDispatch();
+
   //use State
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -40,10 +47,12 @@ const NewInvoice = (props) => {
   const [showInput, setShowInput] = useState(true);
 
   const [allItems, setAllItems] = useState([]);
-
-  const productList = (item) => {
-    setAllItems(item);
-  };
+  const [globalDiscountState, setGlobalDiscountState] = useState(0);
+  const [description, setDescription] = useState("");
+  const [vatChecked, setVatChecked] = useState(false);
+  const [error, setError] = useState("");
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState("");
 
   //Handlers
   const handletoggleDraft = () => {
@@ -55,8 +64,8 @@ const NewInvoice = (props) => {
     setInvoiceDate(currentDate);
     calculateDueDate(currentDate, selectedNet);
 
-    dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
-    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
+    // dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
+    // dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
   }, []);
 
   const calculateDueDate = (date, net) => {
@@ -101,6 +110,64 @@ const NewInvoice = (props) => {
     }
   };
 
+  const productList = (item) => {
+    setAllItems(item);
+  };
+
+  const globalDiscount = (value) => {
+    setGlobalDiscountState(value);
+  };
+
+  const overallDescription = (value) => {
+    setDescription(value);
+  };
+
+  const globalVatChecked = (value) => {
+    setVatChecked(value);
+  };
+
+  const handleSubmit = () => {
+
+    const customerError = "Please enter customer name";
+    setError("");
+    if (customerName.length === 0) {
+      setError(customerError);
+      return;
+    }
+
+    const tempArray = allItems.map((item) => {
+      return {
+        productId: item.id,
+        description: item.description,
+        quantity: item.qty,
+        unitPrice: item.price,
+        discountPercentage: item.discount,
+        vatPercentage: item.vat,
+        unitPriceTaxInclusive: vatChecked,
+      };
+    });
+
+    const requestData = {
+      createdBy: props.loginUsers.loginId,
+      customerId: selectedCustomer.id,
+      invoiceDate: invoiceDate,
+      dueDate: dueDate,
+      net: selectedNet,
+      referenceNumber: "Nil",
+      memo: description,
+      globalDiscount: globalDiscountState,
+      products: tempArray,
+    };
+
+    dispatch({ type: CREATE_INVOICE_API_CALL, data: requestData });
+    setShowAlertModal(true);
+    setSuccess("Success");
+
+    setTimeout(() => {
+      window.location.reload(true)
+    }, 500);
+  };
+
   return (
     <>
       <Container fluid className="mt-2">
@@ -138,7 +205,7 @@ const NewInvoice = (props) => {
                     Close
                   </Button>
                 </Link>
-                <Button className="ms-3 btn-save">
+                <Button className="ms-3 btn-save" onClick={handleSubmit}>
                   {isDraft ? "Save Draft" : "Save"}
                 </Button>
               </div>
@@ -177,27 +244,6 @@ const NewInvoice = (props) => {
                     <small style={{ fontSize: 12 }}>
                       Near Executive Suites, Abu Dhabi
                     </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      +971 502226710, +971 542796562
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>+971 25634643</small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      Email : H&Tholidays@gmail.com
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      Website :{" "}
-                      <a
-                        target="blank"
-                        href="http://www.handtholidays.ae/"
-                        style={{ textDecoration: "none", color: "#1d1d5e" }}
-                      >
-                        www.htholidays.ae
-                      </a>
-                    </small>
                   </p>
                 </div>
               </Col>
@@ -223,7 +269,7 @@ const NewInvoice = (props) => {
                   {showInput &&
                     props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
-                      <Card className="" style={{ width: 250 }}>
+                      <Card>
                         <ListGroup
                           style={{ maxHeight: "15rem", overflowY: "scroll" }}
                         >
@@ -246,7 +292,7 @@ const NewInvoice = (props) => {
                   {selectedCustomer && (
                     <div
                       className="p-2 rounded"
-                      style={{ backgroundColor: "#f0f0f0", width: 250 }}
+                      style={{ backgroundColor: "#f0f0f0", width:300 }}
                     >
                       <h5
                         className="mt-1"
@@ -267,25 +313,28 @@ const NewInvoice = (props) => {
                             >
                               {selectedCustomer.addresses[0].addressLine1},
                               <br />
-                              <span className="mt-1">
+                              <small className="mt-1">
                                 {selectedCustomer.addresses[0].addressLine2},
-                              </span>
+                              </small>
                               <br />
-                              <span>{selectedCustomer.addresses[0].city},</span>
-                              <span className="ms-2">
+                              <small>{selectedCustomer.addresses[0].city},</small>
+                              <small className="ms-2">
                                 {selectedCustomer.addresses[0].state}
-                              </span>
+                              </small>
                               <br />
-                              <span>
+                              <small>
                                 {selectedCustomer.addresses[0].countryName},
-                              </span>
-                              <span className="ms-2">
+                              </small>
+                              <small className="ms-2">
                                 {selectedCustomer.addresses[0].zipcode}.
-                              </span>
+                              </small>
                             </p>
                           </div>
                         )}
                     </div>
+                  )}
+                  {error && !customerName && (
+                    <p style={{ color: "red", fontSize:12 }}>Please enter the customer name.</p>
                   )}
                 </Form.Group>
               </Col>
@@ -298,7 +347,7 @@ const NewInvoice = (props) => {
           </>
 
           <>
-            <Row className="mt-2 mb-3">
+            <Row className="mt-3 mb-3">
               <Col className="col-7 d-flex justify-content-start">
                 <Form.Group>
                   <Form.Label style={{ fontSize: 14, fontWeight: "500" }}>
@@ -322,7 +371,7 @@ const NewInvoice = (props) => {
                     style={{ height: "30px", fontSize: 14 }}
                     type="date"
                     value={dueDate}
-                    onChange={(e)=>setDueDate(e.target.value)}
+                    onChange={(e) => setDueDate(e.target.value)}
                     readOnly
                   />
                 </Form.Group>
@@ -337,7 +386,11 @@ const NewInvoice = (props) => {
                     onChange={handleNetChange}
                   >
                     {netOptions.map((net, index) => (
-                      <option key={index} value={net.value} style={{ fontSize: 12, height: 20 }}>
+                      <option
+                        key={index}
+                        value={net.value}
+                        style={{ fontSize: 12, height: 20 }}
+                      >
                         {net.label}
                       </option>
                     ))}
@@ -360,7 +413,46 @@ const NewInvoice = (props) => {
           </>
         </div>
       </Container>
-      <InvoiceForm items={productList} />
+      <InvoiceForm
+        allItems={productList}
+        globalDiscount={globalDiscount}
+        memo={overallDescription}
+        vatChecked={globalVatChecked}
+      />
+
+<>
+        <Modal show={showAlertModal}>
+          <ModalHeader>
+            <ModalTitle>Purchase Data</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            {success === "Success" ? (
+              <div className="d-flex align-items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon icon-tabler icon-tabler-circle-check"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="#3bb54a"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginLeft: "31%" }}
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9 12l2 2l4 -4" />
+              </svg>
+              <p className="mb-0 ml-2">Data Saved Successfully</p>
+            </div>
+            ) : (
+              <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+            )}
+          </ModalBody>
+        </Modal>
+      </>
     </>
   );
 };

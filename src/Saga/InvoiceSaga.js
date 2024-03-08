@@ -1,6 +1,6 @@
 import { takeEvery, call, put, take } from "redux-saga/effects";
-import { GET_ALL_INVOICE_API_CALL, GET_ALL_INVOICE_API_RESPONSE } from "../utils/Constant";
-import { GetAllInvoiceRequest } from "../Reducer/Action/InvoiceAction";
+import { GET_ALL_INVOICE_API_CALL, GET_ALL_INVOICE_API_RESPONSE, CREATE_INVOICE_API_RESPONSE, CREATE_INVOICE_API_CALL } from "../utils/Constant";
+import { GetAllInvoiceRequest, CreateInvoice } from "../Reducer/Action/InvoiceAction";
 
 
 function* getAllInvoiceApiCall() {
@@ -18,8 +18,19 @@ function* getAllInvoiceApiCall() {
     }
 }
 
+function* createInvoice(data) {
+    const response = yield call(CreateInvoice, data.data);
+    if(response.status === 200) {
+        if (response.data.code === 200){
+            yield put({type:CREATE_INVOICE_API_RESPONSE})
+        }
+    }
+       
+}
+
 function* InvoiceSaga() {
     yield takeEvery(GET_ALL_INVOICE_API_CALL, getAllInvoiceApiCall)
+    yield takeEvery(CREATE_INVOICE_API_CALL, createInvoice)
 }
 
 export default InvoiceSaga;

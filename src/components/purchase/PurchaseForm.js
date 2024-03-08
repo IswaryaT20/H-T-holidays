@@ -52,6 +52,8 @@ const PurchaseForm = (props) => {
   const [rowCount, setRowCount] = useState(1);
   const [vatChecked, setVatChecked] = useState(false);
 
+  const [description, setDescription] = useState("");
+
   const [items, setItems] = useState([]);
 
   //Handlers
@@ -100,7 +102,9 @@ const PurchaseForm = (props) => {
     setGlobalDiscountValue(discount);
   };
 
-  const itemChanges = (allItems, isDeleted = false) => {
+  const itemChanges = (allItems) => {
+    props.allItems(allItems);
+    props.vatChecked(vatChecked);
     setItems(allItems);
 
     let findTotalAmount;
@@ -225,12 +229,15 @@ const PurchaseForm = (props) => {
     }
   };
 
+  props.description(description);
+  props.globalDiscountValue(globalDiscountValue);
+
   return (
     <>
       <Container fluid className="mt-1">
         {/* Main Table */}
         <div style={{ paddingLeft: 50, paddingRight: 50 }}>
-          <Table hover size="sm" responsive>
+          <Table hover size="sm" responsive bordered>
             <thead style={{ padding: "0.75rem" }}>
               <tr>
                 {tableHeader.map((header, index) => (
@@ -293,12 +300,14 @@ const PurchaseForm = (props) => {
           </Button>
         </div>
 
-        <Row className="mt-3" style={{ paddingLeft: 50 }}>
+        <Row className="mt-3 mb-5" style={{ paddingLeft: 50 }}>
           <Col className="col-8">
             <Form.Control
               as="textarea"
               row={4}
               placeholder="Description"
+              value={description}
+              onChange={(e)=> setDescription(e.target.value)}
               style={{ width: "400px", height: "100px" }}
             />
           </Col>
@@ -410,34 +419,6 @@ const PurchaseForm = (props) => {
               </Table>
             </div>
           </Col>
-        </Row>
-
-        <Row className="me-5">
-        <Col></Col>
-          <Col xxl={10} lg={10} className="d-flex justify-content-end me-4 mb-4">
-            <div>
-              <Link to="/Purchase">
-                <Button
-                  className="fw-bolder"
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: "#1d1d5e",
-                    color: "#1d1d5e",
-                  }}
-                >
-                  Close
-                </Button>
-              </Link>
-              <Button
-                className="ms-3 fw-bolder"
-                style={{ backgroundColor: "#1d1d5e", borderColor: "#1d1d5e" }}
-                // onClick={handleSubmit}
-              >
-                Save
-              </Button>
-            </div>
-          </Col>
-          
         </Row>
       </Container>
     </>

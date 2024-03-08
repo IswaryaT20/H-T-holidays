@@ -5,14 +5,15 @@ const INITIAL_STATE = {
     businessTypes: [],
     customerCategories: [],
     userRoles: [],
-    handtCategories: []
+    handtCategories: [],
+    paymentTypes: []
 }
 
 const MasterReducer = (state = INITIAL_STATE, action) => {
 
     switch(action.type) {
         case MASTER_API_RESPONSE:
-            return {...state, addressTypes: action.payload.addressTypes, businessTypes: action.payload.businessTypes, customerCategories: action.payload.customerCategories, userRoles: action.payload.userRoles, handtCategories: action.payload.handtCategories }
+            return {...state, addressTypes: action.payload.addressTypes, businessTypes: action.payload.businessTypes, customerCategories: action.payload.customerCategories, userRoles: action.payload.userRoles, handtCategories: action.payload.handtCategories, paymentTypes: action.payload.paymentTypes }
         }
     return state
 }   
