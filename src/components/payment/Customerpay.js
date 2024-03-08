@@ -12,7 +12,10 @@ import {
   FormCheck,
   FormSelect,
   Button,
+  Alert,
+  Modal,
 } from "react-bootstrap";
+import { Typeahead } from "react-bootstrap-typeahead";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -22,20 +25,66 @@ import { MdPayments } from "react-icons/md";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
 import Receipt from "./Receipt";
+import axios from "axios";
+import { MASTER_API_CALL } from "../../utils/Constant";
+import { Axios } from "axios";
 
 function Customerpay(props) {
+  const [masterCategory, setMasterCategory] = useState("");
+  const [masterCategoryError, setMasterCategoryError] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [paymentType, setPaymenttype] = useState("");
+  const [Referenceno, setReferenceno] = useState("");
+  const [chequeNumber, setchequeNumber] = useState("");
+  const [Chequedate, setChequedate] = useState("");
+  const [collectionDate, setCollectionDate] = useState("");
   const [showInput, setShowInput] = useState(true);
-  const [switchpayment, setswitchpayment] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [masterPaytype, setMasterpaytype] = useState([]);
   const [chequerefnum, setChequerefnum] = useState(false); // Define chequerefnum state
+  const [Paymentsummary, setPaymentsummary] = useState("");
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState();
+  const [errormessage, setErrormessage] = useState("");
+  const [selectedPaymentTypeId, setSelectedPaymentTypeId] = useState("");
+  useEffect(() => {
+    if (showAlertModal) {
+      const timeoutId = setTimeout(() => {
+        setShowAlertModal(false);
+        // window.location.reload();
+      }, 500);
+  
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showAlertModal]);
+
 
   const dispatch = useDispatch();
 
   const handleSearchChange = (e) => {
     if (e.target.name === "customernamesearch") {
       setCustomerName(e.target.value);
+    }
+    if (e.target.name === "amount") {
+      setAmount(e.target.value);
+    }
+    if (e.target.name === "paymenttype") {
+      setPaymenttype(e.target.value);
+    }
+    if (e.target.name === "referenceno") {
+      setReferenceno(e.target.value);
+    }
+    if (e.target.name === "chequedate") {
+      setChequedate(e.target.value);
+    }
+    if (e.target.name === "collectiondate") {
+      setCollectionDate(e.target.value);
+      console.log("payment", e.target.value);
+    }
+    if (e.target.name === "chequeNumber") {
+      setchequeNumber(e.target.value);
     }
   };
 
@@ -59,25 +108,83 @@ function Customerpay(props) {
     customerSelect();
   }, [customerName]);
 
+  useEffect(() => {
+    console.log("the selectedcustomer", selectedCustomer);
+    const selectedcustomerOutstanding = selectedCustomer?.id || 0; // Use optional chaining to handle null
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/payment/getPaymentSummary", {
+        customerId: selectedcustomerOutstanding,
+      })
+      .then((response) => {
+        console.log("the payment summary", response.data.data);
+        setPaymentsummary(response.data.data); 
+
+      })
+      
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [selectedCustomer]);
+
+  useEffect(() => {
+    dispatch({ type: MASTER_API_CALL });
+  }, []);
+  console.log("the master api", props.masterData.paymentTypes);
+  console.log("the master api", selectedPaymentTypeId);
+
   const customerdetails = (item) => {
     setSelectedCustomer(item);
     setShowInput(false);
   };
 
   useEffect(() => {
-    console.log(selectedCustomer);
-  }, [selectedCustomer]);
+    setChequerefnum(selectedPaymentTypeId === "3");
+  }, [selectedPaymentTypeId]);
 
-  const handleSwitchClick = (e) => {
-    e.stopPropagation();
-    setswitchpayment(!switchpayment);
+  const handlereceieve = (e) => {
+    e.preventDefault();
+    setErrormessage("");
+
+    setErrormessage("");
+    if (customerName.length === 0) {
+      setErrormessage("Please enter the supplier name.");
+      return;
+    }
+    if (amount.length === 0) {
+      setErrormessage("Please enter Amount.");
+      return;
+    }
+
+    const customerpayment = {
+      customerId: selectedCustomer.id,
+      createdBy: 3,
+      paymentType: selectedPaymentTypeId,
+      amount: amount,
+      referenceNumber: Referenceno,
+      chequeNumber: chequeNumber,
+      chequeDate: Chequedate,
+      description: null,
+      collectionDate: collectionDate,
+    };
+
+    axios
+      .post(
+        "http://68.178.161.233:8080/handt/v2/payment/addReceipt",
+        customerpayment
+      )
+      .then((response) => console.log(response.data.data))
+
+      .catch((error) => console.log(error));
+
+    console.log("payment", collectionDate);
+    window.location.reload();
+    setSuccess('Success');
+    setShowAlertModal(true);
   };
 
   const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <>
-      <Container fluid className="flex">
+      <Container fluid className="flex mt-5 pt-3">
         <Row className="w-100 ms-0 mt-2 bg-blur" style={{}}>
           <Col lg={2}></Col>
           <Col
@@ -95,7 +202,12 @@ function Customerpay(props) {
               style={{ backgroundColor: "#e4e4e4", height: "50px" }}
             >
               <div className="f-20 text-capitalize">Receipt</div>
-              <button className="p-1 ms-auto f-14 btn-blue">Receive</button>
+              <button
+                className="p-1 ms-auto f-14 btn-blue"
+                onClick={handlereceieve}
+              >
+                Receive
+              </button>
               <Link to="/Receipt">
                 <button className="p-1 f-14 me-2 btn-blue">Cancel</button>
               </Link>
@@ -118,9 +230,13 @@ function Customerpay(props) {
                       className="inputfocus f-14 br_b-2 rounded-0 mt-2"
                       style={{ border: "2px dotted #25316f" }}
                       placeholder="Search Customer Name"
-                      value={customerName}
-                      onChange={(name) => handleSearchChange(name)}
+                      onChange={(e) => handleSearchChange(e)}
                     />
+                  )}
+                  {customerName && !customerName && (
+                    <p variant="danger" className="mt-2">
+                      {customerName}
+                    </p>
                   )}
 
                   {showInput &&
@@ -156,7 +272,10 @@ function Customerpay(props) {
                       className="w-80 p-2"
                       style={{ backgroundColor: "#e4e4e4" }}
                     >
-                      <h3 className="mt-1" onClick={handleSearchChange}>
+                      <h3
+                        className="mt-1"
+                        onClick={() => setShowInput(!showInput)}
+                      >
                         {selectedCustomer.name}
                       </h3>
                       {selectedCustomer.addresses &&
@@ -176,6 +295,8 @@ function Customerpay(props) {
                                 flex: "flex-wrap",
                               }}
                             >
+                              {/* {selectedCustomer.id},
+                              <br /> */}
                               {selectedCustomer.addresses[0].addressLine1},
                               <br />
                               <span className="mt-1">
@@ -205,9 +326,16 @@ function Customerpay(props) {
 
               <Col className="font-large f-20 text-end text-capitalize">
                 <p className="d-flex flex-column fs-4 mt-2">
-                  Outstanding Amount
-                  <span className="f-18 mt-2"> 0.00 AED</span>
+                  Outstanding Amount 
+                  {/* {Paymentsummary &&
+                    Object.values(Paymentsummary).map((value, index) => (
+                      <span key={index} className="f-18 mt-2">
+                        {value.totalOutstanding} AED
+                      </span>
+                    ))} */}
+                    <span  className="f-18 mt-2"> 0.00 AED</span>
                 </p>
+
                 <div className="mt-4">
                   <FormLabel className="d-flex justify-content-end align-items-center f-16 txt-ht_blue fw-bold font-bolder ">
                     <span className="mb-1 me-2">
@@ -256,94 +384,123 @@ function Customerpay(props) {
                     </span>
                     Receipt details
                   </FormLabel>
-                  <FormCheck
+                  {/* <FormCheck
                     type="switch"
                     className="fs-4 ms-3 mt-1"
                     onClick={handleSwitchClick}
-                  />
+                  /> */}
                 </FormGroup>
               </div>
-              {switchpayment ? (
+              {/* {switchpayment ? ( */}
+              <div className="p-1">
+                <FormGroup className="d-flex justify-content-around">
+                  <FormLabel>
+                    Payment Type *
+                    <FormSelect
+                      className="inputfocus w-100"
+                      name="paymenttype"
+                      style={{ flex: 3, marginRight: "1px" }}
+                      onChange={(event) => {
+                        const selectedId = event.target.value;
+                        setMasterCategory(selectedId);
+                        setMasterCategoryError(false);
+                        setSelectedPaymentTypeId(selectedId);
+
+                        // Set chequerefnum based on the selected value
+                        setChequerefnum(selectedId === "3"); // Assuming '3' is the value for "Cheque"
+                        console.log("Selected Payment Type ID:", selectedId);
+                        console.log("Selected chequerefnum", chequerefnum);
+                      }}
+                      placeholder="Select Payment type"
+                    >
+                      <option>Select the Payment Mode</option>
+                      {props.masterData.paymentTypes &&
+                        props.masterData.paymentTypes.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.value}
+                          </option>
+                        ))}
+                    </FormSelect>
+                  </FormLabel>
+
+                  <FormLabel className="ms-4">
+                    Amount
+                    <FormControl
+                      type="number"
+                      className="inputfocus"
+                      value={amount}
+                      name="amount"
+                      style={{
+                        width: 250,
+                      }}
+                      onChange={(e) => handleSearchChange(e)}
+                    ></FormControl>
+                    {errormessage && !amount && (
+                      <p variant="danger" className="mt-2">
+                        {errormessage}
+                      </p>
+                    )}
+                  </FormLabel>
+                  <FormLabel>
+                    Reference No
+                    <FormControl
+                      name="referenceno"
+                      style={{
+                        width: 250,
+                      }}
+                      onChange={(e) => handleSearchChange(e)}
+                    ></FormControl>
+                  </FormLabel>
+                </FormGroup>
                 <div className="p-1">
-                  <FormGroup className="d-flex justify-content-around">
-                    <FormLabel>
-                      Deposited To *
-                      <FormSelect
-                        Set
-                        chequerefnum
-                        based
-                        on
-                        selected
-                        value
-                        style={{
-                          width: 250,
-                        }}
-                      >
-                        <option value="">Bank</option>
-                        <option value="">Cash</option>
-                      </FormSelect>
-                    </FormLabel>
-                    <FormLabel>
-                      Payment Type *
-                      <FormSelect
-                        onChange={(e) =>
-                          setChequerefnum(e.target.value === "Cheque")
-                        }
-                        style={{
-                          width: 250,
-                        }}
-                      >
-                        <option value="">Bank</option>
-                        <option value="">Cash</option>
-                        <option value="Cheque">Cheque</option>
-                        <option value="">Card</option>
-                        <option value="">Upi</option>
-                        <option value="">Others</option>
-                      </FormSelect>
-                    </FormLabel>
-                    <FormLabel className="ms-4">
-                      Amount
-                      <FormControl
-                        type="number"
-                        className="inputfocus"
-                        style={{
-                          width: 250,
-                        }}
-                      ></FormControl>
-                    </FormLabel>
-                  </FormGroup>
-                  <div className="p-1">
-                    <FormGroup className="d-flex ">
-                      {chequerefnum && (
-                        <FormLabel className="ms-2 me-2">
-                          Reference Date
-                          <FormControl
-                            className="inputfocus"
-                            type="date"
-                            defaultValue={currentDate}
-                            min={currentDate}
-                            style={{
-                              width: 250,
-                            }}
-                          ></FormControl>
-                        </FormLabel>
-                      )}
-                      {chequerefnum && (
-                        <FormLabel className="ms-4">
-                          Reference Number
-                          <FormControl
-                            className="inputfocus"
-                            type="text"
-                            style={{
-                              width: 250,
-                            }}
-                          ></FormControl>
-                        </FormLabel>
-                      )}
+                  {chequerefnum && (
+                    <FormGroup className="d-flex justify-content-between ">
+                      <FormLabel className="ms-2">
+                        Cheque Date
+                        <FormControl
+                          className="inputfocus"
+                          type="date"
+                          name="chequedate"
+                          min={currentDate}
+                          style={{
+                            width: 250,
+                          }}
+                          onChange={(e) => handleSearchChange(e)}
+                        ></FormControl>
+                      </FormLabel>
+
+                      <FormLabel className="ms-2 me-2">
+                        Collection Date
+                        <FormControl
+                          className="mt-1 inputfocus"
+                          type="date"
+                          name="collectiondate"
+                          min={currentDate}
+                          value={collectionDate}
+                          onChange={(e) => handleSearchChange(e)}
+                          style={{
+                            width: 250,
+                          }}
+                        ></FormControl>
+                      </FormLabel>
+
+                      <FormLabel className="me-2">
+                        Cheque Number
+                        <FormControl
+                          className="inputfocus"
+                          name="chequeNumber"
+                          type="text"
+                          style={{
+                            width: 250,
+                          }}
+                          onChange={(e) => handleSearchChange(e)}
+                        ></FormControl>
+                      </FormLabel>
                     </FormGroup>
-                  </div>
+                  )}
                 </div>
-              ) : null}
+              </div>
+              {/* ) : null} */}
             </div>
 
             <div className="d-flex flex-column align-item-center text-end pe-3 pt-3">
@@ -357,7 +514,7 @@ function Customerpay(props) {
                     fontSize: "12px",
                   }}
                 >
-                  51,117.60 AED
+                  0.00 AED
                 </span>
               </p>
               <p className="txt-ht_blue f-16 fw-bolder">
@@ -370,7 +527,7 @@ function Customerpay(props) {
                     fontSize: "12px",
                   }}
                 >
-                  51,117.60 AED
+                  0.00 AED
                 </span>
               </p>
               {/* <p className="txt-ht_blue f-16 fw-bolder">
@@ -395,7 +552,7 @@ function Customerpay(props) {
                     fontSize: "12px",
                   }}
                 >
-                  51,117.60 AED
+                  0.00 AED
                 </span>
               </p>
             </div>
@@ -403,6 +560,39 @@ function Customerpay(props) {
           <Col lg={2}></Col>
         </Row>
       </Container>
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+        <Modal.Header>
+          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {success === "Success" ? (
+            <>
+              <div className="d-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
+            </>
+          ) : (
+            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+          )}
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
@@ -410,6 +600,8 @@ function Customerpay(props) {
 const mapsToProps = (state) => {
   return {
     customers: state.customers,
+    masterData: state.masterData,
+    loggedInUser: state.users,
   };
 };
 

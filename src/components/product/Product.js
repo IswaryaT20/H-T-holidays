@@ -111,16 +111,18 @@ const Newproduct = (props) => {
 
     const bodyData = {
       productName: productName,
+      // supplierId: supplierId,
       productType: masterCategory[0].id,
       productDescription: description,
-
+      // supplierName: supplierName,
       createdBy: props.loggedInUser.loginId,
       productUrl: productUrl,
+      masterCategory: masterCategory,
     };
-
+  
     console.log("Body Data:", bodyData);
     dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData });
-
+    window.location.reload();
     setShowModal(false);
 
     setProductType("SERVICES");
@@ -241,7 +243,7 @@ const Newproduct = (props) => {
     );
   }, [props.productsData.products, currentPage]);
   return (
-    <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+    <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:80}}>
       <Row style={{ marginTop: "2%" }}>
         <Col className="col-8" style={{}}>
           <div className="d-flex">

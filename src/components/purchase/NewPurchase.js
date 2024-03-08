@@ -30,7 +30,7 @@ const NewPurchase = (props) => {
   //use State
   const [supplierName, setSupplierName] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [showInput, setShowInput] = useState(true);
+  // const [showInput, setShowInput] = useState(true);
   const [purchaseDate, setPurchaseDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");
@@ -152,7 +152,7 @@ const NewPurchase = (props) => {
 
     const requestData = {
       createdBy: props.loggedInUser.loginId,
-      supplierId: selectedSupplier.id,
+      supplierId: 41,
       invoiceDate: purchaseDate,
       dueDate: dueDate,
       net: selectedNet,
@@ -171,13 +171,12 @@ const NewPurchase = (props) => {
       window.location.reload(true);
       setShowAlertModal(false);
       setSuccess("");
-      navigate("/Invoice");
     }, 500);
   };
 
   return (
     <>
-      <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+      <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:75}}>
         <Container fluid className="mt-2">
           <Row className="mt-3">
             <Col className="d-flex justify-content-end">
@@ -216,11 +215,11 @@ const NewPurchase = (props) => {
             <Row className="w-100 mt-3">
               <Col className="col-4">
                 <Form.Group>
-                  {showInput && (
+
                     <Form.Control
-                      className={`inputfocus text-center rounded-0 ${
-                        selectedSupplier ? "bg-light" : ""
-                      }`}
+                      // className={`inputfocus text-center rounded-0 ${
+                      //   selectedSupplier ? "bg-light" : ""
+                      // }`}
                       type="search"
                       name="supplierNameSearch"
                       placeholder="+ Add Supplier"
@@ -441,25 +440,25 @@ const NewPurchase = (props) => {
           <ModalBody>
             {success === "Success" ? (
               <div className="d-flex align-items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-circle-check"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="#3bb54a"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ marginLeft: "31%" }}
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <circle cx="12" cy="12" r="9" />
-                <path d="M9 12l2 2l4 -4" />
-              </svg>
-              <p className="mb-0 ml-2">Data Saved Successfully</p>
-            </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
             ) : (
               <Alert variant="danger">Data Saved Unsuccessfully</Alert>
             )}

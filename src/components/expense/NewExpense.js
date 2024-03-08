@@ -118,7 +118,7 @@ const NewExpense = () => {
   return (
     <>
       <Container fluid className="mt-1">
-        <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+        <div style={{ paddingRight: 50, paddingLeft: 50,marginTop:75 }}>
           <Row className="mt-3 w-100 p-1 d-flex align-items-center">
             <Col className="fs-6 fw-bolder c-b">Create Direct Expense</Col>
             <Col className="d-flex justify-content-end">

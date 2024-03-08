@@ -21,6 +21,7 @@ import Customerpay from "./components/payment/Customerpay";
 import Payment from "./components/payment/Payment";
 import Receipt from "./components/payment/Receipt";
 import VendorDetails from "./components/vendors/VendorDetails";
+import ProfilLoss from "./components/Report/BusinessOverview/Profitloss"
 
 import {
   KEY_IS_LOGGED_IN,
@@ -35,6 +36,7 @@ import {
 import "./App.css";
 import Employee from "./components/employee/Employee";
 import CustomerDetails from "./components/customer/CustomerDetails";
+import Report from "./components/Report/Report"
 
 function App() {
   const state = useSelector((state) => state);
@@ -87,6 +89,15 @@ function App() {
               <>
                 <Navbar />
                 <Customer />
+              </>
+            }
+          />
+          <Route
+            path="/ProfilLoss"
+            element={
+              <>
+                <Navbar />
+                <ProfilLoss />
               </>
             }
           />
@@ -269,6 +280,14 @@ function App() {
             element={
               <>
                 <Navbar /> <Employee />
+              </>
+            }
+          />
+          <Route
+            path="/Report"
+            element={
+              <>
+                <Navbar /> <Report />
               </>
             }
           />

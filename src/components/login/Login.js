@@ -72,7 +72,7 @@ function Login(props) {
             />
             <FloatingLabel
               id="floatingInput"
-              label="Username"
+              label="Email Id"
               className="mb-2 "
             >
               <Form.Control
@@ -85,7 +85,7 @@ function Login(props) {
               />
               {error && !emailId && (
               <p className="text-start ms-2" style={{ color: "red", fontSize:12 }}>
-                Please enter username
+                Please enter Email Id
               </p>
             )}
             </FloatingLabel>
@@ -104,13 +104,13 @@ function Login(props) {
               />
               {error && !password && (
               <p className="text-start ms-2" style={{ color: "red", fontSize:12 }}>
-                Please enter password
+                Please enter Password
               </p>
             )}
             </FloatingLabel>
             <Form.Check type="checkbox" className="rounded d-flex">
               <Form.Check.Input />
-              <Form.Check className="ms-2 mb-2 f-14">Remember Me</Form.Check>
+              <Form.Check className="ms-2 mb-2 f-14" required>Remember Me</Form.Check>
             </Form.Check>
 
             <div style={{ color: "red" }}>
