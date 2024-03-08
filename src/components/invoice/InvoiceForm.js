@@ -100,7 +100,8 @@ const InvoiceForm = (props) => {
   };
 
   const itemChanges = (allItems) => {
-    props.items(allItems)
+    props.allItems(allItems);
+    props.vatChecked(vatChecked);
     setItems(allItems);
 
     let findTotalAmount;
@@ -225,6 +226,9 @@ const InvoiceForm = (props) => {
     }
     // props.productList(allItems)
   };
+
+  props.globalDiscount(globalDiscountValue);
+  props.memo(description)
 
 
   return (

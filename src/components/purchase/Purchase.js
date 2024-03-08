@@ -16,7 +16,10 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
-import { GET_ALL_PURCHASE_ORDER_API_CALL, RESET_PURCHASE_ORDERS_ARRAY } from "../../utils/Constant";
+import {
+  GET_ALL_PURCHASE_ORDER_API_CALL,
+  RESET_PURCHASE_ORDERS_ARRAY,
+} from "../../utils/Constant";
 
 const Newproduct = (props) => {
   //use states
@@ -26,10 +29,10 @@ const Newproduct = (props) => {
 
   const dispatch = useDispatch();
 
-  console.log(props)
+  console.log(props);
 
   useEffect(() => {
-    dispatch({type: RESET_PURCHASE_ORDERS_ARRAY})
+    dispatch({ type: RESET_PURCHASE_ORDERS_ARRAY });
     dispatch({ type: GET_ALL_PURCHASE_ORDER_API_CALL });
   }, []);
 
@@ -52,7 +55,7 @@ const Newproduct = (props) => {
     "Purchase Date",
     "Due Date",
     "Net Date",
-    "Total Amount",
+    "Total Amount (AED)",
     "Action",
   ];
 
@@ -83,7 +86,9 @@ const Newproduct = (props) => {
                 >
                   Total Amount
                   <br />
-                  <span style={{ color: "black" }}>AED {props.purchaseOrder.totalAmount}</span>
+                  <span style={{ color: "black" }}>
+                    {(props.purchaseOrder.totalAmount).toFixed(2)} AED
+                  </span>
                 </p>
                 <p
                   style={{
@@ -96,7 +101,9 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  <span style={{ color: "black" }}>AED {props.purchaseOrder.unpaidAmount}</span>
+                  <span style={{ color: "black" }}>
+                    {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
+                  </span>
                 </p>
                 <p
                   style={{
@@ -109,7 +116,9 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  <span style={{ color: "black" }}>AED {props.purchaseOrder.paidAmount}</span>
+                  <span style={{ color: "black" }}>
+                    {(props.purchaseOrder.paidAmount).toFixed(2)} AED
+                  </span>
                 </p>
               </div>
             </div>
@@ -137,7 +146,9 @@ const Newproduct = (props) => {
                   }}
                 >
                   Total Amount :{" "}
-                  <span style={{ color: "black" }}>AED {props.purchaseOrder.totalAmount}</span>
+                  <span style={{ color: "black" }}>
+                    {(props.purchaseOrder.totalAmount).toFixed(2)} AED
+                  </span>
                 </p>
                 <p
                   style={{
@@ -147,12 +158,19 @@ const Newproduct = (props) => {
                     fontWeight: "500",
                   }}
                 >
-                  Unpaid : <span style={{ color: "black" }}>AED {props.purchaseOrder.unpaidAmount}</span>
+                  Unpaid :{" "}
+                  <span style={{ color: "black" }}>
+                     {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
+                  </span>
                 </p>
               </div>
               <ProgressBar
                 className="progress"
-                now={parseInt((props.purchaseOrder.paidAmount/props.purchaseOrder.totalAmount) * 100)}
+                now={parseInt(
+                  ((props.purchaseOrder.paidAmount).toFixed(2) /
+                    (props.purchaseOrder.totalAmount.toFixed(2))) *
+                    100
+                )}
                 style={{ width: "93%", marginLeft: "21px" }}
               />
               <div className="d-flex">
@@ -167,7 +185,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  {props.purchaseOrder.paidAmount}
+                  {(props.purchaseOrder.paidAmount).toFixed(2)} AED
                 </p>
                 <div
                   class="square"
@@ -182,7 +200,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  {props.purchaseOrder.unpaidAmount}
+                  {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
                 </p>
               </div>
             </div>
@@ -234,8 +252,8 @@ const Newproduct = (props) => {
               onChange={handleDateChange}
               startDate={startDate}
               endDate={endDate}
+              dateFormat={"yyyy/MM/dd"}
               selectsRange
-              dateFormat={"dd/MM/yyyy"}
               placeholderText="Select Date Range"
               className="rounded me-8 text-start "
             />
@@ -246,7 +264,7 @@ const Newproduct = (props) => {
           style={{ paddingLeft: "1%", paddingRight: "1%" }}
           className="table-container mt-3"
         >
-          <Table striped hover size="sm">
+          <Table striped hover size="sm" bordered>
             <thead>
               <tr>
                 {tableValue.map((tableHeader, index) => (
@@ -260,19 +278,54 @@ const Newproduct = (props) => {
               </tr>
             </thead>
             <tbody>
-              {props.purchaseOrder.listPurchaseOrder.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.purchaseOrderId}</td>
-                  <td>{item.supplier}</td>
-                  <td>{item.invoiceDate}</td>
-                  <td>{item.dueDate}</td>
-                  <td>{item.net}</td>
-                  <td>{item.totalAmount}</td>
-                  <td>
-                    <FiDownload />
+              {props.purchaseOrder.listPurchaseOrder
+                .filter((item) => {
+                  const invoiceDate = new Date(item.invoiceDate);
+                  return (
+                    (search === "" ||
+                      item.supplier
+                        .toLowerCase()
+                        .includes(search.toLowerCase())) &&
+                    (!startDate ||
+                      !endDate ||
+                      (invoiceDate >= startDate && invoiceDate <= endDate))
+                  );
+                })
+                .map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.purchaseOrderId}</td>
+                    <td>{item.supplier}</td>
+                    <td>{item.invoiceDate}</td>
+                    <td>{item.dueDate}</td>
+                    <td>{item.net}</td>
+                    <td>{item.totalAmount}</td>
+                    <td>
+                      <FiDownload style={{ cursor: "pointer" }} />
+                    </td>
+                  </tr>
+                ))}
+              {props.purchaseOrder.listPurchaseOrder.filter((item) => {
+                const invoiceDate = new Date(item.invoiceDate);
+                return (
+                  (search === "" ||
+                    item.supplier
+                      .toLowerCase()
+                      .includes(search.toLowerCase())) &&
+                  (!startDate ||
+                    !endDate ||
+                    (invoiceDate >= startDate && invoiceDate <= endDate))
+                );
+              }).length === 0 && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="fst-italic"
+                    style={{ color: "red" }}
+                  >
+                    No data found!
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </Table>
         </div>

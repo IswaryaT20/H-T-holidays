@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -7,15 +8,20 @@ import {
   Form,
   ListGroup,
   ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalTitle,
   Row,
 } from "react-bootstrap";
 import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector, connect } from "react-redux";
+import { useDispatch, connect } from "react-redux";
 import {
   GET_ALL_PRODUCTS_API_CALL,
   GET_ALL_CUSTOMERS_API_CALL,
   SEARCH_CUSTOMER_API_CALL,
+  CREATE_INVOICE_API_CALL,
 } from "../../utils/Constant";
 
 const NewInvoice = (props) => {
@@ -40,11 +46,12 @@ const NewInvoice = (props) => {
   const [showInput, setShowInput] = useState(true);
 
   const [allItems, setAllItems] = useState([]);
-
-  const productList = (item) => {
-    console.log("New Invoice Items", item)
-    setAllItems(item);
-  };
+  const [globalDiscountState, setGlobalDiscountState] = useState(0);
+  const [description, setDescription] = useState("");
+  const [vatChecked, setVatChecked] = useState(false);
+  const [error, setError] = useState("");
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [success, setSuccess] = useState("");
 
   //Handlers
   const handletoggleDraft = () => {
@@ -102,6 +109,64 @@ const NewInvoice = (props) => {
     }
   };
 
+  const productList = (item) => {
+    setAllItems(item);
+  };
+
+  const globalDiscount = (value) => {
+    setGlobalDiscountState(value);
+  };
+
+  const overallDescription = (value) => {
+    setDescription(value);
+  };
+
+  const globalVatChecked = (value) => {
+    setVatChecked(value);
+  };
+
+  const handleSubmit = () => {
+
+    const customerError = "Please enter customer name";
+    setError("");
+    if (customerName.length === 0) {
+      setError(customerError);
+      return;
+    }
+
+    const tempArray = allItems.map((item) => {
+      return {
+        productId: item.id,
+        description: item.description,
+        quantity: item.qty,
+        unitPrice: item.price,
+        discountPercentage: item.discount,
+        vatPercentage: item.vat,
+        unitPriceTaxInclusive: vatChecked,
+      };
+    });
+
+    const requestData = {
+      createdBy: props.loggedInUser.loginId,
+      customerId: selectedCustomer.id,
+      invoiceDate: invoiceDate,
+      dueDate: dueDate,
+      net: selectedNet,
+      referenceNumber: "Nil",
+      memo: description,
+      globalDiscount: globalDiscountState,
+      products: tempArray,
+    };
+
+    dispatch({ type: CREATE_INVOICE_API_CALL, data: requestData });
+    setShowAlertModal(true);
+    setSuccess("Success");
+
+    setTimeout(() => {
+      window.location.reload(true)
+    }, 1000);
+  };
+
   return (
     <>
       <Container fluid className="mt-2">
@@ -139,7 +204,7 @@ const NewInvoice = (props) => {
                     Close
                   </Button>
                 </Link>
-                <Button className="ms-3 btn-save">
+                <Button className="ms-3 btn-save" onClick={handleSubmit}>
                   {isDraft ? "Save Draft" : "Save"}
                 </Button>
               </div>
@@ -177,27 +242,6 @@ const NewInvoice = (props) => {
                     <br />
                     <small style={{ fontSize: 12 }}>
                       Near Executive Suites, Abu Dhabi
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      +971 502226710, +971 542796562
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>+971 25634643</small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      Email : H&Tholidays@gmail.com
-                    </small>
-                    <br />
-                    <small style={{ fontSize: 12 }}>
-                      Website :{" "}
-                      <a
-                        target="blank"
-                        href="http://www.handtholidays.ae/"
-                        style={{ textDecoration: "none", color: "#1d1d5e" }}
-                      >
-                        www.htholidays.ae
-                      </a>
                     </small>
                   </p>
                 </div>
@@ -288,6 +332,9 @@ const NewInvoice = (props) => {
                         )}
                     </div>
                   )}
+                  {error && !customerName && (
+                    <p style={{ color: "red", fontSize:12 }}>Please enter the customer name.</p>
+                  )}
                 </Form.Group>
               </Col>
               <Col className="col-4 d-flex justify-content-end">
@@ -323,7 +370,7 @@ const NewInvoice = (props) => {
                     style={{ height: "30px", fontSize: 14 }}
                     type="date"
                     value={dueDate}
-                    onChange={(e)=>setDueDate(e.target.value)}
+                    onChange={(e) => setDueDate(e.target.value)}
                     readOnly
                   />
                 </Form.Group>
@@ -338,7 +385,11 @@ const NewInvoice = (props) => {
                     onChange={handleNetChange}
                   >
                     {netOptions.map((net, index) => (
-                      <option key={index} value={net.value} style={{ fontSize: 12, height: 20 }}>
+                      <option
+                        key={index}
+                        value={net.value}
+                        style={{ fontSize: 12, height: 20 }}
+                      >
                         {net.label}
                       </option>
                     ))}
@@ -361,7 +412,46 @@ const NewInvoice = (props) => {
           </>
         </div>
       </Container>
-      <InvoiceForm items={productList} />
+      <InvoiceForm
+        allItems={productList}
+        globalDiscount={globalDiscount}
+        memo={overallDescription}
+        vatChecked={globalVatChecked}
+      />
+
+<>
+        <Modal show={showAlertModal}>
+          <ModalHeader>
+            <ModalTitle>Purchase Data</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            {success === "Success" ? (
+              <div className="d-flex align-items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon icon-tabler icon-tabler-circle-check"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="#3bb54a"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginLeft: "31%" }}
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9 12l2 2l4 -4" />
+              </svg>
+              <p className="mb-0 ml-2">Data Saved Successfully</p>
+            </div>
+            ) : (
+              <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+            )}
+          </ModalBody>
+        </Modal>
+      </>
     </>
   );
 };

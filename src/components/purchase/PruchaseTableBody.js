@@ -100,7 +100,6 @@ const PruchaseTableBody = (props) => {
         let findVatAmount = 0
         vatIncludedPrice = parseFloat(findTotalAmount - discountAmount - findVatAmount).toFixed(2)
       }
-      
     }
     else {
       if (item.vat && !isNaN(item.vat)) {
@@ -110,9 +109,7 @@ const PruchaseTableBody = (props) => {
       else {
         vatIncludedPrice = (findTotalAmount - discountAmount).toFixed(2)
       }
-     
     }
-    
     return <span>{vatIncludedPrice}</span>
   }
 
@@ -172,7 +169,7 @@ const PruchaseTableBody = (props) => {
         <Form.Control
           type="number"
           className="inputfocus border-0 rounded-0"
-          placeholder="Dicount"
+          placeholder="Discount"
           style={{ width: 170, height: 30, fontSize: 14 }}
           value={isNaN(item.discount) ? "" : item.discount}
           onChange={(e) =>
