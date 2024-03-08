@@ -82,6 +82,11 @@ const NewPurchase = (props) => {
 
     selectSupplier(e.target.value);
 
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query: value, businessTypeId: 3 },
+    });
+
   };
 
   const selectSupplier = (value) => {
@@ -233,9 +238,8 @@ const NewPurchase = (props) => {
                         cursor: "text",
                       }}
                     />
-                  )}
+                  
                   {showInput && showList &&
-                    props.customers.searchList &&
                     props.customers.searchList.length > 0 && (
                       <Card style={{ width: 250 }}>
                         <ListGroup
