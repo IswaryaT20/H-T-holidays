@@ -82,6 +82,7 @@ function* searchCustomerApiCall(bodyData) {
     try {
       if (response.status === 200) {
         if (response.data.code === 200) {
+          console.log("search category")
           yield put({type: SEARCH_CUSTOMER_API_RESPONSE, payload: response.data.data})
         }
       }

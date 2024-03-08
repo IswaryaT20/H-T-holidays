@@ -29,6 +29,7 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
     }
 
     case SEARCH_CUSTOMER_API_RESPONSE: {
+      console.log(action.payload)
       return { ...state, searchList: action.payload }
     }
 

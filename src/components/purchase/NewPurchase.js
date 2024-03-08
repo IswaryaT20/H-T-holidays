@@ -23,6 +23,7 @@ import {
 import PurchaseForm from "./PurchaseForm";
 
 const NewPurchase = (props) => {
+  console.log(props)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,6 +39,7 @@ const NewPurchase = (props) => {
   const [description, setDescription] = useState("");
   const [vatChecked, setVatChecked] = useState(false);
   const [error, setError] = useState("");
+  const [showList, setShowList] = useState(false);
 
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -74,36 +76,42 @@ const NewPurchase = (props) => {
   };
 
   // getting supplier name
-  // const [supplierList, setSupplierList] = useState([]);
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSupplierName(value);
+
+    selectSupplier(e.target.value);
+
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query: value, businessTypeId: 3 },
+    });
+
+  };
+
+  const selectSupplier = (value) => {
+    if (supplierName) {
+      setTimeout(() => {
+        dispatch({
+          type: SEARCH_CUSTOMER_API_CALL,
+          payload: { query: value, businessTypeId: 3 },
+        });
+      }, 1000);
+    }
+  };
 
   // useEffect(() => {
-  //   fetchSupplierList("");
-  // }, []);
+  //   selectSupplier();
+  // }, [supplierName]);
 
-  // const fetchSupplierList = (query) => {
-  //   dispatch({
-  //     type: SEARCH_CUSTOMER_API_CALL,
-  //     payload: { query, businessTypeId: 3 },
-  //   }).then((response) => {
-  //     // Update the state with the received list of suppliers
-  //     setSupplierList(response.data);
-  //   });
-  // };
-
-  // const handleSearchChange = (e) => {
-  //   const value = e.target.value;
-  //   // Fetch supplier list based on the search query
-  //   fetchSupplierList(value);
-  // };
-  // const handleSupplierSelection = (selectedSupplier) => {
-  //   // Handle selected supplier
-  //   console.log("Selected Supplier:", selectedSupplier);
-  // };
-
-  // const supplierDetails = (item) => {
-  //   setSelectedSupplier(item);
-  //   setShowInput(false);
-  // };
+  const supplierDetails = (item) => {
+    if (selectedSupplier === item) {
+      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
+    } else {
+      setSelectedSupplier(item);
+      setShowInput(false);
+    }
+  };
 
   const productList = (item) => {
     console.log("Item", item);
@@ -221,14 +229,91 @@ const NewPurchase = (props) => {
                       name="supplierNameSearch"
                       placeholder="+ Add Supplier"
                       value={supplierName}
-                      onChange={(e) => setSupplierName(e.target.value)}
+                      onChange={(e) => {
+                        setShowList(true)
+                        handleSearchChange(e)}}
                       style={{
                         backgroundColor: "#dedef8",
                         width: "250px",
                         cursor: "text",
                       }}
                     />
-                  {error && !supplierName &&  (
+                  
+                  {showInput && showList &&
+                    props.customers.searchList.length > 0 && (
+                      <Card style={{ width: 250 }}>
+                        <ListGroup
+                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
+                        >
+                          {props.customers.searchList.map((item) => (
+                            <ListGroupItem
+                              key={item.id}
+                              onClick={() => {
+                                setShowList(false)
+                                supplierDetails(item)}}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <strong>Name: </strong>
+                              {item.name}
+                            </ListGroupItem>
+                          ))}
+                        </ListGroup>
+                        <Link to="/VendorForm">
+                          <Button variant="link">Add Vendor+</Button>
+                        </Link>
+                      </Card>
+                    )}
+                  {/* Selected supplier details */}
+                  {selectedSupplier && (
+                    <div
+                      className="w-75 p-2 rounded"
+                      style={{ backgroundColor: "#f0f0f0" }}
+                    >
+                      <h5
+                        className="mt-1"
+                        onClick={() => {
+                          setSupplierName(null);
+                          setSelectedSupplier(null)
+                          setShowInput(!showInput)}
+                        }
+                      >
+                        {selectedSupplier.name}
+                      </h5>
+                      {selectedSupplier.addresses && (
+                          <div>
+                            {/* Supplier address details */}
+                            <p
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "500",
+                                flex: "flex-wrap",
+                              }}
+                            >
+                              {selectedSupplier.addresses[0].addressLine1},
+                              <br />
+                              <small className="mt-1">
+                                {selectedSupplier.addresses[0].addressLine2},
+                              </small>
+                              <br />
+                              <small>
+                                {selectedSupplier.addresses[0].city},
+                              </small>
+                              <small className="ms-2">
+                                {selectedSupplier.addresses[0].state}
+                              </small>
+                              <br />
+                              <small>
+                                {selectedSupplier.addresses[0].countryName},
+                              </small>
+                              <small className="ms-2">
+                                {selectedSupplier.addresses[0].zipcode}.
+                              </small>
+                            </p>
+                          </div>
+                        )}
+                    </div>
+                  )}
+                  {error && !supplierName && (
                     <p style={{ color: "red", fontSize: 12 }}>
                       Please enter the Supplier name.
                     </p>
