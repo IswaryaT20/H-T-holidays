@@ -68,8 +68,6 @@ function CustomerForm(props) {
   const navigation = useNavigate();
   const dispatch = useDispatch();
 
-  console.log(props)
-
   const avatars = [
     { id: "1", name: "avatar1", src: avtar1 },
     { id: "2", name: "avatar2", src: avtar2 },
@@ -94,10 +92,10 @@ function CustomerForm(props) {
   }, [])
 
   useEffect(() => {
-    if (props.customers.code === 200) {
+    if (props.customers.goback) {
       navigation(-1)
     }
-  }, [props.customers.code])
+  }, [props.customers.goback])
 
   const handleChange = (e) => {
 
@@ -267,44 +265,16 @@ function CustomerForm(props) {
       <div
         style={{
           backgroundColor: "#F5F5F5",
-
+          paddingBottom: 30,
+          paddingTop: 30,
           paddingLeft: 30,
           paddingRight: 30,
         }}
       >
         <Container fluid className=" f-14 ">
           <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
-            <Col className=" f-14 d-flex justify-content-start  ">
-              <Button
-                type="submit"
-                className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
-                style={{
-                  height: "28px",
-                  width: "13%",
-                  backgroundColor: "#25316f",
-                }}
-                onClick={handlesubmit}
-              >
-                Save
-              </Button>
-
-              <Button
-                type="submit"
-                className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
-                style={{
-                  height: "28px",
-                  width: "13%",
-                  backgroundColor: "#bebec3",
-                  color: "black",
-                }}
-                onClick={handlesubmit}
-              >
-                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
-                  Cancel{" "}
-                </Link>
-              </Button>
-            </Col>
-            <Col className="d-flex justify-content-end me-3 ">
+            
+            {/* <Col className="d-flex justify-content-end me-3 " hidden>
               <Button
                 className="m-1 bg-blue f-12 rounded-1 b-none"
                 style={{ backgroundColor: "#25316f", width: "max-content" }}
@@ -326,33 +296,35 @@ function CustomerForm(props) {
               >
                 Log Notes
               </Button>
-            </Col>
+            </Col> */}
           </Row>
           {/*---------------form starts ---------------------*/}
           <Row
             xs={12}
             sm={12}
-            lg={9}
-            md={9}
-            xxl={9}
-            className=" f-14 ms-1 mt-2 w-100 "
-            style={{ flex: 1 }}
+            lg={12}
+            md={12}
+            xxl={12}
+            className=" "
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center !important' }}
           >
+            <Row style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
             <Col
               xs={6}
-              md={8}
-              lg={8}
-              xxl={8}
+              md={12}
+              lg={10}
+              xxl={10}
               className="border border-2  shadow"
             >
               <Row style={{ flex: 1 }} className=" ms-0 ">
                 <Col
-                  xs={10}
-                  sm={10}
-                  lg={10}
-                  md={10}
-                  xxl={10}
+                  xs={6}
+                  sm={6}
+                  lg={6}
+                  md={6}
+                  xxl={8}
                   className=" f-14 d-flex p-4"
+                  style={{ paddingRight: 100}}
                 >
                   <div key={`inline-radio`} className="mb-1 mt-2">
                     {businessType.map((item) => {
@@ -372,13 +344,13 @@ function CustomerForm(props) {
                   </div>
                 </Col>
                 <Col
-                  xs={3}
-                  sm={3}
-                  md={2}
-                  lg={2}
+                  xs={6}
+                  sm={6}
+                  md={6}
+                  lg={6}
                   xxl={2}
                   className="mt-1 d-flex justify-content-end "
-                  style={{ zIndex: "9" }}
+                  style={{ zIndex: "9", }}
                 >
                   <Form.Group className="text-end d-flex flex-column justify-content-end">
                     <img
@@ -756,8 +728,37 @@ function CustomerForm(props) {
                 </Col>
               </Row>
             </Col>
+            </Row>
+            <div style={{marginTop: 25, display: 'flex', justifyContent: 'end', alignItems: 'end', paddingRight: '15%'}}>
+            <Col style={{display: 'flex', justifyContent: 'flex-end'}} className=" f-14 d-flex justify-content-start  ">
+              <Button
+                type="submit"
+                className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
+                style={{
+                  backgroundColor: "#25316f",
+                }}
+                onClick={handlesubmit}
+              >
+                Save
+              </Button>
 
-            <Col className="mt-2" style={{ paddingLeft: 50, paddingRight: 50 }}>
+              <Button
+                type="submit"
+                className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
+                style={{
+                  backgroundColor: "#bebec3",
+                  color: "black",
+                }}
+                onClick={handlesubmit}
+              >
+                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                  Cancel{" "}
+                </Link>
+              </Button>
+            </Col>
+            </div>
+
+            {/* <Col className="mt-2" style={{ paddingLeft: 50, paddingRight: 50 }}>
               <FormGroup>
                 <FormLabel>
                   <h4>Log Notes</h4>
@@ -775,7 +776,7 @@ function CustomerForm(props) {
                 >
                   <RiAttachment2 /> Attach File
                 </p>
-                {/* Hidden file input element */}
+                
                 <input
                   type="file"
                   id="fileInput"
@@ -787,10 +788,10 @@ function CustomerForm(props) {
                   <p style={{ color: "#25316f" }}>upload: {attachedFileName}</p>
                 )}
               </FormGroup>
-            </Col>
+            </Col> */}
 
             {/*addreess modal for the extra address */}
-            {address && (
+            {/* {address && (
               <AddressForm
                 className="inputfocus"
                 addresstoggle={addressmodal}
@@ -803,8 +804,12 @@ function CustomerForm(props) {
                 handleChange={handleChange}
                 setFormData={setFormData}
               />
-            )}
+            )} */}
           </Row>
+
+
+
+          
         </Container>
       </div>
     </>
