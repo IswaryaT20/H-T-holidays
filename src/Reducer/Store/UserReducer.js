@@ -52,12 +52,10 @@ const UserReducer = (state = INITIAL_STATE, action) => {
       return { ...state, loginId: action.payload }
     }
     case GET_LOGGED_USER_DETAILS_RESPONSE: {
-      
       return { ...state, loginName: action.payload.name, loginMobile: action.payload.mobile }
     }
 
     case USER_ACCOUNT_LOGOUT: {
-      console.log("user account logging out")
       return {...state, isLoggedIn: false}
     }
 
