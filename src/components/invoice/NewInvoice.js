@@ -80,35 +80,35 @@ const NewInvoice = (props) => {
     calculateDueDate(invoiceDate, selectedNetValue);
   };
 
-  const handleSearchChange = (e) => {
-    if (e.target.name === "customerNameSearch") {
-      setCustomerName(e.target.value);
-    }
-  };
+  // const handleSearchChange = (e) => {
+  //   if (e.target.name === "customerNameSearch") {
+  //     setCustomerName(e.target.value);
+  //   }
+  // };
 
-  const selectCustomer = () => {
-    if (customerName) {
-      setTimeout(() => {
-        dispatch({
-          type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: customerName },
-        });
-      }, 1000);
-    }
-  };
+  // const selectCustomer = () => {
+  //   if (customerName) {
+  //     setTimeout(() => {
+  //       dispatch({
+  //         type: SEARCH_CUSTOMER_API_CALL,
+  //         payload: { query: customerName },
+  //       });
+  //     }, 1000);
+  //   }
+  // };
 
-  useEffect(() => {
-    selectCustomer();
-  }, [customerName]);
+  // useEffect(() => {
+  //   selectCustomer();
+  // }, [customerName]);
 
-  const customerDetails = (item) => {
-    if (selectedCustomer === item) {
-      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
-    } else {
-      setSelectedCustomer(item);
-      setShowInput(false);
-    }
-  };
+  // const customerDetails = (item) => {
+  //   if (selectedCustomer === item) {
+  //     setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
+  //   } else {
+  //     setSelectedCustomer(item);
+  //     setShowInput(false);
+  //   }
+  // };
 
   const productList = (item) => {
     setAllItems(item);
@@ -149,7 +149,7 @@ const NewInvoice = (props) => {
 
     const requestData = {
       createdBy: props.loginUsers.loginId,
-      customerId: selectedCustomer.id,
+      customerId: 16,
       invoiceDate: invoiceDate,
       dueDate: dueDate,
       net: selectedNet,
@@ -170,8 +170,8 @@ const NewInvoice = (props) => {
 
   return (
     <>
-      <Container fluid className="mt-2">
-        <div style={{ paddingLeft: 50, paddingRight: 50 }}>
+      <Container fluid className="mt-2 ">
+        <div style={{ paddingLeft: 50, paddingRight: 50,marginTop:75 }}>
           <Row>
             <Col>
               <Form>
@@ -249,7 +249,7 @@ const NewInvoice = (props) => {
               </Col>
               <Col className="col-4 d-flex justify-content-center">
                 <Form.Group>
-                  {showInput && (
+                 
                     <Form.Control
                       className={`inputfocus text-center rounded-0 ${
                         selectedCustomer ? "bg-light" : ""
@@ -258,84 +258,14 @@ const NewInvoice = (props) => {
                       name="customerNameSearch"
                       placeholder="+ Add Customer"
                       value={customerName}
-                      onChange={(e) => handleSearchChange(e)}
+                      onChange={(e) => setCustomerName(e.target.value)}
                       style={{
                         backgroundColor: "#dedef8",
                         width: "250px",
                         cursor: "text",
                       }}
                     />
-                  )}
-                  {showInput &&
-                    props.customers.searchList &&
-                    props.customers.searchList.length > 0 && (
-                      <Card>
-                        <ListGroup
-                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                        >
-                          {props.customers.searchList.map((item) => (
-                            <ListGroupItem
-                              key={item.id}
-                              onClick={() => customerDetails(item)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <strong>Name: </strong>
-                              {item.name}
-                            </ListGroupItem>
-                          ))}
-                        </ListGroup>
-                        <Link to="/CustomerForm">
-                          <Button variant="link">Add Customer +</Button>
-                        </Link>
-                      </Card>
-                    )}
-                  {selectedCustomer && (
-                    <div
-                      className="p-2 rounded"
-                      style={{ backgroundColor: "#f0f0f0", width:300 }}
-                    >
-                      <h5
-                        className="mt-1"
-                        onClick={() => setShowInput(!showInput)}
-                      >
-                        {selectedCustomer.name}
-                      </h5>
-                      {selectedCustomer.addresses &&
-                        selectedCustomer.addresses.length > 0 && (
-                          <div>
-                            {/* Supplier address details */}
-                            <p
-                              style={{
-                                fontSize: 14,
-                                fontWeight: "500",
-                                flex: "flex-wrap",
-                              }}
-                            >
-                              {selectedCustomer.addresses[0].addressLine1},
-                              <br />
-                              <small className="mt-1">
-                                {selectedCustomer.addresses[0].addressLine2},
-                              </small>
-                              <br />
-                              <small>{selectedCustomer.addresses[0].city},</small>
-                              <small className="ms-2">
-                                {selectedCustomer.addresses[0].state}
-                              </small>
-                              <br />
-                              <small>
-                                {selectedCustomer.addresses[0].countryName},
-                              </small>
-                              <small className="ms-2">
-                                {selectedCustomer.addresses[0].zipcode}.
-                              </small>
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  )}
-                  {error && !customerName && (
-                    <p style={{ color: "red", fontSize:12 }}>Please enter the customer name.</p>
-                  )}
+  
                 </Form.Group>
               </Col>
               <Col className="col-4 d-flex justify-content-end">

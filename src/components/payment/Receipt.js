@@ -26,7 +26,7 @@ function Receipt(props) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleDateChange = (dates) => {
     if (dates === NaN) {
@@ -40,25 +40,25 @@ function Receipt(props) {
   };
 
   useEffect(() => {
-    dispatch({type: GET_ALL_CUSTOMERS_API_CALL, data: 3})
-    // axios
-    //   .post("http://68.178.161.233:8080/handt/v2/customer/getAllCustomers")
-    //   .then((response) => {
-    //     setgetcustomer(response.data.data);
-    //   })
-    //   .catch((error) => console.error("Error fetching data:", error));
-    // console.log(entitiesPerPage);
+    // dispatch({type: GET_ALL_CUSTOMERS_API_CALL, data: 3})
+    axios
+      .post("http://68.178.161.233:8080/handt/v2/payment/getAllReceipts")
+      .then((response) => {
+        setgetcustomer(response.data.data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+    console.log(entitiesPerPage);
   }, [entitiesPerPage]);
 
   // console.log("the data pages",entitiesPerPage);
 
   return (
-    <div>
+    <div style={{ marginTop: 75 }}>
       <Container fluid>
         <div
           className="d-flex mt-4 pt-4 "
           style={{
-            border: "1px solid #80808042",
+            // border: "1px solid #80808042",
             paddingLeft: "1%",
             paddingRight: "1%",
             marginBottom: "1%",
@@ -81,6 +81,7 @@ function Receipt(props) {
               </InputGroupText>
               <FormControl
                 placeholder="Search Customer..."
+                value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
                   background: "#80808036",
@@ -125,55 +126,47 @@ function Receipt(props) {
                   ID
                 </th>
                 <th style={{ backgroundColor: "#25316f", color: "white" }}>
-                  Date
-                </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
                   Customer Name
                 </th>
                 <th style={{ backgroundColor: "#25316f", color: "white" }}>
-                  They Owe You
+                  Mode of Pay
                 </th>
                 <th style={{ backgroundColor: "#25316f", color: "white" }}>
-                  You Owe Them
+                  Amount
+                </th>
+                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                  Reference Number
                 </th>
               </tr>
             </thead>
             <tbody>
-              {props.customers.customersList
+              {getcustomer
                 .filter((item) => {
-                  return (
-                    (search.toLowerCase() === ""
-                      ? item
-                      : item.name
-                          .toLowerCase()
-                          .includes(search.toLowerCase())) &&
-                    (!startDate ||
-                      new Date(item.date) >= new Date(startDate)) &&
-                    (!endDate || new Date(item.date) <= new Date(endDate))
-                  );
+                  return search.toLowerCase() === ""
+                    ? item
+                    : item.customerName
+                        .toLowerCase()
+                        .includes(search.toLowerCase());
                 })
                 .map((item) => (
                   <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.createdAt}</td>
-                    <td>{item.name}</td>
-                    <td>{item.theyOweYou}</td>
-                    <td>{item.youOweThem}</td>
+                    <td>{item.customerId}</td>
+                    <td>{item.customerName}</td>
+                    <td>{item.paymentTypeName}</td>
+                    <td>{item.amount}</td>
+                    <td>{item.referenceNumber}</td>
                   </tr>
                 ))}
-              {props.customers.customersList.filter((item) => {
-                return (
-                  (search.toLowerCase() === ""
-                    ? item
-                    : item.name.toLowerCase().includes(search.toLowerCase())) &&
-                  (!startDate || new Date(item.date) >= new Date(startDate)) &&
-                  (!endDate || new Date(item.date) <= new Date(endDate))
-                );
+                {getcustomer.filter((item) => {
+                return search.toLowerCase() === ""
+                  ? item
+                  : item.customerName.toLowerCase().includes(search.toLowerCase());
               }).length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ fontWeight: "600", color: "red" }}>
-                    No data found!
-                  </td>
+                  <td
+                    colSpan={5}
+                    style={{ fontWeight: "600", color: "red" }}
+                  >No data found!</td>
                 </tr>
               )}
             </tbody>
@@ -189,8 +182,8 @@ function Receipt(props) {
 
 const mapsToProps = (state) => {
   return {
-    customers: state.customers
-  }
-}
+    customers: state.customers,
+  };
+};
 
 export default connect(mapsToProps)(Receipt);

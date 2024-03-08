@@ -131,15 +131,15 @@ const CustomerDetails = (props) => {
 
   return (
     <Container
-      className="customercontents mt-4"
+      className="customercontents mt-5 "
       style={{
-        backgroundColor: "white",
+        backgroundColor: "white shadow",
         color: "#1d1d5e",
         boxShadow:
           "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
       }}
     >
-      <Row className="" style={{ height: "", paddingBottom: 50 }}>
+      <Row className="" style={{ height: "", paddingBottom: 50,marginTop:75 }}>
         {selectedCustomer && (
           <>
             <Col
@@ -282,7 +282,7 @@ const CustomerDetails = (props) => {
             placeItems: "center",
           }}
         >
-          <Modal.Header closeButton>
+          <Modal.Header closeButton onClick={showBankDetails} >
             <Modal.Title id="contained-modal-title-vcenter">Add Bank Details</Modal.Title>
           </Modal.Header>
           <Modal.Body className="">

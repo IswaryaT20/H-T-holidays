@@ -29,7 +29,7 @@ const NewPurchase = (props) => {
   //use State
   const [supplierName, setSupplierName] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [showInput, setShowInput] = useState(true);
+  // const [showInput, setShowInput] = useState(true);
   const [purchaseDate, setPurchaseDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");
@@ -74,34 +74,36 @@ const NewPurchase = (props) => {
   };
 
   // getting supplier name
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSupplierName(value);
-  };
+  // const [supplierList, setSupplierList] = useState([]);
 
-  const selectSupplier = () => {
-    if (supplierName) {
-      setTimeout(() => {
-        dispatch({
-          type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: supplierName, businessTypeId: 3 },
-        });
-      }, 1000);
-    }
-  };
+  // useEffect(() => {
+  //   fetchSupplierList("");
+  // }, []);
 
-  useEffect(() => {
-    selectSupplier();
-  }, [supplierName]);
+  // const fetchSupplierList = (query) => {
+  //   dispatch({
+  //     type: SEARCH_CUSTOMER_API_CALL,
+  //     payload: { query, businessTypeId: 3 },
+  //   }).then((response) => {
+  //     // Update the state with the received list of suppliers
+  //     setSupplierList(response.data);
+  //   });
+  // };
 
-  const supplierDetails = (item) => {
-    if (selectedSupplier === item) {
-      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
-    } else {
-      setSelectedSupplier(item);
-      setShowInput(false);
-    }
-  };
+  // const handleSearchChange = (e) => {
+  //   const value = e.target.value;
+  //   // Fetch supplier list based on the search query
+  //   fetchSupplierList(value);
+  // };
+  // const handleSupplierSelection = (selectedSupplier) => {
+  //   // Handle selected supplier
+  //   console.log("Selected Supplier:", selectedSupplier);
+  // };
+
+  // const supplierDetails = (item) => {
+  //   setSelectedSupplier(item);
+  //   setShowInput(false);
+  // };
 
   const productList = (item) => {
     console.log("Item", item);
@@ -147,7 +149,7 @@ const NewPurchase = (props) => {
 
     const requestData = {
       createdBy: props.loggedInUser.loginId,
-      supplierId: selectedSupplier.id,
+      supplierId: 41,
       invoiceDate: purchaseDate,
       dueDate: dueDate,
       net: selectedNet,
@@ -166,13 +168,12 @@ const NewPurchase = (props) => {
       window.location.reload(true);
       setShowAlertModal(false);
       setSuccess("");
-      navigate("/Invoice");
     }, 500);
   };
 
   return (
     <>
-      <div style={{ paddingRight: 50, paddingLeft: 50 }}>
+      <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:75}}>
         <Container fluid className="mt-2">
           <Row className="mt-3">
             <Col className="d-flex justify-content-end">
@@ -211,94 +212,23 @@ const NewPurchase = (props) => {
             <Row className="w-100 mt-3">
               <Col className="col-4">
                 <Form.Group>
-                  {showInput && (
+
                     <Form.Control
-                      className={`inputfocus text-center rounded-0 ${
-                        selectedSupplier ? "bg-light" : ""
-                      }`}
+                      // className={`inputfocus text-center rounded-0 ${
+                      //   selectedSupplier ? "bg-light" : ""
+                      // }`}
                       type="search"
                       name="supplierNameSearch"
                       placeholder="+ Add Supplier"
                       value={supplierName}
-                      onChange={(e) => handleSearchChange(e)}
+                      onChange={(e) => setSupplierName(e.target.value)}
                       style={{
                         backgroundColor: "#dedef8",
                         width: "250px",
                         cursor: "text",
                       }}
                     />
-                  )}
-                  {showInput &&
-                    props.customers.searchList &&
-                    props.customers.searchList.length > 0 && (
-                      <Card style={{ width: 250 }}>
-                        <ListGroup
-                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                        >
-                          {props.customers.searchList.map((item) => (
-                            <ListGroupItem
-                              key={item.id}
-                              onClick={() => supplierDetails(item)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <strong>Name: </strong>
-                              {item.name}
-                            </ListGroupItem>
-                          ))}
-                        </ListGroup>
-                        <Link to="/VendorForm">
-                          <Button variant="link">Add Vendor+</Button>
-                        </Link>
-                      </Card>
-                    )}
-                  {/* Selected supplier details */}
-                  {selectedSupplier && (
-                    <div
-                      className="w-75 p-2 rounded"
-                      style={{ backgroundColor: "#f0f0f0" }}
-                    >
-                      <h5
-                        className="mt-1"
-                        onClick={() => setShowInput(!showInput)}
-                      >
-                        {selectedSupplier.name}
-                      </h5>
-                      {selectedSupplier.addresses &&
-                        selectedSupplier.addresses.length > 0 && (
-                          <div>
-                            {/* Supplier address details */}
-                            <p
-                              style={{
-                                fontSize: 14,
-                                fontWeight: "500",
-                                flex: "flex-wrap",
-                              }}
-                            >
-                              {selectedSupplier.addresses[0].addressLine1},
-                              <br />
-                              <small className="mt-1">
-                                {selectedSupplier.addresses[0].addressLine2},
-                              </small>
-                              <br />
-                              <small>
-                                {selectedSupplier.addresses[0].city},
-                              </small>
-                              <small className="ms-2">
-                                {selectedSupplier.addresses[0].state}
-                              </small>
-                              <br />
-                              <small>
-                                {selectedSupplier.addresses[0].countryName},
-                              </small>
-                              <small className="ms-2">
-                                {selectedSupplier.addresses[0].zipcode}.
-                              </small>
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  )}
-                  {error && !supplierName && (
+                  {error && !supplierName &&  (
                     <p style={{ color: "red", fontSize: 12 }}>
                       Please enter the Supplier name.
                     </p>
@@ -429,25 +359,25 @@ const NewPurchase = (props) => {
           <ModalBody>
             {success === "Success" ? (
               <div className="d-flex align-items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-circle-check"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="#3bb54a"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ marginLeft: "31%" }}
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <circle cx="12" cy="12" r="9" />
-                <path d="M9 12l2 2l4 -4" />
-              </svg>
-              <p className="mb-0 ml-2">Data Saved Successfully</p>
-            </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
             ) : (
               <Alert variant="danger">Data Saved Unsuccessfully</Alert>
             )}

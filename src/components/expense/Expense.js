@@ -135,7 +135,7 @@ const Expense = () => {
   return (
     <>
       <Container fluid className="mt-1">
-        <div style={{ paddingLeft: 50, paddingRight: 50 }}>
+        <div style={{ paddingLeft: 50, paddingRight: 50,marginTop:75 }}>
           <Row className="w-100 mt-2 p-2">
             <Col
               className="col-2 fw-bolder"

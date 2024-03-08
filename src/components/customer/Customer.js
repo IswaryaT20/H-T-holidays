@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { GET_ALL_CUSTOMERS_API_CALL, RESET_CODE } from "../../utils/Constant";
+import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import ProfilePic from '../../Assets/avatars/1.jpg'
 import Close from '../../Assets/images/close.svg';
 import CustomerForm from "./CustomerForm";
@@ -24,53 +24,47 @@ function Customer(props) {
   const [tableActive, setTableActive] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-
+  const [searchQuery, setSearchQuery] = useState('')
   const dispatch = useDispatch();
   const navigation = useNavigate();
-
   const handleCard = () => {
+    setFilteredData(props.customers.customersList);
     setCardActive(true);
+    setSearchQuery("")
     setTableActive(false);
-    setSearchValue('');
-    if (searchValue.length > 0) {
-      setFilteredData(props.customers.customersList);
-    }
+    // if (searchValue.length > 0) {
+    //   setSearchValue('');
+    //   setFilteredData(props.customers.customersList);
+    // }
   };
-
   const handleTable = () => {
     setTableActive(true);
+    setFilteredData(props.customers.customersList);
+    setSearchQuery("")
     setCardActive(false);
-    setSearchValue('');
-    if (searchValue.length > 0) {
-      setFilteredData(props.customers.customersList);
-    }
+    // if (searchValue.length > 0) {
+    //   setSearchValue('');
+    //   setFilteredData(props.customers.customersList);
+    // }
    
   };
-
   const navigateToNewPage = (id) => {
     navigation('/customer-details', { state: { id: id } });
   }
-
   useEffect(() => {
     dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, []);
-
   useEffect(() => {
-    if (props.customers.code == 200) {
-      dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
-    } 
-    
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL })
   }, [props.customers.code]);
 
   useEffect(() => {
     setCards(props.customers.customersList);
     setFilteredData(props.customers.customersList);
-    
   }, [props.customers.customersList]);
-
   const handleFilter = (e) => {
     const searchInput = e.target.value;
-    setSearchValue(searchInput);
+    setSearchQuery(searchInput);
 
     if (searchInput.length > 0) {
       const tempArray = props.customers.customersList.filter((item) => {
@@ -83,21 +77,17 @@ function Customer(props) {
   }
   return (
     <>
-    <div style={{width:'100%', position: 'relative'}}>
+    <div style={{marginTop:75}}>
       <Stack className="mt-4 d-flex" direction="horizontal" gap={5}>
-        <div className="ps-5">
+        <div className="ps-5 ms-3">
           <Link to="/CustomerForm">
             <Button
-              className="rounded text-white btn-blue b-none"
+              className="rounded text-white btn-blue b-none w-100 b-none"
               style={{
                 backgroundColor: "#25316f",
                 fontSize: "14px",
-                width: 75,
-                // justifyContent: "space-evenly",               
-                //   fontSize: "12px",
-                //   width: "100%",
-                //   height: "max-content",
-                //   padding: "1px",
+                width: "",
+                justifyContent: "space-evenly",   
                 
               }}
             >
@@ -111,7 +101,7 @@ function Customer(props) {
         <div
           className="group-search d-flex ml-6p"
           style={{
-            width: "50%",
+            width: "39%",
           }}
         >
           <div className="p-2 filter-icon mt-1"></div>
@@ -127,8 +117,8 @@ function Customer(props) {
                   outline: "none",
                   borderColor: "white",
                 }}
+                value={searchQuery}
                 placeholder="search here"
-                value={searchValue}
                 onChange={(e) => {
                   handleFilter(e)
                 }}
@@ -174,7 +164,6 @@ function Customer(props) {
                       width: "100%",
                       height:100,
                     }}
-
                     onClick={() => {navigateToNewPage(item.id)}}
                   >
                     <div
@@ -206,19 +195,17 @@ function Customer(props) {
           </div>
         </div>
       ) : null}
-
       <div className="table-container mt-5" style={{}}>
         {tableActive ? ( <div style={{marginLeft: 48, marginRight: 48, paddingBottom: 50}}>
               <Table>
-            <thead>
-              <tr style={{paddingTop: 100, paddingBottom: 100}}>
+              <thead class="overflow-hidden">
+              <tr style={{paddingTop: 100, paddingBottom: 100}}> 
                 <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Name</th>
                 <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Phone</th>
                 <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Email</th>
                 <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Sales Person</th>
                 <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Activities</th>
-                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Place</th>
-               
+                <th className="text-start border border-2" style={{backgroundColor:"#25316f",color:"white"}} scope="col" >Place</th>   
               </tr>
             </thead>
             <tbody>
@@ -226,7 +213,7 @@ function Customer(props) {
                 filteredData.map((tableItem) => {
                   console.log(tableItem)
                   return <tr>
-                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}> {tableItem.name}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}    onClick={() => {navigateToNewPage(tableItem.id)}}> {tableItem.name}</td>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.phone}</td>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.email}</td>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.businessTypeName}</td>
@@ -239,20 +226,18 @@ function Customer(props) {
               )}
             </tbody>
           </Table>
-            </div>
+            </div>       
           
         ) : null}
       </div>
+  
       </div>
     </>
   );
 }
-
-
 const mapsToProps = (state) => {
   return {
     customers: state.customers
   }
 }
-
 export default connect(mapsToProps)(Customer);
