@@ -25,7 +25,7 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
       return { ...state, customersList: action.payload, code: 200 };
     }
     case ERROR_MESSAGE: {
-      return { ...state, error: action.payload };
+      return { ...state, error: action.payload.message, code: 100 };
     }
 
     case SEARCH_CUSTOMER_API_RESPONSE: {
@@ -49,11 +49,11 @@ const CustomersReducer = (state = INITIAL_STATE, action) => {
     }
 
     case RESET_CODE: {
-      return {...state, code: 0, goback: false}
+      return {...state, code: 0, goback: false, error: null}
     }
 
     case CREATE_CUSTOMER_API_RESPONSE: {
-      return {...state, code: action.payload}
+      return {...state, code: action.payload, goback: true}
     }
 
   }
