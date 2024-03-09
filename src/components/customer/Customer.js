@@ -75,6 +75,31 @@ function Customer(props) {
       setFilteredData(props.customers.customersList);
     }
   }
+
+  const rendertabledata = (data) => {
+    console.log(data)
+    let address = null;
+    if (data && data.addresses && data?.addresses[0]?.city) {
+      address = data?.addresses[0]?.city
+    }
+    if (address) {
+      if (data.addresses && data?.addresses[0]?.state) {
+        address = address + ", " + data?.addresses[0]?.state
+      }
+    }
+    else if (data && data.addresses && data?.addresses[0]?.state){
+      address = data.addresses && data?.addresses[0]?.state
+    }
+    if (address) {
+      if (data.addresses && data?.addresses[0]?.countryName) {
+        address = address + ", " + data?.addresses[0]?.countryName
+      }
+    }
+    else if (data.addresses && data?.addresses[0]?.countryName) {
+      address = data?.addresses[0]?.countryName
+    }
+    return <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{address ? address : 'N/A' }</td>
+  }
   return (
     <>
     <div style={{marginTop:75}}>
@@ -180,7 +205,7 @@ function Customer(props) {
                     </div>
                     <div className="image-container d-flex flex-column flex-1">
                       <Card.Body className="flex-1">
-                        <Card.Title style={{fontSize: 15, color: '#222222', margin: 0, marginTop: 8}}>{item.name}</Card.Title>
+                        <Card.Title style={{fontSize: 15, color: '#222222', margin: 0, marginTop: 8}}>{item.name ? item.name : item.businessTypeName}</Card.Title>
                         <Card.Text style={{color: '#22222280', fontSize: 12}}>{item.jobPosition}</Card.Text>
                       </Card.Body>
                     </div>
@@ -213,12 +238,15 @@ function Customer(props) {
                 filteredData.map((tableItem) => {
                   console.log(tableItem)
                   return <tr>
-                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}    onClick={() => {navigateToNewPage(tableItem.id)}}> {tableItem.name}</td>
-                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.phone}</td>
-                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.email}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}    onClick={() => {navigateToNewPage(tableItem.id)}}> {tableItem.name ? tableItem.name : tableItem.businessTypeName}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.mobile}</td>
+                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.email ? tableItem.email : 'N/A'}</td>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.businessTypeName}</td>
                   <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.jobPosition}</td>
-                  <td scope="col" className="text-start" style={{textAlign :'text-start' }}>{tableItem.addresses && tableItem?.addresses[0]?.city}, {tableItem.addresses && tableItem?.addresses[0]?.state}, {tableItem.addresses && tableItem?.addresses[0]?.countryName}</td>
+                  {
+                    rendertabledata(tableItem)
+                  }
+                  
                 </tr>
                 })
               ) : (

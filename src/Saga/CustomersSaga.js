@@ -64,7 +64,7 @@ function* createCustomerAPICall(bodyData) {
           type: ERROR_MESSAGE,
           payload: { message: response.data.message },
         });
-        alert(response.data.message);
+        // alert(response.data.message);
       }
     } else {
       yield put({
