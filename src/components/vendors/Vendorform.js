@@ -610,7 +610,7 @@ function VendorForm(props) {
                             }}
                             name="mobile"
                             type="tel"
-                            maxLength={13}
+                            maxLength={10}
                           />
                         </div>
                       </FormLabel>

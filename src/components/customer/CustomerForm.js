@@ -694,11 +694,16 @@ function CustomerForm(props) {
                           *
                         </span>
                         <div key={`inline-radio`} className="mb-1">
-                          <FormControl
+                        <FormControl
                             placeholder="Enter phone number"
                             value={mobile}
-                            onChange={(value) => {
-                              setMobile(value.target.value);
+                            onChange={(event) => {
+                              const inputValue = event.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+
+                              setMobile(inputValue);
                               setMobileError(false);
                             }}
                             className={`inputfocus f-14 br_b-2 rounded-0 ${
@@ -711,9 +716,10 @@ function CustomerForm(props) {
                               height: "2rem",
                             }}
                             name="mobile"
-                            limitMaxLength
-                            type="number"
+                            type="tel"
+                            maxLength={10}
                           />
+                      
                         </div>
                       </FormLabel>
                       {mobileError && (
