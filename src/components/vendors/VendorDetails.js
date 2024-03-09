@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
-import { Button, FormGroup, Modal, FormLabel, FormControl, Container, Row, Col, Form } from "react-bootstrap";
-import { SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL, ADD_CUSTOMER_BANK_DETAILS_API_CALL, UPDATE_CUSTOMER_STATUS_CODE, ADD_CUSTOMR_ADDRESS_API_CALL, MASTER_API_CALL } from "../../utils/Constant";
+import {
+  Button,
+  FormGroup,
+  Modal,
+  FormLabel,
+  FormControl,
+  Container,
+  Row,
+  Col,
+  Form,
+} from "react-bootstrap";
+import {
+  SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
+  ADD_CUSTOMER_BANK_DETAILS_API_CALL,
+  UPDATE_CUSTOMER_STATUS_CODE,
+  ADD_CUSTOMR_ADDRESS_API_CALL,
+  MASTER_API_CALL,
+} from "../../utils/Constant";
 import Avatar from "../../Assets/avatars/1.jpg";
 import { MdAddIcCall } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
-
 
 const CustomerDetails = (props) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [selectedCustomer, setselectedCustomer] = useState(null);
   const [showAddBankDetails, setShowBankDetails] = useState(false);
-  const [bankDetails, setBankDetails] = useState({customerId: location.state.id});
+  const [bankDetails, setBankDetails] = useState({
+    customerId: location.state.id,
+  });
   const [savedFormData, setSavedFormData] = useState(null);
   const [formData, setFormData] = useState({
     addressTypeId: "",
@@ -24,12 +41,11 @@ const CustomerDetails = (props) => {
     country: "",
     zipcode: "",
     state: "",
-    customerId: location.state.id
+    customerId: location.state.id,
   });
-  
+
   const [showAddressesModal, setShowAddressModal] = useState(false);
-  
- 
+
   useEffect(() => {
     dispatch({
       type: SEARCH_CUSTOMER_BY_CUSTOMERS_ID_CALL,
@@ -43,84 +59,87 @@ const CustomerDetails = (props) => {
 
   useEffect(() => {
     if (props.masterData.addressTypes.length === 0) {
-      dispatch({ type: MASTER_API_CALL })
+      dispatch({ type: MASTER_API_CALL });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (props.customers.code === 200) {
-      setShowBankDetails(false)
-      dispatch({type: UPDATE_CUSTOMER_STATUS_CODE, payload: 0})
+      setShowBankDetails(false);
+      dispatch({ type: UPDATE_CUSTOMER_STATUS_CODE, payload: 0 });
     }
-  }, [props.customers.code])
+  }, [props.customers.code]);
 
   const bankNameChange = (value) => {
-    setBankDetails({...bankDetails, bankName: value})
-  }
+    setBankDetails({ ...bankDetails, bankName: value });
+  };
 
   const accountHolderNameChange = (value) => {
-    setBankDetails({...bankDetails, accountHolderName: value})
-  }
+    setBankDetails({ ...bankDetails, accountHolderName: value });
+  };
 
   const accountNumberChange = (value) => {
-    setBankDetails({...bankDetails, accountNumber: value})
-  }
+    setBankDetails({ ...bankDetails, accountNumber: value });
+  };
 
   const ibanNumberChange = (value) => {
-    setBankDetails({...bankDetails, code: value})
-  }
+    setBankDetails({ ...bankDetails, code: value });
+  };
 
   const onBranchNameChange = (value) => {
-    setBankDetails({...bankDetails, branchName: value})
-  }
+    setBankDetails({ ...bankDetails, branchName: value });
+  };
 
   const onSelectCountry = (value) => {
-    setBankDetails({...bankDetails, country: value})
-  }
+    setBankDetails({ ...bankDetails, country: value });
+  };
 
   const showBankDetails = () => {
     setShowBankDetails(!showAddBankDetails);
-  }
+  };
 
   const handleAddAddress = () => {
-    setShowAddressModal(!showAddressesModal)
-  }
+    setShowAddressModal(!showAddressesModal);
+  };
 
   const handleAddressTypeChange = (value) => {
-    console.log(value)
-    setFormData({ ...formData, addressTypeId: value })
-  }
+    console.log(value);
+    setFormData({ ...formData, addressTypeId: value });
+  };
 
   const addressLine1Changes = (value) => {
-    setFormData({ ...formData, addressLine1: value })
-  }
+    setFormData({ ...formData, addressLine1: value });
+  };
 
   const handleCityChange = (value) => {
-    setFormData({ ...formData, city: value })
-  }
+    setFormData({ ...formData, city: value });
+  };
 
   const onZipChange = (value) => {
     setFormData({ ...formData, zipcode: value });
-  }
+  };
 
   const emiratesChange = (value) => {
-    setFormData({ ...formData, emirates: value })
-  }
+    setFormData({ ...formData, emirates: value });
+  };
   const onSelectCountryForAddress = (value) => {
-    setFormData({ ...formData, country: value })
-  }
+    setFormData({ ...formData, country: value });
+  };
   const saveAddress = () => {
-    const tempArray = []
-    tempArray.push(formData)
-    dispatch({ type: ADD_CUSTOMR_ADDRESS_API_CALL, payload: tempArray })
-  }
+    const tempArray = [];
+    tempArray.push(formData);
+    dispatch({ type: ADD_CUSTOMR_ADDRESS_API_CALL, payload: tempArray });
+  };
 
   const saveBankDetails = () => {
-    const bankInformation = []
-    bankInformation.push(bankDetails)
+    const bankInformation = [];
+    bankInformation.push(bankDetails);
 
-    dispatch({type: ADD_CUSTOMER_BANK_DETAILS_API_CALL, payload: bankInformation})
-  } 
+    dispatch({
+      type: ADD_CUSTOMER_BANK_DETAILS_API_CALL,
+      payload: bankInformation,
+    });
+  };
 
   return (
     <Container
@@ -132,7 +151,10 @@ const CustomerDetails = (props) => {
           "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
       }}
     >
-      <Row className="" style={{ height: "", paddingBottom: 50,marginTop:'75px' }}>
+      <Row
+        className=""
+        style={{ height: "", paddingBottom: 50, marginTop: "75px" }}
+      >
         {selectedCustomer && (
           <>
             <Col
@@ -147,7 +169,9 @@ const CustomerDetails = (props) => {
                   src={Avatar}
                   alt="profile picture"
                 ></img>
-                <h4 className="mt-4">{selectedCustomer.title}.{selectedCustomer.name}</h4>
+                <h4 className="mt-4">
+                  {selectedCustomer.title}.{selectedCustomer.name}
+                </h4>
                 <p> {selectedCustomer.jobPosition}</p>
                 <p className="callsection" style={{ marginTop: "20%" }}>
                   <span
@@ -235,26 +259,105 @@ const CustomerDetails = (props) => {
                     </Col>
                   </Row>
                   <Row>
-                    <Col style={{paddingLeft: 25}}>
-                    <h5 className="mt-4 text-underline">
-                      Bank Deails
-                    </h5>
-                      {
-                        props.customers.selectedCustomerDetails.bankAccounts && props.customers.selectedCustomerDetails.bankAccounts.map(item => {
-                          return <div style={{paddingLeft: 8, paddingRight: 8, paddingTop: 8, paddingBottom: 8, display: 'flex', flexDirection: 'column', backgroundColor: '#F5F5F5', marginTop: 2}}>
-                              <label style={{fontSize: 16, fontWeight: 'bold', color: '#505050'}}>{item.bankName} - {item.accountNumber}</label>
-                              <label style={{fontSize: 12, color: '#505050'}}>{item.bankName},&nbsp;{item.branchName}</label>
-                          </div>
-                        })
-                      }
+                    <Col style={{ paddingLeft: 25 }}>
+                      <h5 className="mt-4 text-underline">Bank Details</h5>
+                      {props.customers.selectedCustomerDetails.bankAccounts &&
+                        props.customers.selectedCustomerDetails.bankAccounts.map(
+                          (item) => {
+                            return (
+                              <div
+                                style={{
+                                  paddingLeft: 8,
+                                  paddingRight: 8,
+                                  paddingTop: 8,
+                                  paddingBottom: 8,
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  backgroundColor: "#F5F5F5",
+                                  marginTop: 2,
+                                }}
+                              >
+                                <label
+                                  style={{
+                                    fontSize: 16,
+                                    fontWeight: "bold",
+                                    color: "#505050",
+                                  }}
+                                >
+                                  {item.bankName} - {item.accountNumber}
+                                </label>
+                                <label
+                                  style={{ fontSize: 12, color: "#505050" }}
+                                >
+                                  {item.bankName},&nbsp;{item.branchName}
+                                </label>
+                              </div>
+                            );
+                          }
+                        )}
 
-                      <h6 style={{cursor: 'pointer', marginTop: 35, marginLeft: 8, fontWeight: '600'}} onClick={showBankDetails}><u>Add Bank Details</u></h6>
+                      <h6
+                        style={{
+                          cursor: "pointer",
+                          marginTop: 35,
+                          marginLeft: 8,
+                          fontWeight: "600",
+                        }}
+                        onClick={showBankDetails}
+                      >
+                        <u>Add Bank Details</u>
+                      </h6>
                       <p>{selectedCustomer.logNotes}</p>
                     </Col>
                     <Col>
                       <h5 className="mt-4 text-underline">Addresses</h5>
+                      {props.customers.selectedCustomerDetails.addresses &&
+                        props.customers.selectedCustomerDetails.addresses.map(
+                          (item) => {
+                            return (
+                              <div
+                                style={{
+                                  paddingLeft: 8,
+                                  paddingRight: 8,
+                                  paddingTop: 8,
+                                  paddingBottom: 8,
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  backgroundColor: "#F5F5F5",
+                                  marginTop: 2,
+                                }}
+                              >
+                                <label
+                                  style={{
+                                    fontSize: 16,
+                                    fontWeight: "bold",
+                                    color: "#505050",
+                                  }}
+                                >
+                                  {item.addressType} , {item.addressLine1} ,{" "}
+                                  {item.addressLine2}
+                                </label>
+                                <label
+                                  style={{ fontSize: 12, color: "#505050" }}
+                                >
+                                  {item.city},{item.countryName},
+                                </label>
+                              </div>
+                            );
+                          }
+                        )}
 
-                      <h6 style={{cursor: 'pointer', marginTop: 35, marginLeft: 8, fontWeight: '600'}} onClick={handleAddAddress}><u>Add Address</u></h6>
+                      <h6
+                        style={{
+                          cursor: "pointer",
+                          marginTop: 35,
+                          marginLeft: 8,
+                          fontWeight: "600",
+                        }}
+                        onClick={handleAddAddress}
+                      >
+                        <u>Add Address</u>
+                      </h6>
                     </Col>
                   </Row>
                 </>
@@ -265,115 +368,116 @@ const CustomerDetails = (props) => {
       </Row>
 
       <>
-      <Modal
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        show={showAddBankDetails}
-        style={{
-          width: "100%",
-          placeItems: "center",
-        }}
-      >
-        <Modal.Header closeButton onClick={showBankDetails}>
-          <Modal.Title id="contained-modal-title-vcenter">Add Bank Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="">
-          <Row className="">
-            <Col className="d-flex flex-column justify-content-end">
-              <FormGroup className=" m-2 d-flex flex-row">
-                <FormLabel className="f-14 w-100 w-100">
-                  Bank Name
-                  <FormControl
-                    name="bankName"
-                    className="f-14 w-100 br_b-2 rounded-0 mt-0 me-2 inputfocus"
-                    type="text"
-                    onChange={(e) => bankNameChange(e.target.value)}
-                    style={{ border: "2px dotted #25316f" }}
-                  />
-                </FormLabel>
-              </FormGroup>
-              <FormGroup className=" m-2">
-                <FormLabel className="f-14 w-100 ">
-                  Account Number
-                  <FormControl
-                    name="accountNumber"
-                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
-                    type="text"
-                    onChange={(e) => accountNumberChange(e.target.value)}
-                    style={{ border: "2px dotted #25316f" }}
-                  />
-                </FormLabel>
-              </FormGroup>
-              <FormGroup className=" m-2">
-                <FormLabel className="f-14 w-100 ">
-                  Country
-                   <Form.Select
-                          className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
-                          style={{ border: "2px dotted #25316f" }}
-                          placeholder="Country"
-                          onChange={(e) => onSelectCountry(e.target.value)}
-                          name="country"
-                        >
-                          <option value={0}>Select Country</option>
-                          <option value={2}>UAE</option>
-                          <option value={1}>INDIA</option>
-                        </Form.Select>
-                </FormLabel>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup className=" m-2">
-                <FormLabel className="f-14 w-100 ">
-                  Account Holder Name
-                  <FormControl
-                    name="accountholdername"
-                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
-                    type="text"
-                    onChange={(e) => accountHolderNameChange(e.target.value)}
-                    style={{ border: "2px dotted #25316f" }}
-                  />
-                </FormLabel>
-                <FormLabel className="f-14 w-100 ">
-                  IBAN No
-                  <FormControl
-                    name="iban"
-                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
-                    type="text"
-                    onChange={(e) => ibanNumberChange(e.target.value)}
-                    style={{ border: "2px dotted #25316f" }}
-                  />
-                </FormLabel>
-              </FormGroup>
-              <FormGroup className=" m-2">
-                <FormLabel className="f-14 w-100 ">
-                  Branch
-                  <FormControl
-                    name="branch"
-                    className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
-                    type="text"
-                    onChange={(e) => onBranchNameChange(e.target.value)}
-                    style={{ border: "2px dotted #25316f" }}
-                  />
-                </FormLabel>
-              </FormGroup>
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button type="reset" variant="secondary" onClick={showBankDetails}>
-            Close
-          </Button>
+        <Modal
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          show={showAddBankDetails}
+          style={{
+            width: "100%",
+            placeItems: "center",
+          }}
+        >
+          <Modal.Header closeButton onClick={showBankDetails}>
+            <Modal.Title id="contained-modal-title-vcenter">
+              Add Bank Details
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="">
+            <Row className="">
+              <Col className="d-flex flex-column justify-content-end">
+                <FormGroup className=" m-2 d-flex flex-row">
+                  <FormLabel className="f-14 w-100 w-100">
+                    Bank Name
+                    <FormControl
+                      name="bankName"
+                      className="f-14 w-100 br_b-2 rounded-0 mt-0 me-2 inputfocus"
+                      type="text"
+                      onChange={(e) => bankNameChange(e.target.value)}
+                      style={{ border: "2px dotted #25316f" }}
+                    />
+                  </FormLabel>
+                </FormGroup>
+                <FormGroup className=" m-2">
+                  <FormLabel className="f-14 w-100 ">
+                    Account Number
+                    <FormControl
+                      name="accountNumber"
+                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      type="text"
+                      onChange={(e) => accountNumberChange(e.target.value)}
+                      style={{ border: "2px dotted #25316f" }}
+                    />
+                  </FormLabel>
+                </FormGroup>
+                <FormGroup className=" m-2">
+                  <FormLabel className="f-14 w-100 ">
+                    Country
+                    <Form.Select
+                      className=" f-14  br_b-2 rounded-0 mt-2 me-2 inputfocus"
+                      style={{ border: "2px dotted #25316f" }}
+                      placeholder="Country"
+                      onChange={(e) => onSelectCountry(e.target.value)}
+                      name="country"
+                    >
+                      <option value={0}>Select Country</option>
+                      <option value={2}>UAE</option>
+                      <option value={1}>INDIA</option>
+                    </Form.Select>
+                  </FormLabel>
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup className=" m-2">
+                  <FormLabel className="f-14 w-100 ">
+                    Account Holder Name
+                    <FormControl
+                      name="accountholdername"
+                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      type="text"
+                      onChange={(e) => accountHolderNameChange(e.target.value)}
+                      style={{ border: "2px dotted #25316f" }}
+                    />
+                  </FormLabel>
+                  <FormLabel className="f-14 w-100 ">
+                    IBAN No
+                    <FormControl
+                      name="iban"
+                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      type="text"
+                      onChange={(e) => ibanNumberChange(e.target.value)}
+                      style={{ border: "2px dotted #25316f" }}
+                    />
+                  </FormLabel>
+                </FormGroup>
+                <FormGroup className=" m-2">
+                  <FormLabel className="f-14 w-100 ">
+                    Branch
+                    <FormControl
+                      name="branch"
+                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      type="text"
+                      onChange={(e) => onBranchNameChange(e.target.value)}
+                      style={{ border: "2px dotted #25316f" }}
+                    />
+                  </FormLabel>
+                </FormGroup>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button type="submit" variant="secondary" onClick={showBankDetails}>
+              Close
+            </Button>
 
-          <Button type="reset" variant="primary" onClick={saveBankDetails}>
-            Save
-          </Button>
-    
-        </Modal.Footer>
-      </Modal>
-    </>
+            <Button type="submit" variant="primary" onClick={saveBankDetails}>
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
 
-    <>
+      <>
         <Modal
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
@@ -384,7 +488,7 @@ const CustomerDetails = (props) => {
             placeItems: "center",
           }}
         >
-          <Modal.Header closeButton onClick={handleAddAddress} >
+          <Modal.Header closeButton onClick={handleAddAddress}>
             <Modal.Title id="contained-modal-title-vcenter" className="h-20">
               Add Address
             </Modal.Title>
@@ -393,20 +497,22 @@ const CustomerDetails = (props) => {
             <Form>
               {["radio"].map((type) => (
                 <div key={`inline-${type}`} className="mb-3">
-                  {
-                    props.masterData.addressTypes.map(item => {
-                      return <Form.Check
+                  {props.masterData.addressTypes.map((item) => {
+                    return (
+                      <Form.Check
                         className="inputfocus"
                         inline
                         label={item.value}
                         value={item.id}
                         name="group1"
                         type={type}
-                        onChange={(e) => handleAddressTypeChange(e.target.value)}
+                        onChange={(e) =>
+                          handleAddressTypeChange(e.target.value)
+                        }
                         id={`inline-${type}-3`}
                       />
-                    })
-                  }
+                    );
+                  })}
                 </div>
               ))}
             </Form>
@@ -444,7 +550,6 @@ const CustomerDetails = (props) => {
                   name="customeraddress"
                   value={formData.customeraddress}
                   onChange={(e) => addressLine1Changes(e.target.value)}
-
                 />
                 <FormGroup className="f-14 d-flex justify-space-between">
                   <Form.Control
@@ -470,7 +575,9 @@ const CustomerDetails = (props) => {
                       className=" f-14 rounded-0 me-2 inputfocus"
                       style={{ border: "2px dotted #25316f" }}
                       placeholder="Country"
-                      onChange={(e) => onSelectCountryForAddress(e.target.value)}
+                      onChange={(e) =>
+                        onSelectCountryForAddress(e.target.value)
+                      }
                       name="country"
                     >
                       <option value={0}>Select Country</option>
@@ -503,7 +610,6 @@ const CustomerDetails = (props) => {
             )}
           </Modal.Body>
           <Modal.Footer>
-
             <Button
               className="b-none"
               style={{
