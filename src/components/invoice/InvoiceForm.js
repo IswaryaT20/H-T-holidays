@@ -303,6 +303,7 @@ const InvoiceForm = (props) => {
         <Row className="mt-3" style={{ paddingLeft: 50 }}>
           <Col className="col-8">
             <Form.Control
+              className="inputfocus"
               as="textarea"
               row={4}
               placeholder="Description"

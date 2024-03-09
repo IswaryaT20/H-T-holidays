@@ -2,32 +2,32 @@ import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
-  Card,
   Col,
   Container,
   Form,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalHeader,
   ModalTitle,
   Row,
 } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
 import {
   SEARCH_CUSTOMER_API_CALL,
   CREATE_PURCHASE_ORDER_API_CALL,
 } from "../../utils/Constant";
 import PurchaseForm from "./PurchaseForm";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "./Purchase.css";
 
 const NewPurchase = (props) => {
-  console.log(props)
+  console.log(props);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   //use State
+
   const [supplierName, setSupplierName] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
   const [showInput, setShowInput] = useState(true);
@@ -39,7 +39,8 @@ const NewPurchase = (props) => {
   const [description, setDescription] = useState("");
   const [vatChecked, setVatChecked] = useState(false);
   const [error, setError] = useState("");
-  const [showList, setShowList] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [supplierOptions, setSupplierOptions] = useState([]);
 
   const netOptions = [
     { label: "Net 0", value: 0 },
@@ -76,41 +77,38 @@ const NewPurchase = (props) => {
   };
 
   // getting supplier name
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSupplierName(value);
-
-    selectSupplier(e.target.value);
-
+  useEffect(() => {
     dispatch({
       type: SEARCH_CUSTOMER_API_CALL,
-      payload: { query: value, businessTypeId: 3 },
+      payload: { businessTypeId: 3 },
     });
+  }, [dispatch]);
 
-  };
-
-  const selectSupplier = (value) => {
-    if (supplierName) {
-      setTimeout(() => {
-        dispatch({
-          type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: value, businessTypeId: 3 },
-        });
-      }, 1000);
-    }
-  };
-
-  // useEffect(() => {
-  //   selectSupplier();
-  // }, [supplierName]);
-
-  const supplierDetails = (item) => {
-    if (selectedSupplier === item) {
-      setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
+  useEffect(() => {
+    if (props.customers.searchList.length > 0) {
+      setSupplierOptions(
+        props.customers.searchList.map((item) => ({
+          id: item.id,
+          userName: item.userName,
+          name: item.name,
+          addresses: item.addresses,
+          mobile: item.mobile,
+        }))
+      );
     } else {
-      setSelectedSupplier(item);
-      setShowInput(false);
+      setSupplierOptions([]);
     }
+  }, [props.customers.searchList]);
+
+  const handleSupplierSelection = (selected) => {
+    setSelectedSupplier(selected[0]);
+  };
+
+  const handleSearchChange = (query) => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query, businessTypeId: 3 },
+    });
   };
 
   const productList = (item) => {
@@ -138,7 +136,7 @@ const NewPurchase = (props) => {
       setError(refNumError);
       return;
     }
-    if (supplierName.length === 0) {
+    if (selectedSupplier.length === 0) {
       setError(supplierError);
       return;
     }
@@ -157,7 +155,7 @@ const NewPurchase = (props) => {
 
     const requestData = {
       createdBy: props.loggedInUser.loginId,
-      supplierId: 41,
+      supplierId: selectedSupplier.id,
       invoiceDate: purchaseDate,
       dueDate: dueDate,
       net: selectedNet,
@@ -176,12 +174,12 @@ const NewPurchase = (props) => {
       window.location.reload(true);
       setShowAlertModal(false);
       setSuccess("");
-    }, 500);
+    }, 1000);
   };
 
   return (
     <>
-      <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:75}}>
+      <div style={{ paddingRight: 50, paddingLeft: 50, marginTop: 75 }}>
         <Container fluid className="mt-2">
           <Row className="mt-3">
             <Col className="d-flex justify-content-end">
@@ -220,105 +218,57 @@ const NewPurchase = (props) => {
             <Row className="w-100 mt-3">
               <Col className="col-4">
                 <Form.Group>
-
-                    <Form.Control
-                      // className={`inputfocus text-center rounded-0 ${
-                      //   selectedSupplier ? "bg-light" : ""
-                      // }`}
-                      type="search"
-                      name="supplierNameSearch"
-                      placeholder="+ Add Supplier"
-                      value={supplierName}
-                      onChange={(e) => {
-                        setShowList(true)
-                        handleSearchChange(e)}}
-                      style={{
-                        backgroundColor: "#dedef8",
-                        width: "250px",
-                        cursor: "text",
-                      }}
-                    />
-                  
-                  {showInput && showList &&
-                    props.customers.searchList.length > 0 && (
-                      <Card style={{ width: 250 }}>
-                        <ListGroup
-                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                        >
-                          {props.customers.searchList.map((item) => (
-                            <ListGroupItem
-                              key={item.id}
-                              onClick={() => {
-                                setShowList(false)
-                                supplierDetails(item)}}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <strong>Name: </strong>
-                              {item.name}
-                            </ListGroupItem>
-                          ))}
-                        </ListGroup>
-                        <Link to="/VendorForm">
-                          <Button variant="link">Add Vendor+</Button>
-                        </Link>
-                      </Card>
-                    )}
-                  {/* Selected supplier details */}
-                  {selectedSupplier && (
-                    <div
-                      className="w-75 p-2 rounded"
-                      style={{ backgroundColor: "#f0f0f0" }}
+                  {selectedSupplier ? (
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedSupplier ? "f0f0f0" : ""
+                      }`}
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
                     >
-                      <h5
-                        className="mt-1"
-                        onClick={() => {
-                          setSupplierName(null);
-                          setSelectedSupplier(null)
-                          setShowInput(!showInput)}
-                        }
-                      >
-                        {selectedSupplier.name}
-                      </h5>
+                      <strong>{selectedSupplier.name}</strong>
+                      <br />
                       {selectedSupplier.addresses && (
-                          <div>
-                            {/* Supplier address details */}
-                            <p
-                              style={{
-                                fontSize: 14,
-                                fontWeight: "500",
-                                flex: "flex-wrap",
-                              }}
-                            >
-                              {selectedSupplier.addresses[0].addressLine1},
-                              <br />
-                              <small className="mt-1">
-                                {selectedSupplier.addresses[0].addressLine2},
-                              </small>
-                              <br />
-                              <small>
-                                {selectedSupplier.addresses[0].city},
-                              </small>
-                              <small className="ms-2">
-                                {selectedSupplier.addresses[0].state}
-                              </small>
-                              <br />
-                              <small>
-                                {selectedSupplier.addresses[0].countryName},
-                              </small>
-                              <small className="ms-2">
-                                {selectedSupplier.addresses[0].zipcode}.
-                              </small>
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  )}
-                  {error && !supplierName && (
-                    <p style={{ color: "red", fontSize: 12 }}>
-                      Please enter the Supplier name.
+                        <div>
+                        <small>
+                          {selectedSupplier.addresses[0]?.addressLine1}
+                        </small>
+                        ,<br />
+                        <small>
+                          {selectedSupplier.addresses[0]?.addressLine2}
+                        </small>
+                        ,<br />
+                        <small>
+                          {selectedSupplier.addresses[0]?.city}
+                        </small>,{" "}
+                        <small>{selectedSupplier.addresses[0]?.state}</small>,{" "}
+                        <small>{selectedSupplier.addresses[0]?.zipcode}</small>,
+                        <br />
+                        <small>
+                          {selectedSupplier.addresses[0].countryName}
+                        </small>
+                      </div>
+
+                      )}
+                      
                     </p>
+                  ) : (
+                    <Typeahead
+                      className="typeahead br_b-2 p-1"
+                      id="supplierName"
+                      onChange={handleSupplierSelection}
+                      options={supplierOptions}
+                      labelKey="name"
+                      onInputChange={handleSearchChange}
+                      placeholder="+ Add Supplier"
+                      style={{ width: 200, border: "2px dotted #25316f" }}
+                    />
                   )}
                 </Form.Group>
+                {error && !selectedSupplier && (
+                  <p style={{ color: "red", fontSize: 12 }}>
+                    Please enter the supplier name.
+                  </p>
+                )}
               </Col>
 
               <Col className="col-4  d-flex justify-content-center">
@@ -327,7 +277,7 @@ const NewPurchase = (props) => {
                     backgroundColor: "#f0f0f0",
                     padding: "8px",
                     width: 300,
-                    height: "auto",
+                    // height: "auto",
                     borderRadius: 5,
                   }}
                 >
@@ -420,7 +370,7 @@ const NewPurchase = (props) => {
                   />
                   {error && !refNumber && (
                     <p style={{ color: "red", fontSize: 12 }}>
-                      Please enter REF Number
+                      Please enter REF Number.
                     </p>
                   )}
                 </Form.Group>
