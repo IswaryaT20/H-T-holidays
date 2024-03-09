@@ -27,10 +27,6 @@ const NewPurchase = (props) => {
   const dispatch = useDispatch();
 
   //use State
-
-  const [supplierName, setSupplierName] = useState("");
-  const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [showInput, setShowInput] = useState(true);
   const [purchaseDate, setPurchaseDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");
@@ -54,6 +50,7 @@ const NewPurchase = (props) => {
   const [selectedNet, setSelectedNet] = useState(0);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [success, setSuccess] = useState("");
+  const [showTypeahead, setShowTypeahead] = useState(true);
 
   //Handlers
 
@@ -102,6 +99,7 @@ const NewPurchase = (props) => {
 
   const handleSupplierSelection = (selected) => {
     setSelectedSupplier(selected[0]);
+    setShowTypeahead(!selected[0]);
   };
 
   const handleSearchChange = (query) => {
@@ -111,6 +109,7 @@ const NewPurchase = (props) => {
     });
   };
 
+  //Values from PurchaseForm
   const productList = (item) => {
     console.log("Item", item);
     setAllItems(item);
@@ -218,40 +217,7 @@ const NewPurchase = (props) => {
             <Row className="w-100 mt-3">
               <Col className="col-4">
                 <Form.Group>
-                  {selectedSupplier ? (
-                    <p
-                      className={`inputfocus text-start rounded-1 p-2 ${
-                        selectedSupplier ? "f0f0f0" : ""
-                      }`}
-                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
-                    >
-                      <strong>{selectedSupplier.name}</strong>
-                      <br />
-                      {selectedSupplier.addresses && (
-                        <div>
-                        <small>
-                          {selectedSupplier.addresses[0]?.addressLine1}
-                        </small>
-                        ,<br />
-                        <small>
-                          {selectedSupplier.addresses[0]?.addressLine2}
-                        </small>
-                        ,<br />
-                        <small>
-                          {selectedSupplier.addresses[0]?.city}
-                        </small>,{" "}
-                        <small>{selectedSupplier.addresses[0]?.state}</small>,{" "}
-                        <small>{selectedSupplier.addresses[0]?.zipcode}</small>,
-                        <br />
-                        <small>
-                          {selectedSupplier.addresses[0].countryName}
-                        </small>
-                      </div>
-
-                      )}
-                      
-                    </p>
-                  ) : (
+                  {showTypeahead ? (
                     <Typeahead
                       className="typeahead br_b-2 p-1"
                       id="supplierName"
@@ -262,6 +228,39 @@ const NewPurchase = (props) => {
                       placeholder="+ Add Supplier"
                       style={{ width: 200, border: "2px dotted #25316f" }}
                     />
+                  ) : (
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedSupplier ? "f0f0f0" : ""
+                      }`}
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
+                    >
+                      <strong onClick={()=>setShowTypeahead(!showTypeahead)}>{selectedSupplier.name}</strong>
+                      <br />
+                      {selectedSupplier.addresses && (
+                        <div>
+                          <small>
+                            {selectedSupplier.addresses[0]?.addressLine1}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0]?.addressLine2}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0]?.city}
+                          </small>,{" "}
+                          <small>{selectedSupplier.addresses[0]?.state}</small>,{" "}
+                          <small>
+                            {selectedSupplier.addresses[0]?.zipcode}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0].countryName}
+                          </small>
+                        </div>
+                      )}
+                    </p>
                   )}
                 </Form.Group>
                 {error && !selectedSupplier && (

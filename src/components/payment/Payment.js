@@ -7,6 +7,7 @@ import {
   Col,
   InputGroup,
   FormControl,
+  Table,
 } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -19,8 +20,6 @@ import { useDispatch, connect } from "react-redux";
 function Payment(props) {
   const [entitiesPerPage, setEntitiesPerPage] = useState("");
   const [search, setSearch] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [getSupplier, setGetsupplier] = useState([]);
 
   const dispatch = useDispatch();
@@ -39,7 +38,7 @@ function Payment(props) {
   // console.log("the data pages",entitiesPerPage);
 
   return (
-    <div className="mt-5">
+    <div className="mt-5" style={{ paddingLeft: 50, paddingRight: 50 }}>
       <Container fluid style={{ marginTop: 70 }}>
         <div
           className="d-flex mt-4 pt-4 "
@@ -53,8 +52,8 @@ function Payment(props) {
           <Col>
             <Link to="/SupplierPay">
               <Button
-                className="b-none"
-                style={{ backgroundColor: "#25316f", color: "white" }}
+                className="b-none fw-bolder"
+                style={{ backgroundColor: "#1d1d5e", color: "white" }}
               >
                 New Payment
               </Button>
@@ -103,23 +102,23 @@ function Payment(props) {
             </div>
           </Col>
         </div>
-        <div className="table-container " style={{ width: "100%" }}>
-          <table className="table" style={{ overflowY: "scroll" }}>
+        <div style={{height:350, overflowY:"scroll"}}>
+          <Table striped hover size="sm" bordered>
             <thead>
               <tr>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   ID
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Supplier Name
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Mode of Pay
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Amount
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Reference Number
                 </th>
               </tr>
@@ -129,7 +128,9 @@ function Payment(props) {
                 .filter((item) => {
                   return search.toLowerCase() === ""
                     ? item
-                    : item.supplierName.toLowerCase().includes(search.toLowerCase());
+                    : item.supplierName
+                        .toLowerCase()
+                        .includes(search.toLowerCase());
                 })
                 .map((item) => (
                   <tr key={item.id}>
@@ -148,14 +149,13 @@ function Payment(props) {
                       .includes(search.toLowerCase());
               }).length === 0 && (
                 <tr>
-                  <td
-                    colSpan={5}
-                    style={{ fontWeight: "600", color: "red" }}
-                  >No data found!</td>
+                  <td colSpan={5} className="fst-italic" style={{ color: "red" }}>
+                    No data found!
+                  </td>
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
         <div className="d-flex justify-content-center ms-auto text-center mt-3">
           <Pagination size="md"></Pagination>

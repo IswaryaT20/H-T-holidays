@@ -9,112 +9,95 @@ import {
   Form,
   Alert,
   Pagination,
+
+
 } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
+
+
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+
+
 import { Typeahead } from "react-bootstrap-typeahead";
+
 import axios from "axios";
 import { useDispatch, connect } from "react-redux";
-import {
-  GET_ALL_PRODUCTS_API_CALL,
-  ADD_PRODUCT_API_CALL,
-  GET_ALL_CUSTOMERS_API_CALL,
-  MASTER_API_CALL
-} from "../../utils/Constant";
+import { GET_ALL_PRODUCTS_API_CALL, ADD_PRODUCT_API_CALL, GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 
 const Newproduct = (props) => {
   const [showModal, setShowModal] = useState(false);
-
+  const [showModaledit, setShowModaledit] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [search, setSearch] = useState("");
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModaledit = () => setShowModaledit(false);
+  const handleCloseAlertModal = () => setShowAlertModal(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
-
+  const [supplierNameError, setSupplierNameError] = useState(false);
   const [productNameError, setProductNameError] = useState(false);
   const [productType, setProductType] = useState(" SERVICES");
   const [productUrl, setProductUrl] = useState();
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
-
-
-  const [startingIndex, setStartIndex] = useState();
-  const [endingIndex, setEndingIndex] = useState(10);
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierId, setSupplierId] = useState();
+  const [startingIndex, setStartIndex] = useState(0)
+  const [endingIndex, setEndingIndex] = useState(10)
   const [success, setSuccess] = useState();
-  const [filteredData, setFilteredData] = useState([]);
-  const [handtCategories, setHandtCategories] = useState([]);
+  const [customerCategories, setCustomerCategories] = useState([]);
   const [masterCategory, setMasterCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [masterCategoryError, setMasterCategoryError] = useState(false);
+  
 
   useEffect(() => {
+ 
     if (showAlertModal) {
       const timeoutId = setTimeout(() => {
         setShowAlertModal(false);
-      }, 500);
-
+      }, 500); 
+  
       return () => clearTimeout(timeoutId);
     }
-  }, [showAlertModal]);
-
-  const dispatch = useDispatch();
+  
+    if (success) {
+      window.location.reload();
+    }
+  }, [showAlertModal, success]);
+  
+  const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
-
+  
     if (props.customers.customersList.length === 0) {
       dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
     }
   }, [dispatch, props.customers.customersList.length]);
-
-  useEffect(() => {
-    setFilteredData(props.productsData.products)
-  }, [props.productsData.products])
-
-
-  const handleCloseModal = () => {
-
-    setShowModal(false);
-  };
-
-  const handleFilter = (e) => {
-    if (e.target.value.length > 0) {
-      const tempArray = props.productsData.products.filter((item) => {
-        return item.productName.toLowerCase().includes(e.target.value.toLowerCase());
-      })
-
-      setFilteredData(tempArray)
-    }
-    else {
-      setFilteredData(props.productsData.products)
-    }
-  }
-
-  const handleShowModal = () => setShowModal(true);
-
-  const handleCloseAlertModal = () => setShowAlertModal(false);
-
+  
   const handleSubmit = () => {
     if (!productName.trim()) {
       setProductNameError(true);
       return;
     }
     if (!masterCategory) {
-      setMasterCategoryError(true); // Set master category error to true if it's empty
+      setMasterCategoryError(true);
       return;
     }
-
     const isProductNameExists = props.productsData.products.some(item => item.productName === productName);
-    if (isProductNameExists) {
-      alert("Product name already exists!");
-      return;
-    }
-
+  if (isProductNameExists) {
+ 
+    alert("Product name already exists!");
+    return;
+  }
     const bodyData = {
       productName: productName,
-      // supplierId: supplierId,
-      productType: masterCategory[0].id,
+      supplierId: supplierId,
+      productType: productType,
       productDescription: description,
-      // supplierName: supplierName,
+      supplierName: supplierName,
       createdBy: props.loggedInUser.loginId,
       productUrl: productUrl,
       masterCategory: masterCategory,
@@ -122,20 +105,18 @@ const Newproduct = (props) => {
   
     console.log("Body Data:", bodyData);
     dispatch({ type: ADD_PRODUCT_API_CALL, payload: bodyData });
-    window.location.reload();
     setShowModal(false);
-
     setProductType("SERVICES");
     setProductName("");
     setProductUrl("");
     setDescription("");
     setMasterCategory("");
-
+    setSupplierNameError(false);
     setProductNameError(false);
     setShowAlertModal(true);
     setShowAlertModal(true);
     setSuccess("Success");
-
+    
   };
   const resetInputFields = () => {
     setProductType("SERVICES");
@@ -143,107 +124,99 @@ const Newproduct = (props) => {
     setProductUrl("");
     setDescription("");
     setMasterCategory("");
-
+    setSupplierNameError(false);
     setProductNameError(false);
   };
-
-
+  
   const handleOptionClick1 = (index) => {
     setSelectedIndex(index);
-
+    handleCloseModaledit();
   };
-
   const paginationEvent = (index) => {
     setCurrentPage(index);
     setStartIndex((index - 1) * 10);
     setEndingIndex(index * 10);
   };
-
   const tableValue = [
-
     "Product Name",
     "Product Type",
     "Description",
     "Action",
   ];
+
   useEffect(() => {
-    // const fetchCategories = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       "http://68.178.161.233:8080/handt/v2/common/getmaster"
-    //     );
-    //     console.log(response.data.data);
-    //     setHandtCategories(response.data.data.handtCategories);
-    //   } catch (error) {
-    //     console.error("Error fetching data:", error);
-    //   }
-    // };
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://68.178.161.233:8080/handt/v2/common/getmaster');
+        console.log(response.data.data);
+        setCustomerCategories(response.data.data.handtCategories);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-    // fetchCategories();
-
-    dispatch({type: MASTER_API_CALL})
+    fetchCategories();
   }, []);
 
   const renderPagination = useCallback(() => {
-    const totalNoOfProducts = props.productsData.products;
-    const noOfPages = Math.ceil(totalNoOfProducts.length / 15);
-    let startPage = Math.min(1, currentPage);
-    let endPage = Math.min(startPage + 2, noOfPages); // Display at most 3 pages initially
+  const totalNoOfProducts = props.productsData.products;
+  const noOfPages = Math.ceil(totalNoOfProducts.length / 10);
+  let startPage = Math.min(1, currentPage);
+  let endPage = Math.min(startPage + 2, noOfPages); 
 
-    if (currentPage >= noOfPages - 1) {
-      startPage = Math.max(1, noOfPages - 2); // Start displaying the last 3 pages
-      endPage = noOfPages;
-    } else if (currentPage > 1) {
-      startPage = currentPage - 1; // Adjust startPage to show the next set of pages
-      endPage = Math.min(currentPage + 1, noOfPages); // Adjust endPage accordingly
-    }
-
-    return (
-      <div className="pagenation" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <Pagination>
-          <Pagination.First onClick={() => paginationEvent(1)} />
-          <Pagination.Prev
-            onClick={() => paginationEvent(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-
-          {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-            <Pagination.Item
-              key={startPage + index}
-              active={currentPage === startPage + index}
-              onClick={() => paginationEvent(startPage + index)}
-            >
-              {startPage + index}
-            </Pagination.Item>
-          ))}
-          {noOfPages > 3 && currentPage < noOfPages - 2 && (
-            <>
-              <Pagination.Ellipsis disabled />
-              <Pagination.Item
-                key={noOfPages}
-                active={currentPage === noOfPages}
-                onClick={() => paginationEvent(noOfPages)}
-              >
-                {noOfPages}
-              </Pagination.Item>
-            </>
-          )}
-
-          <Pagination.Next
-            onClick={() => paginationEvent(currentPage + 1)}
-            disabled={currentPage === noOfPages}
-          />
-
-          <Pagination.Last
-            onClick={() => paginationEvent(noOfPages)}
-            disabled={currentPage === noOfPages}
-          />
-        </Pagination>
-      </div>
-    );
-  }, [props.productsData.products, currentPage]);
+  if (currentPage >= noOfPages - 1) {
+    startPage = Math.max(1, noOfPages - 2);
+    endPage = noOfPages;
+  } else if (currentPage > 1) {
+    startPage = currentPage - 1;
+    endPage = Math.min(currentPage + 1, noOfPages); 
+  }
   return (
-    <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:80}}>
+    <div className="pagenation" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+      <Pagination>
+        <Pagination.First onClick={() => paginationEvent(1)} />
+        <Pagination.Prev
+          onClick={() => paginationEvent(currentPage - 1)}
+          disabled={currentPage === 1}
+        />
+
+        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+          <Pagination.Item
+            key={startPage + index}
+            active={currentPage === startPage + index}
+            onClick={() => paginationEvent(startPage + index)}
+          >
+            {startPage + index}
+          </Pagination.Item>
+        ))}
+        {noOfPages > 3 && currentPage < noOfPages - 2 && (
+          <>
+            <Pagination.Ellipsis disabled />
+            <Pagination.Item
+              key={noOfPages}
+              active={currentPage === noOfPages}
+              onClick={() => paginationEvent(noOfPages)}
+            >
+              {noOfPages}
+            </Pagination.Item>
+          </>
+        )}
+
+        <Pagination.Next
+          onClick={() => paginationEvent(currentPage + 1)}
+          disabled={currentPage === noOfPages}
+        />
+
+        <Pagination.Last
+          onClick={() => paginationEvent(noOfPages)}
+          disabled={currentPage === noOfPages}
+        />
+      </Pagination>
+    </div>
+  );
+}, [props.productsData.products, currentPage]);
+  return (
+    <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:70}}>
       <Row style={{ marginTop: "2%" }}>
         <Col className="col-8" style={{}}>
           <div className="d-flex">
@@ -262,33 +235,24 @@ const Newproduct = (props) => {
             >
               New +
             </Button>
-
             <p
               style={{
                 marginLeft: "38px",
                 marginTop: "6px",
                 marginRight: "13px",
                 color: "#1d1d5e",
-                fontWeight: "bold",
+                fontWeight:'bold'
               }}
             >
               Products
             </p>
 
             <InputGroup
-              style={{
-                height: "10px",
-                width: "27%",
-                marginLeft: "10%",
-                fontWeight: "bold",
-              }}
+              style={{ height: "10px", width: "27%", marginLeft: "10%",fontWeight: 'bold' }}
             >
               <FormControl
                 placeholder="Search Products..."
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  handleFilter(e)
-                }}
+                onChange={(e) => setSearch(e.target.value)}
                 style={{
                   background: "#80808036",
                   boxShadow: "none",
@@ -300,16 +264,13 @@ const Newproduct = (props) => {
           </div>
         </Col>
       </Row>
-      <div className="mt-4" fluid style={{ flex: 1 }}>
+      <div
+        className="mt-4"
+        fluid
+        style={{ flex: 1 }}
+      >
         <Table striped hover>
-          <thead
-            style={{
-              position: "sticky",
-              top: 0,
-              zIndex: 1,
-              background: "#fff",
-            }}
-          >
+          <thead>
             <tr>
               {tableValue.map((tablename, index) => (
                 <th
@@ -322,37 +283,44 @@ const Newproduct = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.productsData.products.map((items) => (
+            {props.productsData.products.filter((items) => {
+              return search.toLowerCase() === ""
+                ? items
+                : items.productName
+                  .toLowerCase()
+                  .includes(search.toLowerCase());
+            })
+              .sort((a, b) => b.id - a.id)
+              .slice(startingIndex, endingIndex)
+              .map((items) => (
                 <tr key={items.id}>
 
                   <td>{items.productName}</td>
-                  <td>{items.category}</td>
-                  <td style={{ maxWidth: '20px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }} title={items.productDescription}>
-                      {items.productDescription.split(' ').slice(0, 10).join(' ')}
-                      {items.productDescription.split(' ').length > 10 && '...'}
-                    </div>
-                  </td>
+                  <td>{items.productType}</td>
+<td style={{ maxWidth: '20px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }} title={items.productDescription}>
+    {items.productDescription.split(' ').slice(0, 10).join(' ')}
+    {items.productDescription.split(' ').length > 10 && '...'}
+  </div>
+</td>
                   <td>
-                    <FaEdit
-                      // onClick={() => handleOptionClick1(items.id)}
-                      style={{
-                        alignItems: "center",
-                        marginLeft: "13px",
-                        marginBottom: "-3px",
-                      }}
-                    />
-
-                    <MdDelete style={{ marginLeft: "13px" }} />
-                  </td>
-                </tr>
-              ))}
+          <FaEdit onClick={() => handleOptionClick1(items.id)} style={{ alignItems: 'center', marginLeft: '13px', marginBottom: '-3px' }} />
+          <MdDelete style={{ marginLeft: '13px' }} />
+        </td>
+      </tr>
+    ))}
+  {props.productsData.products.length === 0 && (
+    <tr>
+      <td colSpan="4" style={{ textAlign: 'center' }}>No data found</td>
+    </tr>
+  )}
           </tbody>
         </Table>
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton onClick={resetInputFields}>
+      <Modal.Header closeButton onClick={resetInputFields}>
+        
           <Modal.Title style={{ fontSize: "18px", color: "#1d1d5e" }}>
             New Product
           </Modal.Title>
@@ -376,52 +344,40 @@ const Newproduct = (props) => {
           <Row>
             <Col>
               <div style={{ display: "flex", flexDirection: "column" }}>
+            
 
-                <div
-                  className={`mb-3 ${masterCategory ? "has-error" : ""}`}
-                  style={{ display: "flex", alignItems: "center" }}
-                >
+                <div className={`mb-3 ${masterCategoryError ? "has-error" : ""}`} style={{ display: "flex", alignItems: "center" }}>
+
+  <label className="control-label mr-3" style={{ fontSize: "14px", padding: "0px", flex: 2 }}>
+    Master Category <span style={{ color: 'red' }}>*</span>
+  </label>
+  <Typeahead
+    id="masterCategoryTypeahead"
+    className="inputfocus"
+    style={{ flex: 3, marginRight: '1px' }} 
+    selected={masterCategory} // Initialize with current state value
+    options={customerCategories.map((category) => ({
+      id: category.id,
+      label: category.value
+    }))}
+    labelKey="label"
+    onChange={(selected) => {
+      setMasterCategory(selected);
+      setMasterCategoryError(false); // Reset the error when a selection is made
+    }}
+    placeholder="Search..." 
+  />
+  {masterCategoryError && !masterCategory && (
+    <span style={{ color: "red", marginTop: '48px', marginLeft: '-32%', fontSize: '12px' }}>Master Category Required</span>
+  )}
+</div>
+                <div className={`mb-3 ${masterCategoryError ? "has-error" : ""}`} style={{ display: "flex", alignItems: "center" }}>
+
                   <label
                     className="control-label mr-3"
                     style={{ fontSize: "14px", padding: "0px", flex: 2 }}
                   >
-                    Product Type <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Typeahead
-                    id="masterCategoryTypeahead"
-                    className="inputfocus"
-                    style={{ flex: 3, marginRight: '1px' }}
-                    selected={masterCategory} // Initialize with current state value
-                    options={props.masterData.handtCategories.map((category) => ({
-                      id: category.id,
-                      label: category.value
-                    }))}
-                    labelKey="label"
-                    onChange={(selected) => {
-                      setMasterCategory(selected);
-                      setMasterCategoryError(false); // Reset the error when a selection is made
-                    }}
-                    placeholder="Select Product type"
-                  />
-
-                  {masterCategoryError && !masterCategory && (
-                    <span style={{ color: "red", marginTop: '48px', marginLeft: '-32%', fontSize: '12px' }}>Master Category Required</span>
-                  )}
-                </div>
-
-
-
-
-
-                <div
-                  className={`mb-3 ${productNameError ? "has-error" : ""}`}
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <label
-                    className="control-label mr-3"
-                    style={{ fontSize: "14px", padding: "0px", flex: 2 }}
-                  >
-                    Product Name <span style={{ color: "red" }}>*</span>
+                    Product Name <span style={{ color: 'red' }}>*</span>
                   </label>
                   <Form.Control
                     type="text"
@@ -429,8 +385,9 @@ const Newproduct = (props) => {
                     className="inputfocus"
                     style={{
                       flex: 3,
-                      marginLeft: "14px",
+                 marginLeft:17,
                     }}
+                   
                     value={productName}
                     onChange={(e) => {
                       setProductName(e.target.value);
@@ -438,16 +395,7 @@ const Newproduct = (props) => {
                     }}
                   />
                   {productNameError && (
-                    <span
-                      style={{
-                        color: "red",
-                        marginTop: "53px",
-                        marginLeft: "-29%",
-                        fontSize: "12px",
-                      }}
-                    >
-                      Product Name Required
-                    </span>
+                    <span style={{ color: "red", marginTop: '53px', marginLeft: '-29%', fontSize: '12px' }}>Product Name Required</span>
                   )}
                 </div>
 
@@ -465,7 +413,7 @@ const Newproduct = (props) => {
                     className="form-control inputfocus description"
                     rows="4"
                     placeholder="Enter your message"
-                    style={{ flex: 3, marginLeft: "20px" }}
+                    style={{ flex: 3, marginLeft: '20px' }}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
@@ -494,69 +442,186 @@ const Newproduct = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <Modal show={showAlertModal}>
-        <Modal.Header>
-          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+      <Modal
+        show={showModaledit}
+        onHide={handleCloseModaledit}
+        className="modelcontent"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "18px", color: "#1d1d5e" }}>
+            Edit Product
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {success === "Success" ? (
-            <>
-              <div className="d-flex align-items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-circle-check"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="#3bb54a"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ marginLeft: "31%" }}
+          <div className="d-flex">
+            <p
+              style={{
+                border: "none",
+                marginRight: "10px",
+                color: "#1d1d5e",
+                marginBottom: "16px",
+                fontSize: "16px",
+                marginTop: "10px",
+                margin: "-2px 6px 17px -4px",
+              }}
+            >
+              General Info
+            </p>
+          </div>
+          <Row>
+            <Col>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div
+                  className="mb-3"
+                  style={{ display: "flex", alignItems: "center" }}
                 >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M9 12l2 2l4 -4" />
-                </svg>
-                <p className="mb-0 ml-2">Data Saved Successfully</p>
+                  <label
+                    className="control-label mr-3"
+                    style={{ fontSize: "14px", padding: "0px" }}
+                  >
+                    Product Type
+                  </label>
+
+                  <Form.Control
+                    type="text"
+                    placeholder=" "
+                    className="inputfocus"
+                    style={{ marginLeft: "22%", width: "50%", padding: "2px", background: '#d9e1ee8c' }}
+                    defaultValue="  H_T HOLIDAYS"
+                    readOnly
+                  />
+                </div>
+                <div
+                  className="mb-3"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <label
+                    className="control-label mr-3"
+                    style={{ fontSize: "14px" }}
+                  >
+                    Supplier Name
+                  </label>
+                  <FormControl
+                    type="text"
+                    placeholder=" "
+                    className="inputfocus"
+                    style={{ marginLeft: "89px", width: "50%", padding: "2px" }}
+
+                  />
+                </div>
+
+                <div
+                  className="mb-3"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <label
+                    className="control-label mr-3"
+                    style={{ fontSize: "14px" }}
+                  >
+                    Product Name
+                  </label>
+                  <Form.Control
+                    type="text"
+                    placeholder=" "
+                    className="inputfocus"
+                    style={{ marginLeft: "20%", width: "50%", padding: "2px" }}
+                  />
+                </div>
+                <div
+                  className="mb-3"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <label className="control-label" style={{ fontSize: "14px" }}>
+                    Description
+                  </label>
+                  <textarea
+                    className="form-control inputfocus"
+                    rows="4"
+                    placeholder="Enter your message"
+                    style={{ marginLeft: "25%", width: "50%" }}
+                  ></textarea>
+                </div>
               </div>
-            </>
-          ) : (
-            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
-          )}
+            </Col>
+          </Row>
         </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="button"
+            onClick={handleCloseModaledit}
+            style={{
+              background: "#1d1d5e",
+              color: "white",
+              width: "13%",
+              height: "31px",
+              textAlign: "center",
+              border: "none",
+              padding: "0px",
+              marginTop: "4px",
+              marginRight: "22px",
+            }}
+          >
+            {" "}
+            Save
+          </Button>
+        </Modal.Footer>
       </Modal>
+      <Modal show={showAlertModal}>
+  <Modal.Header >
+    <Modal.Title style={{fontSize:'12px'}}>Product Data</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {success === 'Success' ? (
+      <>
+        <div className="d-flex align-items-center">
+        <svg
+  xmlns="http://www.w3.org/2000/svg"
+  className="icon icon-tabler icon-tabler-circle-check"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  strokeWidth="2"
+  stroke="#3bb54a"
+  fill="none"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  style={{ marginLeft: '31%' }}
+>
+
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9 12l2 2l4 -4" />
+          </svg>
+          <p className="mb-0 ml-2">Data Saved Successfully</p>
+        </div>
+      </>
+    ) : (
+      <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+    )}
+  </Modal.Body>
+</Modal>
 
       {
-        props.productsData.error ? (
-          <Alert clas>[No Customer Data Fount]</Alert>
-        ) : null
+        props.productsData.error ? <Alert clas>[No Customer Data Fount]</Alert> : null
       }
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          marginTop: 20,
-          paddingBottom: 100,
-        }}
-      >
-        {props.productsData.products?.length > 0 ? renderPagination() : null}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 20, paddingBottom: 100 }}>
+        {
+          props.productsData.products?.length > 0 ? renderPagination() : null
+        }
       </div>
-    </div >
+
+    </div>
   );
 };
+
 
 const mapsToProps = (state) => {
   return {
     productsData: state.productsData,
     loggedInUser: state.users,
-    customers: state.customers,
-    masterData: state.masterData
-  };
-};
+    customers: state.customers
+  }
+}
+
 export default connect(mapsToProps)(Newproduct);

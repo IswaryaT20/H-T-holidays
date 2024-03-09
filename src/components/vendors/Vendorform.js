@@ -67,15 +67,13 @@ function VendorForm(props) {
 
   const dispatch = useDispatch();
 
-  
-
   useEffect(() => {
     if (showAlertModal) {
       const timeoutId = setTimeout(() => {
         setShowAlertModal(false);
         // window.location.reload();
       }, 500);
-  
+
       return () => clearTimeout(timeoutId);
     }
   }, [showAlertModal]);
@@ -151,7 +149,6 @@ function VendorForm(props) {
   };
 
   const handlesubmit = () => {
-
     if (suppliername.length === 0) {
       setErrorMessage(true);
       return;
@@ -160,8 +157,6 @@ function VendorForm(props) {
       setErrorMessage(true);
       return;
     }
-
-
 
     const sendsupplierdata = {
       name: suppliername,
@@ -201,14 +196,13 @@ function VendorForm(props) {
       type: CREATE_CUSTOMER_API_CALL,
       payload: sendsupplierdata,
     });
-   
+
     console.log("props message : ", props.customers.error);
-    setSuccess('Success');
+    setSuccess("Success");
     setShowAlertModal(true);
     const seterror = props.customers.error;
     if (seterror) {
       setErrorMessagess(seterror.message);
-
 
       const timer = setTimeout(() => {
         setErrorMessagess(""); // Clear the error message after 1 second
@@ -216,9 +210,8 @@ function VendorForm(props) {
       }, 1500);
     }
 
-    console.log("theserver",Errormessagess.message);
+    console.log("theserver", Errormessagess.message);
 
-    
     console.log("supplier data", props.customers);
     console.log(sendsupplierdata);
     console.log(formData);
@@ -226,8 +219,8 @@ function VendorForm(props) {
 
   useEffect(() => {
     dispatch({ type: MASTER_API_CALL });
-    console.log("message :", props.message); 
-    console.log("customers :", props.customers); 
+    console.log("message :", props.message);
+    console.log("customers :", props.customers);
   }, []);
 
   const handleVatreatment = (item) => {
@@ -251,13 +244,15 @@ function VendorForm(props) {
       >
         <Container fluid className=" f-14 pt-1 ">
           <Row className=" f-14 ms-1 me-1 pb-1 pt-1 mt-3 mb-3">
-            <Col className=" f-14 d-flex justify-content-start  ">
+            <Col
+              className=" f-14 d-flex justify-content-end "
+              style={{ paddingRight: "10%" }}
+            >
               <Button
                 type="submit"
                 className=" f-14 bg-blue b-none f-14 mt-1 text-uppercase rounded-1"
                 style={{
                   height: "28px",
-                  width: "13%",
                   backgroundColor: "#25316f",
                 }}
                 onClick={handlesubmit}
@@ -269,7 +264,6 @@ function VendorForm(props) {
                 className="fw-bolder f-14 bg-blue b-none f-14 mt-1 ms-2 text-uppercase rounded-1"
                 style={{
                   height: "28px",
-                  width: "13%",
                   backgroundColor: "#bebec3",
                   color: "black",
                 }}
@@ -283,37 +277,27 @@ function VendorForm(props) {
                 </Link>
               </Button>
             </Col>
-            <Col className="d-flex justify-content-end me-3 ">
-              <Button
-                className="m-1 bg-blue f-12 rounded-1 b-none"
-                style={{ backgroundColor: "#25316f", width: "max-content" }}
-                onClick={bankmodal}
-              >
-                Accounting
-              </Button>
-              <Button
-                className="m-1 bg-blue f-12 rounded-1 b-none "
-                style={{ backgroundColor: "#25316f", width: "max-content" }}
-              >
-                Log Notes
-              </Button>
-            </Col>
           </Row>
           {/*---------------form starts ---------------------*/}
           <Row
             xs={12}
             sm={12}
-            lg={9}
-            md={9}
-            xxl={9}
-            className=" f-14 ms-1 mt-2 w-100 "
-            style={{ flex: 1 }}
+            lg={12}
+            md={12}
+            xxl={12}
+            className=""
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             <Col
-              xs={6}
-              md={8}
-              lg={8}
-              xxl={8}
+              xs={10}
+              md={10}
+              lg={10}
+              xxl={10}
               className="border border-2  shadow"
             >
               <Row style={{ flex: 1 }} className=" ms-0 ">
@@ -325,59 +309,15 @@ function VendorForm(props) {
                   xxl={10}
                   className=" f-14 d-flex p-4"
                 ></Col>
-                <Col
-                  xs={3}
-                  sm={3}
-                  md={2}
-                  lg={2}
-                  xxl={2}
-                  className="mt-1 d-flex justify-content-end "
-                  style={{ zIndex: "9" }}
-                >
-                  <Form.Group className="text-end d-flex flex-column justify-content-end">
-                    <img
-                      src={selectedImage}
-                      alt="Profile picture for cusotmer"
-                      className=" f-14 img-thumbnail rounded-circle"
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "cover",
-                      }}
-                      onClickCapture={openAvatars}
-                    />
-
-                    <Modal show={isAvatarsOpen} onHide={openAvatars}>
-                      <Modal.Body>
-                        <strong>Kindly choose the profile picture</strong>
-                      </Modal.Body>
-
-                      {isAvatarsOpen && (
-                        <div className=" h-20 p-2">
-                          <div className="d-flex w-100 flex-wrap position-relative ">
-                            {avatars.map((item) => (
-                              <img
-                                className="ms-2 p-2 cursor-pointer  rounded-full  p-1"
-                                style={{ zIndex: "99", width: "20%" }}
-                                name={item.name}
-                                key={item.id}
-                                src={item.src}
-                                rounded
-                                onClick={captureImage}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </Modal>
-                    <Form.Label className="">Profile Picture</Form.Label>
-                  </Form.Group>
-                </Col>
               </Row>
 
               <Row
                 className="ps-3 pe-3"
-                style={{ display: "flex", justifyContent: "space-around" }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  marginTop: "4%",
+                }}
               >
                 <Col
                   xxl={7}
@@ -398,9 +338,8 @@ function VendorForm(props) {
                         style={{ border: "2px dotted #25316f" }}
                         name="suppliername"
                       ></FormControl>
-                    
-                        
-                    {Errormessage && !suppliername && (
+
+                      {Errormessage && !suppliername && (
                         <p className="error f-14" style={{ color: "red" }}>
                           Cusotmer Name is required
                         </p>
@@ -527,7 +466,7 @@ function VendorForm(props) {
                   </FormGroup>
                   <FormGroup>
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
-                      Title
+                      Salutation
                       <FormSelect
                         className="f-14   br_b-2 rounded-0 inputfocus"
                         onChange={(e) => handleChange(e)}
@@ -538,6 +477,7 @@ function VendorForm(props) {
                           height: "2.5rem",
                         }}
                       >
+                        <option>Select Salutation</option>
                         <option value="Mr">Mr.</option>
                         <option value="Mrs">Mrs.</option>
                         <option value="Miss">Miss.</option>
@@ -553,7 +493,7 @@ function VendorForm(props) {
                   lg={5}
                   xxl={5}
                   className=" f-14 "
-                  style={{ position: "relative", top: "-25px" }}
+                  style={{ position: "relative", top: "-48px" }}
                 >
                   <FormGroup>
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
@@ -621,8 +561,6 @@ function VendorForm(props) {
                       )}
                     </div>
 
-                 
-
                     <FormLabel className=" b txt-ht_blue w-100 f-14">
                       Email
                       <FormControl
@@ -647,43 +585,6 @@ function VendorForm(props) {
               </Row>
             </Col>
 
-            <Col className="mt-2" style={{ paddingLeft: 50, paddingRight: 50 }}>
-              <FormGroup>
-                <FormLabel>
-                  <h4>Log Notes</h4>
-                </FormLabel>
-                <Form.Control
-                  className="inputfocus"
-                  as="textarea"
-                  placeholder="Leave a comment here"
-                  style={{ height: "100px" }}
-                  disabled
-                />
-                      {Errormessagess &&  (
-            <Alert className="mt-5" variant="danger">{Errormessagess.message}</Alert>
-           
-          )}
-        
-
-                {/* <Button
-                  className=" f-14 bg-blue b-none f-14 text-uppercase rounded-1"
-                  style={{
-                    height: "30px",
-                    width: "max-content",
-                    backgroundColor: "#25316f",
-                    marginTop: 25,
-                  }}
-                  type="button"
-                >
-                  Save
-                </Button> */}
-
-       
-          
-                </FormGroup>
-           
-            </Col>
-
             {/*bamk modal for the bank details */}
 
             {bankdetails && (
@@ -696,39 +597,39 @@ function VendorForm(props) {
             )}
           </Row>
         </Container>
-        <Modal show={showAlertModal} onHide={() => setShowAlertModal(false) }>
-        <Modal.Header>
-          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {success === "Success" ? (
-            <>
-              <div className="d-flex align-items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-circle-check"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="#3bb54a"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ marginLeft: "31%" }}
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M9 12l2 2l4 -4" />
-                </svg>
-                <p className="mb-0 ml-2">Data Saved Successfully</p>
-              </div>
-            </>
-          ) : (
-            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
-          )}
-        </Modal.Body>
-      </Modal>
+        <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+          <Modal.Header>
+            <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {success === "Success" ? (
+              <>
+                <div className="d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-circle-check"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="#3bb54a"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ marginLeft: "31%" }}
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9 12l2 2l4 -4" />
+                  </svg>
+                  <p className="mb-0 ml-2">Data Saved Successfully</p>
+                </div>
+              </>
+            ) : (
+              <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+            )}
+          </Modal.Body>
+        </Modal>
       </div>
     </>
   );

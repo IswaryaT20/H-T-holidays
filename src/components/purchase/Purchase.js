@@ -260,7 +260,7 @@ const Newproduct = (props) => {
           </Col>
         </Row>
 
-        <div style={{ paddingLeft: "1%", paddingRight: "1%",height:350, overflowY: "auto" }} className="mt-3 mb-4">
+        <div style={{ paddingLeft: "1%", paddingRight: "1%", overflowY:"auto", height:350 }} className="mt-3 mb-4">
           <Table striped hover size="sm" bordered>
             <thead>
               <tr>
