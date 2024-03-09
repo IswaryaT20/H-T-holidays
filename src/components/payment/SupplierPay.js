@@ -6,12 +6,8 @@ import {
   Row,
   FormGroup,
   FormControl,
-  Card,
-  ListGroup,
   FormLabel,
-  FormCheck,
   FormSelect,
-  Button,
   Alert,
   Modal,
 } from "react-bootstrap";
@@ -25,15 +21,12 @@ import {
   SEARCH_CUSTOMER_API_CALL,
   MASTER_API_CALL,
 } from "../../utils/Constant";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 import axios from "axios";
 
 function Customerpay(props) {
-  const [customerName, setCustomerName] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [showInput, setShowInput] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [chequerefnum, setChequerefnum] = useState(false); // Define chequerefnum state
-
   const [amount, setAmount] = useState("");
   const [Referenceno, setReferenceno] = useState("");
   const [chequeNumber, setChequeNumber] = useState("");
@@ -42,8 +35,9 @@ function Customerpay(props) {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [success, setSuccess] = useState();
   const [masterPaytype, setMasterpaytype] = useState([]);
-  
-
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [supplierOptions, setSupplierOptions] = useState([]);
+  const [showTypeahead, setShowTypeahead] = useState(true);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -52,44 +46,45 @@ function Customerpay(props) {
         setShowAlertModal(false);
         // window.location.reload();
       }, 500);
-  
+
       return () => clearTimeout(timeoutId);
     }
   }, [showAlertModal]);
-  const handleSearchChange = (e) => {
-    if (e.target.name === "suppliernamesearch") {
-      setCustomerName(e.target.value);
-    }
-  };
-
-  const customerSelect = () => {
-    const searchname = customerName;
-
-    if (searchname) {
-      setLoading(true);
-
-      // Add a delay of 1 second
-      setTimeout(() => {
-        dispatch({
-          type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: searchname, businessTypeId: 3 },
-        });
-      }, 1000);
-    }
-  };
 
   useEffect(() => {
-    customerSelect();
-  }, [customerName]);
-
-  const customerdetails = (item) => {
-    setSelectedCustomer(item);
-    setShowInput(false);
-  };
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { businessTypeId: 3 },
+    });
+  }, [dispatch]);
 
   useEffect(() => {
-    console.log(selectedCustomer);
-  }, [selectedCustomer]);
+    if (props.customers.searchList.length > 0) {
+      setSupplierOptions(
+        props.customers.searchList.map((item) => ({
+          id: item.id,
+          userName: item.userName,
+          name: item.name,
+          addresses: item.addresses,
+          mobile: item.mobile,
+        }))
+      );
+    } else {
+      setSupplierOptions([]);
+    }
+  }, [props.customers.searchList]);
+
+  const handleSupplierSelection = (selected) => {
+    setSelectedSupplier(selected[0]);
+    setShowTypeahead(!selected[0]);
+  };
+
+  const handleSearchChange = (query) => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query, businessTypeId: 3 },
+    });
+  };
 
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -98,15 +93,13 @@ function Customerpay(props) {
     console.log(props.message);
   }, []);
 
-  useEffect(()=> {
-    setMasterpaytype(props.masters.paymentTypes)
-  }, [props.masters.paymentTypes])
-
+  useEffect(() => {
+    setMasterpaytype(props.masters.paymentTypes);
+  }, [props.masters.paymentTypes]);
 
   const handleSubmit = () => {
-  
     setErrormessage("");
-    if (customerName.length === 0) {
+    if (selectedSupplier.length === 0) {
       setErrormessage("Please enter the supplier name.");
       return;
     }
@@ -114,20 +107,22 @@ function Customerpay(props) {
       setErrormessage("Please enter Amount.");
       return;
     }
+    if(Referenceno.length === 0 ){
+      setErrormessage("Please enter REF No.")
+    }
 
-      const requestData = {
-        customerId: selectedCustomer.id,
-        createdBy: props.loginUsers.loginId,
-        paymentType: 1,
-        amount: amount,
-        referenceNumber: Referenceno,
-        chequeNumber: chequeNumber,
-        chequeDate: currentDate,
-        description: "null",
-        collectionDate: Collectiondate,
-      };
-      console.log(requestData)
-    
+    const requestData = {
+      customerId: selectedSupplier.id,
+      createdBy: props.loginUsers.loginId,
+      paymentType: 1,
+      amount: amount,
+      referenceNumber: Referenceno,
+      chequeNumber: chequeNumber,
+      chequeDate: currentDate,
+      description: "",
+      collectionDate: Collectiondate,
+    };
+    console.log(requestData);
 
     axios
       .post(
@@ -137,8 +132,8 @@ function Customerpay(props) {
       .then((response) => response.data.data)
       .catch((error) => console.log(error));
 
-      setSuccess('Success');
-      setShowAlertModal(true);
+    setSuccess("Success");
+    setShowAlertModal(true);
 
     setTimeout(() => {
       window.location.reload();
@@ -147,9 +142,13 @@ function Customerpay(props) {
 
   return (
     <>
-      <Container fluid className="flex" style={{
-        marginTop:75,
-      }}>
+      <Container
+        fluid
+        className="flex"
+        style={{
+          marginTop: 75,
+        }}
+      >
         <Row className="w-100 ms-0 mt-2 bg-blur" style={{}}>
           <Col lg={2}></Col>
           <Col
@@ -192,104 +191,59 @@ function Customerpay(props) {
                   </span>
                 </p>
                 <FormGroup>
-                  {showInput && (
-                    <FormControl
-                      id="name"
-                      type="search"
-                      name="suppliernamesearch"
-                      className="inputfocus f-14 br_b-2 rounded-0 mt-2"
-                      style={{ border: "2px dotted #25316f" }}
-                      placeholder="Search Supplier Name"
-                      value={customerName}
-                      onChange={(name) => handleSearchChange(name)}
+                  {showTypeahead ? (
+                    <Typeahead
+                      className="typeahead br_b-2 p-1"
+                      id="supplierName"
+                      onChange={handleSupplierSelection}
+                      options={supplierOptions}
+                      labelKey="name"
+                      onInputChange={handleSearchChange}
+                      placeholder="+ Add Supplier"
+                      style={{ width: 200, border: "2px dotted #25316f" }}
                     />
-                  )}
-                  {showInput &&
-                    props.customers.searchList &&
-                    props.customers.searchList.length > 0 && (
-                      <Card className="mt-3" style={{ width: "18rem" }}>
-                        <ListGroup
-                          variant="flush"
-                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                        >
-                          {props.customers.searchList.map((item) => (
-                            <ListGroup.Item
-                              key={item.id}
-                              onClick={() => customerdetails(item)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <strong onClick={() => setShowInput(true)}>
-                                Name:
-                              </strong>
-                              {item.name}
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                        <Link to="/VendorForm">
-                          <Button variant="link">Add Supplier +</Button>
-                        </Link>
-                      </Card>
-                    )}
-                  {selectedCustomer ? (
-                    <div
-                      xxl={2}
-                      lg={2}
-                      className="w-80 p-2"
-                      style={{ backgroundColor: "#f0f0f0" }}
-                    >
-                      <h3
-                        className="mt-1"
-                        onClick={() => setShowInput(!showInput)}
-                      >
-                        {selectedCustomer.name}
-                      </h3>
-                      {selectedCustomer.addresses &&
-                        selectedCustomer.addresses.length > 0 && (
-                          <div
-                            style={{
-                              fontSize: 20,
-                              position: "relative",
-                              top: "-2px",
-                            }}
-                          >
-                            <p
-                              className=" w-70"
-                              style={{
-                                fontSize: 16,
-                                fontWeight: "500",
-                                flex: "flex-wrap",
-                              }}
-                            >
-                              {selectedCustomer.addresses[0].addressLine1},
-                              <br />
-                              <span className="mt-1">
-                                {selectedCustomer.addresses[0].addressLine2},
-                              </span>
-                              <br />
-                              <span>{selectedCustomer.addresses[0].city},</span>
-                              <span className="ms-2">
-                                {selectedCustomer.addresses[0].state}
-                              </span>
-                              <br />
-                              <span>
-                                {selectedCustomer.addresses[0].countryName},
-                              </span>
-                              <span className="ms-2">
-                                {selectedCustomer.addresses[0].zipcode}.
-                              </span>
-                            </p>
-                          </div>
-                        )}
-                    </div>
                   ) : (
-                    <span></span>
-                  )}
-                  {errormessage && !customerName && (
-                    <p style={{ color: "red", fontSize: 12 }}>
-                      Please enter the supplier name.
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedSupplier ? "f0f0f0" : ""
+                      }`}
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
+                    >
+                      <strong onClick={() => setShowTypeahead(!showTypeahead)}>
+                        {selectedSupplier.name}
+                      </strong>
+                      <br />
+                      {selectedSupplier.addresses && (
+                        <div>
+                          <small>
+                            {selectedSupplier.addresses[0]?.addressLine1}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0]?.addressLine2}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0]?.city}
+                          </small>,{" "}
+                          <small>{selectedSupplier.addresses[0]?.state}</small>,{" "}
+                          <small>
+                            {selectedSupplier.addresses[0]?.zipcode}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedSupplier.addresses[0].countryName}
+                          </small>
+                        </div>
+                      )}
                     </p>
                   )}
                 </FormGroup>
+                {errormessage && !selectedSupplier && (
+                  <p style={{ color: "red", fontSize: 12 }}>
+                    Please enter the supplier name.
+                  </p>
+                )}
               </Col>
 
               <Col className="font-large f-20 text-end text-capitalize">
@@ -395,19 +349,19 @@ function Customerpay(props) {
                       className="mt-1 inputfocus"
                       name="referenceno"
                       value={Referenceno}
-                      onChange={(e)=> setReferenceno(e.target.value)}
+                      onChange={(e) => setReferenceno(e.target.value)}
                       style={{
                         width: 250,
                       }}
                     ></FormControl>
                     {errormessage && !Referenceno && (
-                    <p style={{ color: "red", fontSize: 12 }}>
-                    Please enter the Ref number.
-                  </p>
-                  )}
+                      <p style={{ color: "red", fontSize: 12 }}>
+                        Please enter the REF No.
+                      </p>
+                    )}
                   </FormLabel>
                 </FormGroup>
-                
+
                 <div className="p-1">
                   <FormGroup className="d-flex justify-content-evenly">
                     {chequerefnum && (
@@ -433,7 +387,7 @@ function Customerpay(props) {
                           type="date"
                           name="collectiondate"
                           value={Collectiondate}
-                          onChange={(e)=> setCollectiondate(e.target.value)}
+                          onChange={(e) => setCollectiondate(e.target.value)}
                           style={{
                             width: 250,
                           }}
@@ -447,7 +401,7 @@ function Customerpay(props) {
                           className="mt-1 inputfocus"
                           type="text"
                           value={chequeNumber}
-                          onChange={(e)=> setChequeNumber(e.target.value)}
+                          onChange={(e) => setChequeNumber(e.target.value)}
                           style={{
                             width: 250,
                           }}
@@ -506,40 +460,39 @@ function Customerpay(props) {
       </Container>
 
       <>
-      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false) }>
-        <Modal.Header>
-          <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {success === "Success" ? (
-            <>
-              <div className="d-flex align-items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-circle-check"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="#3bb54a"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ marginLeft: "31%" }}
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M9 12l2 2l4 -4" />
-                </svg>
-                <p className="mb-0 ml-2">Data Saved Successfully</p>
-                
-              </div>
-            </>
-          ) : (
-            <Alert variant="danger">Data Saved Unsuccessfully</Alert>
-          )}
-        </Modal.Body>
-      </Modal>
+        <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+          <Modal.Header>
+            <Modal.Title style={{ fontSize: "12px" }}>Product Data</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {success === "Success" ? (
+              <>
+                <div className="d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-circle-check"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="#3bb54a"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ marginLeft: "31%" }}
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9 12l2 2l4 -4" />
+                  </svg>
+                  <p className="mb-0 ml-2">Data Saved Successfully</p>
+                </div>
+              </>
+            ) : (
+              <Alert variant="danger">Data Saved Unsuccessfully</Alert>
+            )}
+          </Modal.Body>
+        </Modal>
       </>
     </>
   );

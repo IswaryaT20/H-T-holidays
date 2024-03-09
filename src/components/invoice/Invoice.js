@@ -243,8 +243,8 @@ const Newproduct = (props) => {
           </Col>
         </Row>
         <div
-          style={{ paddingLeft: "1%", paddingRight: "1%" }}
-          className="table-container mt-3 mb-4"
+          style={{ paddingLeft: "1%", paddingRight: "1%", overflowY:"scroll", height:350 }}
+          className="mt-3 mb-4"
         >
           <Table striped hover size="sm" bordered>
             <thead>

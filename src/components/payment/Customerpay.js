@@ -6,107 +6,91 @@ import {
   Row,
   FormGroup,
   FormControl,
-  Card,
-  ListGroup,
   FormLabel,
-  FormCheck,
   FormSelect,
   Button,
   Alert,
   Modal,
 } from "react-bootstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
 import { IoMdContact } from "react-icons/io";
 import { IoCalendar } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import Customer from "../customer/Customer";
 import { AE } from "country-flag-icons/react/3x2";
 import { MdPayments } from "react-icons/md";
-import { useDispatch, useSelector, connect } from "react-redux";
+import { useDispatch, connect } from "react-redux";
 import { SEARCH_CUSTOMER_API_CALL } from "../../utils/Constant";
-import Receipt from "./Receipt";
-import axios from "axios";
 import { MASTER_API_CALL } from "../../utils/Constant";
-import { Axios } from "axios";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import axios from "axios";
 
 function Customerpay(props) {
   const [masterCategory, setMasterCategory] = useState("");
   const [masterCategoryError, setMasterCategoryError] = useState(false);
-  const [customerName, setCustomerName] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [amount, setAmount] = useState("");
   const [paymentType, setPaymenttype] = useState("");
   const [Referenceno, setReferenceno] = useState("");
   const [chequeNumber, setchequeNumber] = useState("");
   const [Chequedate, setChequedate] = useState("");
   const [collectionDate, setCollectionDate] = useState("");
-  const [showInput, setShowInput] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [masterPaytype, setMasterpaytype] = useState([]);
   const [chequerefnum, setChequerefnum] = useState(false); // Define chequerefnum state
   const [Paymentsummary, setPaymentsummary] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [success, setSuccess] = useState();
   const [errormessage, setErrormessage] = useState("");
   const [selectedPaymentTypeId, setSelectedPaymentTypeId] = useState("");
+  
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [customerOptions, setCustomerOptions] = useState([]);
+  const [showTypeahead, setShowTypeahead] = useState(true);
+
   useEffect(() => {
     if (showAlertModal) {
       const timeoutId = setTimeout(() => {
         setShowAlertModal(false);
         // window.location.reload();
       }, 500);
-  
+
       return () => clearTimeout(timeoutId);
     }
   }, [showAlertModal]);
 
-
   const dispatch = useDispatch();
 
-  const handleSearchChange = (e) => {
-    if (e.target.name === "customernamesearch") {
-      setCustomerName(e.target.value);
-    }
-    if (e.target.name === "amount") {
-      setAmount(e.target.value);
-    }
-    if (e.target.name === "paymenttype") {
-      setPaymenttype(e.target.value);
-    }
-    if (e.target.name === "referenceno") {
-      setReferenceno(e.target.value);
-    }
-    if (e.target.name === "chequedate") {
-      setChequedate(e.target.value);
-    }
-    if (e.target.name === "collectiondate") {
-      setCollectionDate(e.target.value);
-      console.log("payment", e.target.value);
-    }
-    if (e.target.name === "chequeNumber") {
-      setchequeNumber(e.target.value);
-    }
-  };
-
-  const customerSelect = () => {
-    const searchname = customerName;
-
-    if (searchname) {
-      setLoading(true);
-
-      // Add a delay of 1 second
-      setTimeout(() => {
-        dispatch({
-          type: SEARCH_CUSTOMER_API_CALL,
-          payload: { query: searchname },
-        });
-      }, 1000);
-    }
-  };
+  useEffect(() => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { businessTypeId: 1 || 2 },
+    });
+  }, [dispatch]);
 
   useEffect(() => {
-    customerSelect();
-  }, [customerName]);
+    if (props.customers.searchList.length > 0) {
+      setCustomerOptions(
+        props.customers.searchList.map((item) => ({
+          id: item.id,
+          userName: item.userName,
+          name: item.name,
+          addresses: item.addresses,
+          mobile: item.mobile,
+        }))
+      );
+    } else {
+      setCustomerOptions([]);
+    }
+  }, [props.customers.searchList]);
+
+  const handleCustomerSelection = (selected) => {
+    setSelectedCustomer(selected[0]);
+    setShowTypeahead(!selected[0]);
+  };
+
+  const handleSearchChange = (query) => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query },
+    });
+  };
 
   useEffect(() => {
     console.log("the selectedcustomer", selectedCustomer);
@@ -117,10 +101,9 @@ function Customerpay(props) {
       })
       .then((response) => {
         console.log("the payment summary", response.data.data);
-        setPaymentsummary(response.data.data); 
-
+        setPaymentsummary(response.data.data);
       })
-      
+
       .catch((error) => console.error("Error fetching data:", error));
   }, [selectedCustomer]);
 
@@ -129,11 +112,6 @@ function Customerpay(props) {
   }, []);
   console.log("the master api", props.masterData.paymentTypes);
   console.log("the master api", selectedPaymentTypeId);
-
-  const customerdetails = (item) => {
-    setSelectedCustomer(item);
-    setShowInput(false);
-  };
 
   useEffect(() => {
     setChequerefnum(selectedPaymentTypeId === "3");
@@ -144,13 +122,16 @@ function Customerpay(props) {
     setErrormessage("");
 
     setErrormessage("");
-    if (customerName.length === 0) {
-      setErrormessage("Please enter the supplier name.");
+    if (selectedCustomer.length === 0) {
+      setErrormessage("Please enter the customer name.");
       return;
     }
     if (amount.length === 0) {
       setErrormessage("Please enter Amount.");
       return;
+    }
+    if(Referenceno.length === 0){
+      setErrormessage("Please enter REF No.")
     }
 
     const customerpayment = {
@@ -176,7 +157,7 @@ function Customerpay(props) {
 
     console.log("payment", collectionDate);
     window.location.reload();
-    setSuccess('Success');
+    setSuccess("Success");
     setShowAlertModal(true);
   };
 
@@ -222,118 +203,73 @@ function Customerpay(props) {
                   </span>
                 </p>
                 <FormGroup>
-                  {showInput && (
-                    <FormControl
-                      id="name"
-                      type="search"
-                      name="customernamesearch"
-                      className="inputfocus f-14 br_b-2 rounded-0 mt-2"
-                      style={{ border: "2px dotted #25316f" }}
-                      placeholder="Search Customer Name"
-                      onChange={(e) => handleSearchChange(e)}
+                  
+                  {showTypeahead ? (
+                    <Typeahead
+                      className="typeahead br_b-2 p-1"
+                      id="supplierName"
+                      onChange={handleCustomerSelection}
+                      options={customerOptions}
+                      labelKey="name"
+                      onInputChange={handleSearchChange}
+                      placeholder="+ Add Customer"
+                      style={{ width: 200, border: "2px dotted #25316f" }}
                     />
-                  )}
-                  {customerName && !customerName && (
-                    <p variant="danger" className="mt-2">
-                      {customerName}
+                  ) : (
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedCustomer ? "f0f0f0" : ""
+                      }`}
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
+                    >
+                      <strong onClick={() => setShowTypeahead(!showTypeahead)}>
+                        {selectedCustomer.name}
+                      </strong>
+                      <br />
+                      {selectedCustomer.addresses && (
+                        <div>
+                          <small>
+                            {selectedCustomer.addresses[0]?.addressLine1}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.addressLine2}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.city}
+                          </small>,{" "}
+                          <small>{selectedCustomer.addresses[0]?.state}</small>,{" "}
+                          <small>
+                            {selectedCustomer.addresses[0]?.zipcode}
+                          </small>
+                          ,
+                          <br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.countryName}
+                          </small>
+                        </div>
+                      )}
                     </p>
                   )}
-
-                  {showInput &&
-                    props.customers.searchList &&
-                    props.customers.searchList.length > 0 && (
-                      <Card className="mt-3" style={{ width: "18rem" }}>
-                        <ListGroup
-                          variant="flush"
-                          style={{ maxHeight: "15rem", overflowY: "scroll" }}
-                        >
-                          {props.customers.searchList.map((item) => (
-                            <ListGroup.Item
-                              key={item.id}
-                              onClick={() => customerdetails(item)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <strong onClick={() => setShowInput(true)}>
-                                Name:
-                              </strong>
-                              {item.name}
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                        <Link to="/CustomerForm">
-                          <Button variant="link">Add Customer +</Button>
-                        </Link>
-                      </Card>
-                    )}
-                  {selectedCustomer ? (
-                    <div
-                      xxl={2}
-                      lg={2}
-                      className="w-80 p-2"
-                      style={{ backgroundColor: "#e4e4e4" }}
-                    >
-                      <h3
-                        className="mt-1"
-                        onClick={() => setShowInput(!showInput)}
-                      >
-                        {selectedCustomer.name}
-                      </h3>
-                      {selectedCustomer.addresses &&
-                        selectedCustomer.addresses.length > 0 && (
-                          <div
-                            style={{
-                              fontSize: 20,
-                              position: "relative",
-                              top: "-2px",
-                            }}
-                          >
-                            <p
-                              className=" w-70"
-                              style={{
-                                fontSize: 16,
-                                fontWeight: "500",
-                                flex: "flex-wrap",
-                              }}
-                            >
-                              {/* {selectedCustomer.id},
-                              <br /> */}
-                              {selectedCustomer.addresses[0].addressLine1},
-                              <br />
-                              <span className="mt-1">
-                                {selectedCustomer.addresses[0].addressLine2},
-                              </span>
-                              <br />
-                              <span>{selectedCustomer.addresses[0].city},</span>
-                              <span className="ms-2">
-                                {selectedCustomer.addresses[0].state}
-                              </span>
-                              <br />
-                              <span>
-                                {selectedCustomer.addresses[0].countryName},
-                              </span>
-                              <span className="ms-2">
-                                {selectedCustomer.addresses[0].zipcode}.
-                              </span>
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
                 </FormGroup>
+                {errormessage && !selectedCustomer && (
+                  <p style={{ color: "red", fontSize: 12 }}>
+                    Please enter the supplier name.
+                  </p>
+                )}
               </Col>
 
               <Col className="font-large f-20 text-end text-capitalize">
                 <p className="d-flex flex-column fs-4 mt-2">
-                  Outstanding Amount 
+                  Outstanding Amount
                   {/* {Paymentsummary &&
                     Object.values(Paymentsummary).map((value, index) => (
                       <span key={index} className="f-18 mt-2">
                         {value.totalOutstanding} AED
                       </span>
                     ))} */}
-                    <span  className="f-18 mt-2"> 0.00 AED</span>
+                  <span className="f-18 mt-2"> 0.00 AED</span>
                 </p>
 
                 <div className="mt-4">
@@ -436,8 +372,8 @@ function Customerpay(props) {
                       onChange={(e) => handleSearchChange(e)}
                     ></FormControl>
                     {errormessage && !amount && (
-                      <p variant="danger" className="mt-2">
-                        {errormessage}
+                      <p style={{ color: "red", fontSize: 12 }}>
+                        Please enter amount.
                       </p>
                     )}
                   </FormLabel>
@@ -450,6 +386,11 @@ function Customerpay(props) {
                       }}
                       onChange={(e) => handleSearchChange(e)}
                     ></FormControl>
+                    {errormessage && !Referenceno && (
+                      <p style={{ color: "red", fontSize: 12 }}>
+                        Please enter the REF No.
+                      </p>
+                    )}
                   </FormLabel>
                 </FormGroup>
                 <div className="p-1">

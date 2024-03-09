@@ -22,7 +22,7 @@ import {
 } from "../../utils/Constant";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
-import "./Invoice.css"
+import "./Invoice.css";
 
 const NewInvoice = (props) => {
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ const NewInvoice = (props) => {
   ];
   const [selectedNet, setSelectedNet] = useState(0);
   const [dueDate, setDueDate] = useState("");
-  const [isDraft, setIsDraft] = useState(false);
+  const [isTaxInvoice, setIsTaxInvoive] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState("");
 
   const [allItems, setAllItems] = useState([]);
@@ -49,10 +49,11 @@ const NewInvoice = (props) => {
   const [error, setError] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [success, setSuccess] = useState("");
+  const [showTypeahead, setShowTypeahead] = useState(true);
 
   //Handlers
   const handletoggleDraft = () => {
-    setIsDraft(!isDraft);
+    setIsTaxInvoive(!isTaxInvoice);
   };
 
   useEffect(() => {
@@ -105,6 +106,7 @@ const NewInvoice = (props) => {
 
   const handleCustomerSelection = (selected) => {
     setSelectedCustomer(selected[0]);
+    setShowTypeahead(!selected[0]);
   };
 
   const handleSearchChange = (query) => {
@@ -114,6 +116,7 @@ const NewInvoice = (props) => {
     });
   };
 
+  //values form InvoiceForm
   const productList = (item) => {
     setAllItems(item);
   };
@@ -159,6 +162,7 @@ const NewInvoice = (props) => {
       referenceNumber: "Nil",
       memo: description,
       globalDiscount: globalDiscountState,
+      isTaxInvoice: !isTaxInvoice,
       products: tempArray,
     };
 
@@ -182,7 +186,8 @@ const NewInvoice = (props) => {
                   style={{ fontWeight: "500", color: "#1d1d5e" }}
                   type="switch"
                   id="custom-switch"
-                  label={isDraft ? "Draft Invoice" : "Invoice"}
+                  label={isTaxInvoice ? "Draft Invoice" : "Invoice"}
+                  value={isTaxInvoice}
                   onChange={handletoggleDraft}
                 />
               </Form>
@@ -209,7 +214,7 @@ const NewInvoice = (props) => {
                   </Button>
                 </Link>
                 <Button className="ms-3 btn-save" onClick={handleSubmit}>
-                  {isDraft ? "Save Draft" : "Save"}
+                  {isTaxInvoice ? "Save Draft" : "Save"}
                 </Button>
               </div>
             </Col>
@@ -219,7 +224,7 @@ const NewInvoice = (props) => {
             className="d-flex justify-content-center fs-6 fw-bolder"
             style={{ color: "#1d1d5e" }}
           >
-            {isDraft ? "DRAFT INVOICE" : "NEW INVOICE"}
+            {isTaxInvoice ? "DRAFT INVOICE" : "NEW INVOICE"}
           </h1>
 
           <>
@@ -252,33 +257,7 @@ const NewInvoice = (props) => {
               </Col>
               <Col className="col-4 d-flex justify-content-center">
                 <Form.Group>
-                  {selectedCustomer ? (
-                    <p
-                      className={`inputfocus text-start rounded-1 p-2 ${
-                        selectedCustomer ? "f0f0f0" : ""
-                      }`}
-                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
-                    >
-                      <strong>{selectedCustomer.name}</strong>
-                      <br />
-                      {selectedCustomer.addressess && (<div>
-                      <small>
-                        {selectedCustomer.addresses[0]?.addressLine1}
-                      </small>
-                      ,<br />
-                      <small>
-                        {selectedCustomer.addresses[0]?.addressLine2}
-                      </small>
-                      ,<br />
-                      <small>{selectedCustomer.addresses[0]?.city}</small>,{" "}
-                      <small>{selectedCustomer.addresses[0]?.state}</small>,{" "}
-                      <small>{selectedCustomer.addresses[0]?.zipcode}</small>,
-                      <br />
-                      <small>{selectedCustomer.addresses[0]?.countryName}</small>
-                      </div>
-                      )}
-                    </p>
-                  ) : (
+                  {showTypeahead ? (
                     <Typeahead
                       className="typeahead br_b-2 p-1"
                       id="supplierName"
@@ -289,9 +268,49 @@ const NewInvoice = (props) => {
                       placeholder="+ Add Customer"
                       style={{ width: 200, border: "2px dotted #25316f" }}
                     />
+                  ) : (
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedCustomer ? "f0f0f0" : ""
+                      }`}
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
+                    >
+                      <strong onClick={() => setShowTypeahead(!showTypeahead)}>
+                        {selectedCustomer.name}
+                      </strong>
+                      <br />
+                      {selectedCustomer.addresses && (
+                        <div>
+                          <small>
+                            {selectedCustomer.addresses[0]?.addressLine1}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.addressLine2}
+                          </small>
+                          ,<br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.city}
+                          </small>,{" "}
+                          <small>{selectedCustomer.addresses[0]?.state}</small>,{" "}
+                          <small>
+                            {selectedCustomer.addresses[0]?.zipcode}
+                          </small>
+                          ,
+                          <br />
+                          <small>
+                            {selectedCustomer.addresses[0]?.countryName}
+                          </small>
+                        </div>
+                      )}
+                    </p>
                   )}
                 </Form.Group>
-                {error && !selectedCustomer && <p style={{ color: "red", fontSize: 12 }}>Please enter the customer name.</p>}
+                {error && !selectedCustomer && (
+                  <p style={{ color: "red", fontSize: 12 }}>
+                    Please enter the customer name.
+                  </p>
+                )}
               </Col>
               <Col className="col-4 d-flex justify-content-end">
                 <p>
@@ -378,7 +397,7 @@ const NewInvoice = (props) => {
       <>
         <Modal show={showAlertModal}>
           <ModalHeader>
-            <ModalTitle>Purchase Data</ModalTitle>
+            <ModalTitle>Invoice Created</ModalTitle>
           </ModalHeader>
           <ModalBody>
             {success === "Success" ? (
