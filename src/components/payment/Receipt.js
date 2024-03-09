@@ -12,10 +12,8 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaSearch } from "react-icons/fa";
-import { GET_ALL_CUSTOMERS_API_CALL } from "../../utils/Constant";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { useDispatch, connect } from "react-redux";
 
@@ -53,7 +51,7 @@ function Receipt(props) {
   // console.log("the data pages",entitiesPerPage);
 
   return (
-    <div style={{ marginTop: 75 }}>
+    <div style={{ marginTop: 75, paddingLeft: 50, paddingRight: 50 }}>
       <Container fluid>
         <div
           className="d-flex mt-4 pt-4 "
@@ -67,8 +65,8 @@ function Receipt(props) {
           <Col>
             <Link to="/Customerpay">
               <Button
-                className="b-none"
-                style={{ backgroundColor: "#25316f", color: "white" }}
+                className="b-none fw-bolder"
+                style={{ backgroundColor: "#1d1d5e", color: "white" }}
               >
                 New Receipt
               </Button>
@@ -118,23 +116,23 @@ function Receipt(props) {
             </div>
           </Col>
         </div>
-        <div className="table-container " style={{ width: "100%" }}>
-          <table className="table" style={{ overflowY: "scroll" }} responsive>
+        <div style={{ height: 350, overflowY: "scroll" }}>
+          <Table striped hover size="sm" bordered>
             <thead>
               <tr>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   ID
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Customer Name
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Mode of Pay
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Amount
                 </th>
-                <th style={{ backgroundColor: "#25316f", color: "white" }}>
+                <th style={{ backgroundColor: "#1d1d5e", color: "white" }}>
                   Reference Number
                 </th>
               </tr>
@@ -157,20 +155,25 @@ function Receipt(props) {
                     <td>{item.referenceNumber}</td>
                   </tr>
                 ))}
-                {getcustomer.filter((item) => {
+              {getcustomer.filter((item) => {
                 return search.toLowerCase() === ""
                   ? item
-                  : item.customerName.toLowerCase().includes(search.toLowerCase());
+                  : item.customerName
+                      .toLowerCase()
+                      .includes(search.toLowerCase());
               }).length === 0 && (
                 <tr>
                   <td
                     colSpan={5}
-                    style={{ fontWeight: "600", color: "red" }}
-                  >No data found!</td>
+                    className="fst-italic"
+                    style={{ color: "red" }}
+                  >
+                    No data found!
+                  </td>
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
         <div className="d-flex justify-content-center ms-auto text-center mt-3">
           <Pagination size="md"></Pagination>
