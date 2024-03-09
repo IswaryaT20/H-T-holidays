@@ -27,6 +27,10 @@ const NewPurchase = (props) => {
   const dispatch = useDispatch();
 
   //use State
+
+  const [supplierName, setSupplierName] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [showInput, setShowInput] = useState(true);
   const [purchaseDate, setPurchaseDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [refNumber, setRefNumber] = useState("");

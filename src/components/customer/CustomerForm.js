@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "react-phone-number-input/style.css";
 import { RiAttachment2 } from "react-icons/ri";
 
@@ -54,16 +56,18 @@ function CustomerForm(props) {
   const [mobile, setMobile] = useState("");
   const [mobileError, setMobileError] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [companyNameError, setCompanyNameError] = useState("");
   const [website, setWebsite] = useState("");
-  const [category, setCategory] = useState();
+  const [category, setCategory] = useState(0);
   const [customeraddress, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [emirates, setEmirates] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState(2);
   const [zip, setZip] = useState("");
   const [title, setTitle] = useState("");
   const [vattreatment, setVattreatment] = useState("false");
-  const [customerType, setCustomerType] = useState(); // individual
+  const [customerType, setCustomerType] = useState(1); // individual
   const [attachedFileName, setAttachedFileName] = useState("");
   const [savedbankFormData, setBankFormData] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
@@ -101,13 +105,35 @@ function CustomerForm(props) {
 
   useEffect(() => {
     dispatch({type: RESET_CODE})
+    dispatch({ type: MASTER_API_CALL });
   }, [])
 
   useEffect(() => {
     if (props.customers.goback) {
-      navigation(-1)
+      // navigation(-1)
+      resetValues();
+      toast("Successfully registered", {
+        type: 'success',
+        onClose: () => {
+          navigation(-1)
+          dispatch({type: RESET_CODE})
+        }
+      })
     }
   }, [props.customers.goback])
+
+
+  useEffect(() => {
+    if (props.customers.code === 100) {
+      toast(props.customers.error, {
+        type: 'error',
+        onClose: () => {
+          dispatch({type: RESET_CODE})
+        }
+      })
+    }
+  }, [props.customers.code])
+
 
   const handleChange = (e) => {
 
@@ -142,34 +168,50 @@ function CustomerForm(props) {
   };
 
   const selectBusinessType = (businessType) => {
-    console.log(businessType);
+    
+    if (businessType.id != 1) {
+      setNameError(false);
+    }
+    setNameError(false)
+    setMobileError(false);
+    setCategoryError(false);
+    setCompanyNameError(false)
     setCustomerType(businessType.id);
   };
 
+
+  const resetValues = () => {
+    setName("")
+    setCompanyName("")
+    setNameError(false)
+  }
+
   const onSelectCategory = (item) => {
-    console.log(item.target.value);
     setCategory(item.target.value);
   };
 
   const handleVatreatment = (item) => {
-    console.log(item.target.value);
     setVattreatment(item.target.value);
   };
 
   const handlesubmit = () => {
     if (customerType === 1 && !name.trim()) {
       setNameError(true);
-      return;
+      // return;
+    }
+
+    if (customerType === 2 && !companyName.trim()) {
+      setCompanyNameError(true)
     }
 
     if (!mobile.trim() || mobileError) {
       setMobileError(true);
-      return;
+      // return;
     }
 
     if (!category || (typeof category === "string" && !category.trim())) {
       setCategoryError(true);
-      return;
+      // return;
     }
 
     if (
@@ -177,58 +219,65 @@ function CustomerForm(props) {
       (!trnnum || (typeof trnnum === "string" && !trnnum.trim()))
     ) {
       setVatError(true);
-      return;
+      // return;
     }
 
-    const requestData = {
-      name: name,
-      jobPosition: jobposition,
-      trnNo: trnnum,
-      phone: phone,
-      mobile: mobile,
-      email: email,
-      website: website,
-      isRegistered: vattreatment,
-      category: category,
-      title: title,
-      country: country,
-      emirates: emirates,
-      zip: zip,
-      createdBy: props.loggedInUser.loginId,
-      customerCategoryId: category,
-      businessTypeId: customerType,
-      addresses: [
-        {
-          addressLine1: customeraddress,
-          addressLine2: city,
-          city: city,
-          zipcode: zip,
-          country: country,
-          state: city,
-          addressTypeId: 1,
-        },
-      ],
-      bankAccounts: savedbankFormData.bankName ? [
-        {
-          code: savedbankFormData.iban ? savedbankFormData.iban : null ,
-          bankName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
-          accountNumber: savedbankFormData.accountNumber ? savedbankFormData.accountNumber : null,
-          branchName: savedbankFormData.branch ? savedbankFormData.branch : null,
-          accountHolderName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
-          country: savedbankFormData.bankcountry ? savedbankFormData.bankcountry : null,
-        },
-      ] : []
-    };
+    if (mobile.trim() && category ) {
 
-    dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
-    console.log("data", props.customers);
-    setSuccess('Success');
-    setShowAlertModal(true);
-    setBankFormData({ ...formData });
-    handleModalClose();
-    console.log("the bank accounts", requestData.bankAccounts);
-    console.log("country", country);
-    console.log("vat", vattreatment);
+      console.log("coming inside")
+      const tempAddressArray = []
+      if (customeraddress || city || zip) {
+        tempAddressArray.push({
+          addressLine1: customeraddress ? customeraddress : null,
+          addressLine2: city ? city : null, 
+          city: city ? city : null,
+          zipcode: zip ? zip : zip,
+          country: country ? country : null,
+          state: "",
+          addressTypeId: 1,
+        })
+      }
+      const requestData = {
+        name: name,
+        jobPosition: jobposition,
+        trnNo: trnnum,
+        phone: phone,
+        mobile: mobile,
+        email: email,
+        website: website,
+        isRegistered: vattreatment,
+        category: category,
+        title: title,
+        country: country,
+        emirates: emirates,
+        zip: zip,
+        createdBy: props.loggedInUser.loginId,
+        customerCategoryId: category,
+        businessTypeId: customerType,
+        addresses: tempAddressArray,
+        bankAccounts: savedbankFormData.bankName ? [
+          {
+            code: savedbankFormData.iban ? savedbankFormData.iban : null ,
+            bankName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
+            accountNumber: savedbankFormData.accountNumber ? savedbankFormData.accountNumber : null,
+            branchName: savedbankFormData.branch ? savedbankFormData.branch : null,
+            accountHolderName: savedbankFormData.bankName ? savedbankFormData.bankName : null,
+            country: savedbankFormData.bankcountry ? savedbankFormData.bankcountry : null,
+          },
+        ] : []
+      };
+
+      // console.log(requestData)
+  
+      dispatch({ type: CREATE_CUSTOMER_API_CALL, payload: requestData });
+    }
+
+    
+    // console.log("data", props.customers);
+    // setSuccess('Success');
+    // setShowAlertModal(true);
+    // setBankFormData({ ...formData });
+    // handleModalClose();
   };
 
   const openAvatars = () => {
@@ -251,10 +300,6 @@ function CustomerForm(props) {
     setbankdetails(false);
   };
 
-  useEffect(() => {
-    dispatch({ type: MASTER_API_CALL });
-    console.log(props.message);
-  }, []);
 
   useEffect(() => {
     if (props.master.businessTypes.length > 0) {
@@ -276,6 +321,7 @@ function CustomerForm(props) {
   };
   return (
     <>
+    <ToastContainer />
       <div
         style={{
           backgroundColor: "#F5F5F5",
@@ -346,6 +392,7 @@ function CustomerForm(props) {
                       return (
                         <Form.Check
                           inline
+                          key={item.id}
                           label={item.value}
                           name="customerType"
                           type="radio"
@@ -426,6 +473,7 @@ function CustomerForm(props) {
                         <FormGroup className="d-flex flex-column">
                           <FormControl
                             type="text"
+                            value={name}
                             placeholder="Customer Name"
                             className={`f-14 w-100 h-10 br_b-2 pt-3 ps-3 mb-2 rounded-0 inputfocus ${
                               nameError ? "has-error" : ""
@@ -454,13 +502,20 @@ function CustomerForm(props) {
                         type="text"
                         placeholder="Company Name"
                         checked={customerType === "company"}
-                        onChange={(e) => handleChange(e)}
-                        className=" f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus"
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        className={`f-14 w-100 h-10 br_b-2  pt-3 ps-3 rounded-0 inputfocus ${
+                          companyNameError ? "has-error" : ""
+                        }`}
                         style={{ border: "2px dotted #25316f" }}
                         id={`inline-radio-1`}
                         name="companyname"
                       ></FormControl>
                     </FormGroup>
+                    {companyNameError && (
+                        <p style={{ color: "red" }}>
+                          Company Name is Required
+                        </p>
+                      )}
                   </div>
                   <div className=" f-14 d-flex flex-row" style={{ flex: "1" }}>
                     <FormGroup
@@ -639,11 +694,16 @@ function CustomerForm(props) {
                           *
                         </span>
                         <div key={`inline-radio`} className="mb-1">
-                          <FormControl
+                        <FormControl
                             placeholder="Enter phone number"
                             value={mobile}
-                            onChange={(value) => {
-                              setMobile(value.target.value);
+                            onChange={(event) => {
+                              const inputValue = event.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+
+                              setMobile(inputValue);
                               setMobileError(false);
                             }}
                             className={`inputfocus f-14 br_b-2 rounded-0 ${
@@ -656,9 +716,10 @@ function CustomerForm(props) {
                               height: "2rem",
                             }}
                             name="mobile"
-                            limitMaxLength
-                            type="number"
+                            type="tel"
+                            maxLength={10}
                           />
+                      
                         </div>
                       </FormLabel>
                       {mobileError && (
