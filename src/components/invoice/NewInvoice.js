@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
-  Card,
   Col,
   Container,
   Form,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalHeader,
@@ -18,11 +15,14 @@ import InvoiceForm from "./InvoiceForm";
 import { Link } from "react-router-dom";
 import { useDispatch, connect } from "react-redux";
 import {
-  // GET_ALL_PRODUCTS_API_CALL,
-  // GET_ALL_CUSTOMERS_API_CALL,
+  GET_ALL_PRODUCTS_API_CALL,
+  GET_ALL_CUSTOMERS_API_CALL,
   SEARCH_CUSTOMER_API_CALL,
   CREATE_INVOICE_API_CALL,
 } from "../../utils/Constant";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "./Invoice.css"
 
 const NewInvoice = (props) => {
   const dispatch = useDispatch();
@@ -39,12 +39,8 @@ const NewInvoice = (props) => {
   ];
   const [selectedNet, setSelectedNet] = useState(0);
   const [dueDate, setDueDate] = useState("");
-
   const [isDraft, setIsDraft] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [showInput, setShowInput] = useState(true);
 
   const [allItems, setAllItems] = useState([]);
   const [globalDiscountState, setGlobalDiscountState] = useState(0);
@@ -64,8 +60,8 @@ const NewInvoice = (props) => {
     setInvoiceDate(currentDate);
     calculateDueDate(currentDate, selectedNet);
 
-    // dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
-    // dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
+    dispatch({ type: GET_ALL_PRODUCTS_API_CALL });
+    dispatch({ type: GET_ALL_CUSTOMERS_API_CALL });
   }, []);
 
   const calculateDueDate = (date, net) => {
@@ -80,35 +76,43 @@ const NewInvoice = (props) => {
     calculateDueDate(invoiceDate, selectedNetValue);
   };
 
-  // const handleSearchChange = (e) => {
-  //   if (e.target.name === "customerNameSearch") {
-  //     setCustomerName(e.target.value);
-  //   }
-  // };
+  //Getting customer details;
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [customerOptions, setCustomerOptions] = useState([]);
 
-  // const selectCustomer = () => {
-  //   if (customerName) {
-  //     setTimeout(() => {
-  //       dispatch({
-  //         type: SEARCH_CUSTOMER_API_CALL,
-  //         payload: { query: customerName },
-  //       });
-  //     }, 1000);
-  //   }
-  // };
+  useEffect(() => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { businessTypeId: 1 || 2 },
+    });
+  }, [dispatch]);
 
-  // useEffect(() => {
-  //   selectCustomer();
-  // }, [customerName]);
+  useEffect(() => {
+    if (props.customers.searchList.length > 0) {
+      setCustomerOptions(
+        props.customers.searchList.map((item) => ({
+          id: item.id,
+          userName: item.userName,
+          name: item.name,
+          addresses: item.addresses,
+          mobile: item.mobile,
+        }))
+      );
+    } else {
+      setCustomerOptions([]);
+    }
+  }, [props.customers.searchList]);
 
-  // const customerDetails = (item) => {
-  //   if (selectedCustomer === item) {
-  //     setShowInput(!showInput); // Toggle the showInput state when the selected supplier is clicked
-  //   } else {
-  //     setSelectedCustomer(item);
-  //     setShowInput(false);
-  //   }
-  // };
+  const handleCustomerSelection = (selected) => {
+    setSelectedCustomer(selected[0]);
+  };
+
+  const handleSearchChange = (query) => {
+    dispatch({
+      type: SEARCH_CUSTOMER_API_CALL,
+      payload: { query },
+    });
+  };
 
   const productList = (item) => {
     setAllItems(item);
@@ -127,10 +131,9 @@ const NewInvoice = (props) => {
   };
 
   const handleSubmit = () => {
-
     const customerError = "Please enter customer name";
     setError("");
-    if (customerName.length === 0) {
+    if (selectedCustomer.length === 0) {
       setError(customerError);
       return;
     }
@@ -149,7 +152,7 @@ const NewInvoice = (props) => {
 
     const requestData = {
       createdBy: props.loginUsers.loginId,
-      customerId: 16,
+      customerId: selectedCustomer.id,
       invoiceDate: invoiceDate,
       dueDate: dueDate,
       net: selectedNet,
@@ -164,14 +167,14 @@ const NewInvoice = (props) => {
     setSuccess("Success");
 
     setTimeout(() => {
-      window.location.reload(true)
+      window.location.reload(true);
     }, 500);
   };
 
   return (
     <>
       <Container fluid className="mt-2 ">
-        <div style={{ paddingLeft: 50, paddingRight: 50,marginTop:75 }}>
+        <div style={{ paddingLeft: 50, paddingRight: 50, marginTop: 75 }}>
           <Row>
             <Col>
               <Form>
@@ -249,24 +252,46 @@ const NewInvoice = (props) => {
               </Col>
               <Col className="col-4 d-flex justify-content-center">
                 <Form.Group>
-                 
-                    <Form.Control
-                      className={`inputfocus text-center rounded-0 ${
-                        selectedCustomer ? "bg-light" : ""
+                  {selectedCustomer ? (
+                    <p
+                      className={`inputfocus text-start rounded-1 p-2 ${
+                        selectedCustomer ? "f0f0f0" : ""
                       }`}
-                      type="search"
-                      name="customerNameSearch"
+                      style={{ width: 250, backgroundColor: "#f0f0f0" }}
+                    >
+                      <strong>{selectedCustomer.name}</strong>
+                      <br />
+                      {selectedCustomer.addressess && (<div>
+                      <small>
+                        {selectedCustomer.addresses[0]?.addressLine1}
+                      </small>
+                      ,<br />
+                      <small>
+                        {selectedCustomer.addresses[0]?.addressLine2}
+                      </small>
+                      ,<br />
+                      <small>{selectedCustomer.addresses[0]?.city}</small>,{" "}
+                      <small>{selectedCustomer.addresses[0]?.state}</small>,{" "}
+                      <small>{selectedCustomer.addresses[0]?.zipcode}</small>,
+                      <br />
+                      <small>{selectedCustomer.addresses[0]?.countryName}</small>
+                      </div>
+                      )}
+                    </p>
+                  ) : (
+                    <Typeahead
+                      className="typeahead br_b-2 p-1"
+                      id="supplierName"
+                      onChange={handleCustomerSelection}
+                      options={customerOptions}
+                      labelKey="name"
+                      onInputChange={handleSearchChange}
                       placeholder="+ Add Customer"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      style={{
-                        backgroundColor: "#dedef8",
-                        width: "250px",
-                        cursor: "text",
-                      }}
+                      style={{ width: 200, border: "2px dotted #25316f" }}
                     />
-  
+                  )}
                 </Form.Group>
+                {error && !selectedCustomer && <p style={{ color: "red", fontSize: 12 }}>Please enter the customer name.</p>}
               </Col>
               <Col className="col-4 d-flex justify-content-end">
                 <p>
@@ -350,7 +375,7 @@ const NewInvoice = (props) => {
         vatChecked={globalVatChecked}
       />
 
-<>
+      <>
         <Modal show={showAlertModal}>
           <ModalHeader>
             <ModalTitle>Purchase Data</ModalTitle>
@@ -358,25 +383,25 @@ const NewInvoice = (props) => {
           <ModalBody>
             {success === "Success" ? (
               <div className="d-flex align-items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-circle-check"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="#3bb54a"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ marginLeft: "31%" }}
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <circle cx="12" cy="12" r="9" />
-                <path d="M9 12l2 2l4 -4" />
-              </svg>
-              <p className="mb-0 ml-2">Data Saved Successfully</p>
-            </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-circle-check"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="#3bb54a"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "31%" }}
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p className="mb-0 ml-2">Data Saved Successfully</p>
+              </div>
             ) : (
               <Alert variant="danger">Data Saved Unsuccessfully</Alert>
             )}

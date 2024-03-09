@@ -1,6 +1,6 @@
 import React from "react";
 import Newpurchase from './NewPurchase'
-import PurchaseForm from "./PurchaseForm";
+// import PurchaseForm from "./PurchaseForm";
 
 
 

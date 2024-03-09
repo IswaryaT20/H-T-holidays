@@ -60,7 +60,7 @@ const Newproduct = (props) => {
   ];
 
   return (
-    <div style={{ paddingRight: 50, paddingLeft: 50 ,marginTop:75}}>
+    <div style={{ paddingRight: 50, paddingLeft: 50, marginTop: 75 }}>
       <Container fluid className="mt-2">
         <Row className="ms-1">
           <Col lg={6} xxl={6} className="p-1 ">
@@ -87,7 +87,7 @@ const Newproduct = (props) => {
                   Total Amount
                   <br />
                   <span style={{ color: "black" }}>
-                    {(props.purchaseOrder.totalAmount).toFixed(2)} AED
+                    {props.purchaseOrder.totalAmount.toFixed(2)} AED
                   </span>
                 </p>
                 <p
@@ -102,7 +102,7 @@ const Newproduct = (props) => {
                   Unpaid
                   <br />
                   <span style={{ color: "black" }}>
-                    {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
+                    {props.purchaseOrder.unpaidAmount.toFixed(2)} AED
                   </span>
                 </p>
                 <p
@@ -117,7 +117,7 @@ const Newproduct = (props) => {
                   Paid
                   <br />
                   <span style={{ color: "black" }}>
-                    {(props.purchaseOrder.paidAmount).toFixed(2)} AED
+                    {props.purchaseOrder.paidAmount.toFixed(2)} AED
                   </span>
                 </p>
               </div>
@@ -147,7 +147,7 @@ const Newproduct = (props) => {
                 >
                   Total Amount :{" "}
                   <span style={{ color: "black" }}>
-                    {(props.purchaseOrder.totalAmount).toFixed(2)} AED
+                    {props.purchaseOrder.totalAmount.toFixed(2)} AED
                   </span>
                 </p>
                 <p
@@ -160,15 +160,15 @@ const Newproduct = (props) => {
                 >
                   Unpaid :{" "}
                   <span style={{ color: "black" }}>
-                     {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
+                    {props.purchaseOrder.unpaidAmount.toFixed(2)} AED
                   </span>
                 </p>
               </div>
               <ProgressBar
                 className="progress"
                 now={parseInt(
-                  ((props.purchaseOrder.paidAmount).toFixed(2) /
-                    (props.purchaseOrder.totalAmount.toFixed(2))) *
+                  (props.purchaseOrder.paidAmount.toFixed(2) /
+                    props.purchaseOrder.totalAmount.toFixed(2)) *
                     100
                 )}
                 style={{ width: "93%", marginLeft: "21px" }}
@@ -185,7 +185,7 @@ const Newproduct = (props) => {
                 >
                   Paid
                   <br />
-                  {(props.purchaseOrder.paidAmount).toFixed(2)} AED
+                  {props.purchaseOrder.paidAmount.toFixed(2)} AED
                 </p>
                 <div
                   class="square"
@@ -200,7 +200,7 @@ const Newproduct = (props) => {
                 >
                   Unpaid
                   <br />
-                  {(props.purchaseOrder.unpaidAmount).toFixed(2)} AED
+                  {props.purchaseOrder.unpaidAmount.toFixed(2)} AED
                 </p>
               </div>
             </div>
@@ -260,10 +260,7 @@ const Newproduct = (props) => {
           </Col>
         </Row>
 
-        <div
-          style={{ paddingLeft: "1%", paddingRight: "1%" }}
-          className="table-container mt-3"
-        >
+        <div style={{ paddingLeft: "1%", paddingRight: "1%",height:350, overflowY: "auto" }} className="mt-3 mb-4">
           <Table striped hover size="sm" bordered>
             <thead>
               <tr>

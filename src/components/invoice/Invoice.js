@@ -244,7 +244,7 @@ const Newproduct = (props) => {
         </Row>
         <div
           style={{ paddingLeft: "1%", paddingRight: "1%" }}
-          className="table-container mt-3"
+          className="table-container mt-3 mb-4"
         >
           <Table striped hover size="sm" bordered>
             <thead>
@@ -283,7 +283,7 @@ const Newproduct = (props) => {
                     <td>{item.net}</td>
                     <td>{item.totalAmount}</td>
                     <td>
-                      <FiDownload onClick={() => {
+                      <FiDownload style={{cursor:"pointer"}} onClick={() => {
                         if (item.supplierPOUrl) {
                             window.open(item.supplierPOUrl, "_new")
                         }
