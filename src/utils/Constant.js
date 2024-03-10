@@ -44,6 +44,8 @@ export const CREATE_INVOICE_API_RESPONSE = 'Create-Invoice-Api-Response'
 export const RESET_INVOICE_ARRAY = 'Reset-Invoice-Array';
 export const GENERATE_INVOICE_PDF_API_CALL = 'Generate-pdf-Invoice-Api-Call'
 export const GENERATE_INVOICE_PDF_API_RESPONSE = 'Generate-pdf-Invoice-Api-Response'
+export const GET_ALL_RECEIPT_API_CALL = 'Get-All-Receipt-Api-Call'
+export const GET_ALL_RECEIPT_API_RESPONSE = 'Get-All-Receipt-Response-call'
 
 
 
