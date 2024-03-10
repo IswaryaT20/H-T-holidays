@@ -295,10 +295,9 @@ const Newproduct = (props) => {
                       {
                         item.products.length > 0 ? <FiDownload style={{cursor:"pointer"}} onClick={() => {
                           if (item.supplierPOUrl) {
-                              // window.open(item.supplierPOUrl, "_new")
+                              window.open(item.supplierPOUrl, "_new")
                           }
                           else {
-                            console.log("table dowload buttom", item.invoiceOrderId)
                             dispatch({type: GENERATE_INVOICE_PDF_API_CALL, invoiceId: item.invoiceOrderId})
                           }
                         }} /> : null
