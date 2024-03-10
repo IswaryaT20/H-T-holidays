@@ -45,6 +45,10 @@ const CustomerDetails = (props) => {
   });
 
   const [showAddressesModal, setShowAddressModal] = useState(false);
+  const [bankdetailserror, setbankdetailserror] = useState(false);
+  const [accountnumerror, setAccountnumerror] = useState(false);
+  const [accountanterror, setAccountanterror] = useState(false);
+  const [addressError, setAddressError] = useState(false);
 
   useEffect(() => {
     dispatch({
@@ -72,14 +76,17 @@ const CustomerDetails = (props) => {
 
   const bankNameChange = (value) => {
     setBankDetails({ ...bankDetails, bankName: value });
+    setbankdetailserror(false);
   };
 
   const accountHolderNameChange = (value) => {
     setBankDetails({ ...bankDetails, accountHolderName: value });
+    setAccountanterror(false);
   };
 
   const accountNumberChange = (value) => {
     setBankDetails({ ...bankDetails, accountNumber: value });
+    setAccountnumerror(false);
   };
 
   const ibanNumberChange = (value) => {
@@ -109,6 +116,7 @@ const CustomerDetails = (props) => {
 
   const addressLine1Changes = (value) => {
     setFormData({ ...formData, addressLine1: value });
+    setAddressError(false);
   };
 
   const handleCityChange = (value) => {
@@ -126,12 +134,28 @@ const CustomerDetails = (props) => {
     setFormData({ ...formData, country: value });
   };
   const saveAddress = () => {
+    setAddressError(true);
     const tempArray = [];
     tempArray.push(formData);
     dispatch({ type: ADD_CUSTOMR_ADDRESS_API_CALL, payload: tempArray });
   };
 
   const saveBankDetails = () => {
+    if (!bankDetails.bankName || !bankDetails.bankName.trim()) {
+      setbankdetailserror(true);
+      return; // Stop further processing if there is an error
+    }
+
+    if (!bankDetails.accountNumber || !bankDetails.accountNumber.trim()) {
+      setAccountnumerror(true);
+    }
+    if (
+      !bankDetails.accountHolderName ||
+      !bankDetails.accountHolderName.trim()
+    ) {
+      setAccountanterror(true);
+    }
+
     const bankInformation = [];
     bankInformation.push(bankDetails);
 
@@ -391,11 +415,16 @@ const CustomerDetails = (props) => {
                     Bank Name
                     <FormControl
                       name="bankName"
-                      className="f-14 w-100 br_b-2 rounded-0 mt-0 me-2 inputfocus"
+                      className={`f-14 w-100 br_b-2 rounded-0 mt-0 me-2 inputfocus ${
+                        bankdetailserror ? "has-error" : ""
+                      } `}
                       type="text"
                       onChange={(e) => bankNameChange(e.target.value)}
                       style={{ border: "2px dotted #25316f" }}
                     />
+                    {bankdetailserror && (
+                      <p style={{ color: "red" }}>Bank name is required</p>
+                    )}
                   </FormLabel>
                 </FormGroup>
                 <FormGroup className=" m-2">
@@ -403,11 +432,16 @@ const CustomerDetails = (props) => {
                     Account Number
                     <FormControl
                       name="accountNumber"
-                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      className={`inputfocus f-14 br_b-2 rounded-0 inputfocus ${
+                        accountnumerror ? "has-error" : ""
+                      } `}
                       type="text"
                       onChange={(e) => accountNumberChange(e.target.value)}
                       style={{ border: "2px dotted #25316f" }}
                     />
+                    {accountnumerror && (
+                      <p style={{ color: "red" }}>Account number is required</p>
+                    )}
                   </FormLabel>
                 </FormGroup>
                 <FormGroup className=" m-2">
@@ -433,11 +467,18 @@ const CustomerDetails = (props) => {
                     Account Holder Name
                     <FormControl
                       name="accountholdername"
-                      className="inputfocus f-14 br_b-2 rounded-0 inputfocus"
+                      className={`inputfocus f-14 br_b-2 rounded-0 inputfocus ${
+                        accountanterror ? "has-error" : ""
+                      } `}
                       type="text"
                       onChange={(e) => accountHolderNameChange(e.target.value)}
                       style={{ border: "2px dotted #25316f" }}
                     />
+                    {accountanterror && (
+                      <p style={{ color: "red" }}>
+                        Account holder name is required
+                      </p>
+                    )}
                   </FormLabel>
                   <FormLabel className="f-14 w-100 ">
                     IBAN No
@@ -544,13 +585,19 @@ const CustomerDetails = (props) => {
                 }}
               >
                 <Form.Control
-                  className="f-14 br_b-2 rounded-0 mt-2 inputfocus"
+                  className={`f-14 br_b-2 rounded-0 mt-2 inputfocus ${
+                    addressError ? "has-error" : ""
+                  } `}
                   style={{ border: "2px dotted #25316f" }}
                   placeholder="Address"
                   name="customeraddress"
                   value={formData.customeraddress}
                   onChange={(e) => addressLine1Changes(e.target.value)}
                 />
+                {addressError && (
+                  <p style={{ color: "red" }}>Address is required</p>
+                )}
+
                 <FormGroup className="f-14 d-flex justify-space-between">
                   <Form.Control
                     className="f-14 br_b-2 rounded-0 mt-2 me-2 inputfocus"
